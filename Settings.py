@@ -11,7 +11,6 @@ if __name__ == "__main__":
 
 
 
-
 def Check_settings():
     global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe
     with open(f"C:\\Users\\{Programm_ort}\\Desktop\\Textmanager Daten\\Textmanager Daten\\see_the_text.txt") as see_the_textinfo:
@@ -23,10 +22,16 @@ def Check_settings():
 
 
 def make_settings():
+    make_settings1(Neue_Textmanager.Textmanager)
+
+def make_settings1(farme):
     Settings = Toplevel(Neue_Textmanager.Textmanager)
     Settings.geometry("600x800")
     Settings.config(bg=Textmanager_Hintergrund)
-
+    Photo = PhotoImage(file="off-button.png")
+    Textanzeiger = Button(Settings, image=Photo, bg=Textmanager_Hintergrund, border=0)
+    Textanzeiger.pack()
+    Textanzeiger.draw()
 
 def Info():
     global Info_manager
