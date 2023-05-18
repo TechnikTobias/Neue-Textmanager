@@ -28,7 +28,7 @@ def Menu_generator():
     Menu_Kamera = Menu(Menu_Settings, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0)
     Menu_LiedKontrolle = Menu(Menu_Settings, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0)
     Menu_Help = Menu(Menu_Settings, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0, borderwidth=0)
-    Menu_Settings.add_cascade(label="Info", menu= Menu_Info)
+    Menu_Settings.add_cascade(label="Info", menu=Menu_Info)
     Menu_Settings.add_cascade(label="Kamera", menu=Menu_Kamera)
     Menu_Settings.add_cascade(label="Lied Kontrolle", menu=Menu_LiedKontrolle)
     Menu_Settings.add_cascade(label="Hilfe", menu=Menu_Help)

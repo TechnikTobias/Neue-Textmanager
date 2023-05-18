@@ -12,18 +12,19 @@ if __name__ == "__main__":
 
 
 def Check_settings():
-    global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe
-    with open(f"C:\\Users\\{Programm_ort}\\Desktop\\Textmanager Daten\\Textmanager Daten\\see_the_text.txt") as see_the_textinfo:
+    global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, sd
+    with open(f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt") as see_the_textinfo:
         see_the_text = see_the_textinfo.read()
-    with open(f"C:\\Users\\{Programm_ort}\\Desktop\\Textmanager Daten\\Textmanager Daten\\Hintergrund.txt") as Neue_Texmanager_Hinregrund:
+    with open(f"Textmanager Daten\\Textmanager Daten\\Hintergrund.txt") as Neue_Texmanager_Hinregrund:
         Textmanager_Hintergrund = Neue_Texmanager_Hinregrund.read()
-    with open(f"C:\\Users\\{Programm_ort}\\Desktop\\Textmanager Daten\\Textmanager Daten\\Textfarbe.txt") as Neue_Texmanager_Textfarbe:
+    with open(f"Textmanager Daten\\Textmanager Daten\\Textfarbe.txt") as Neue_Texmanager_Textfarbe:
         Textmanager_Textfarbe = Neue_Texmanager_Textfarbe.read()
 
 def switch():
-    Photo1 = Image.open("off-button.png")
+    Photo1 = Image.open("on-button.png")
     Photo = ImageTk.PhotoImage(Photo1.resize((100,100)))
     Textanzeiger.config(image=Photo)
+    Textanzeiger.m
 
 def make_settings():
     global Textanzeiger
