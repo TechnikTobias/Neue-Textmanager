@@ -20,18 +20,21 @@ def Check_settings():
     with open(f"C:\\Users\\{Programm_ort}\\Desktop\\Textmanager Daten\\Textmanager Daten\\Textfarbe.txt") as Neue_Texmanager_Textfarbe:
         Textmanager_Textfarbe = Neue_Texmanager_Textfarbe.read()
 
+def switch():
+    Photo1 = Image.open("off-button.png")
+    Photo = ImageTk.PhotoImage(Photo1.resize((100,100)))
+    Textanzeiger.config(image=Photo)
 
 def make_settings():
-    make_settings1(Neue_Textmanager.Textmanager)
-
-def make_settings1(farme):
+    global Textanzeiger
     Settings = Toplevel(Neue_Textmanager.Textmanager)
     Settings.geometry("600x800")
     Settings.config(bg=Textmanager_Hintergrund)
-    Photo = PhotoImage(file="off-button.png")
-    Textanzeiger = Button(Settings, image=Photo, bg=Textmanager_Hintergrund, border=0)
+    Photo1 = Image.open("off-button.png")
+    Photo = ImageTk.PhotoImage(Photo1.resize((100,100)))
+    Textanzeiger = Button(Settings, image=Photo, bg=Textmanager_Hintergrund, border=0, command=switch)
     Textanzeiger.pack()
-    Textanzeiger.draw()
+    Textanzeiger.m
 
 def Info():
     global Info_manager
