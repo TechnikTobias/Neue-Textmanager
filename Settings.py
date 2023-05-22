@@ -13,29 +13,47 @@ if __name__ == "__main__":
 
 def Check_settings():
     global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, sd
-    with open(f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt") as see_the_textinfo:
-        see_the_text = see_the_textinfo.read()
-    with open(f"Textmanager Daten\\Textmanager Daten\\Hintergrund.txt") as Neue_Texmanager_Hinregrund:
+    with open(f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", "r", encoding='utf8') as see_the_textinfo:
+        see_the_text = see_the_textinfo.read() == "True"
+        print (see_the_text)
+    with open(f"Textmanager Daten\\Textmanager Daten\\Hintergrund.txt", "r", encoding='utf8') as Neue_Texmanager_Hinregrund:
         Textmanager_Hintergrund = Neue_Texmanager_Hinregrund.read()
-    with open(f"Textmanager Daten\\Textmanager Daten\\Textfarbe.txt") as Neue_Texmanager_Textfarbe:
+    with open(f"Textmanager Daten\\Textmanager Daten\\Textfarbe.txt", "r", encoding='utf8') as Neue_Texmanager_Textfarbe:
         Textmanager_Textfarbe = Neue_Texmanager_Textfarbe.read()
 
 def switch():
+    with open(f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", "w", encoding='utf8') as see_the_textinfo:
+        see_the_textinfo.write("True")
     Photo1 = Image.open("on-button.png")
-    Photo = ImageTk.PhotoImage(Photo1.resize((100,100)))
-    Textanzeiger.config(image=Photo)
-    Textanzeiger.m
+    Photo = ImageTk.PhotoImage(Photo1.resize((50,50)))
+    Textanzeiger_setting.config(image=Photo, command=switch1)
+    Textanzeiger_setting.m
+
+
+def switch1():
+    with open(f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", "w", encoding='utf8') as see_the_textinfo:
+        see_the_textinfo.write("False")
+    Photo1 = Image.open("off-button.png")
+    Photo = ImageTk.PhotoImage(Photo1.resize((50,50)))
+    Textanzeiger_setting.config(image=Photo, command=switch)
+    Textanzeiger_setting.m
 
 def make_settings():
-    global Textanzeiger
+    Check_settings()
+    global Textanzeiger_setting
     Settings = Toplevel(Neue_Textmanager.Textmanager)
     Settings.geometry("600x800")
     Settings.config(bg=Textmanager_Hintergrund)
-    Photo1 = Image.open("off-button.png")
-    Photo = ImageTk.PhotoImage(Photo1.resize((100,100)))
-    Textanzeiger = Button(Settings, image=Photo, bg=Textmanager_Hintergrund, border=0, command=switch)
-    Textanzeiger.pack()
-    Textanzeiger.m
+    if not see_the_text:
+        Photo1 = Image.open("off-button.png")
+        Photo = ImageTk.PhotoImage(Photo1.resize((50,50)))
+        Textanzeiger_setting = Button(Settings, image=Photo, bg=Textmanager_Hintergrund, border=0, command=switch)
+    else:
+        Photo1 = Image.open("on-button.png")
+        Photo = ImageTk.PhotoImage(Photo1.resize((50,50)))
+        Textanzeiger_setting = Button(Settings, image=Photo, bg=Textmanager_Hintergrund, border=0, command=switch1)
+    Textanzeiger_setting.pack()
+    Textanzeiger_setting.m
 
 def Info():
     global Info_manager
