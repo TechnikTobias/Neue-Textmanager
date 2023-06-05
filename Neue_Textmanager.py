@@ -6,6 +6,7 @@ import Settings
 import Kamera
 import Lied_Kontrolle
 import Help
+import Load_settings
 
 Programm_ort = os.getlogin()
 
@@ -17,12 +18,13 @@ def Start():
     Textmanager.title("Textmanager")
     Textmanager.config(bg=Settings.Textmanager_Hintergrund)
     Textmanager.geometry("1040x800")
-    Textmanager.minsize(width=1040, height=850)
     Textmanager.iconbitmap(f"C:\\Users\\{Programm_ort}\\Desktop\\Lieder\\picture_compress 1.ico")
     Menu_generator()
     Load_Setting()
+    Load_Setting()
 
 def Menu_generator():
+    global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help
     Menu_Settings = Menu(Textmanager, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0)
     Menu_Info = Menu(Menu_Settings, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0)
     Menu_Kamera = Menu(Menu_Settings, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0)
@@ -42,16 +44,9 @@ def Menu_generator():
     Textmanager.config(menu=Menu_Settings)
 
 def Load_Setting():
-    if Settings.see_the_text:
-        AnzeigeText = Toplevel(Textmanager)
-        AnzeigeText.config(bg=Settings.Textmanager_Hintergrund)
-        AnzeigeText.geometry("1920x1080+1920+0")
-        AnzeigeText.overrideredirect(True)
-        Text_Anzeige_Label = Label(AnzeigeText, font=("Helvetica", 60), fg="white", bg="black", wraplength=1920)
-        Aktueller_Text = ""
-        Text_Anzeige_Label.config(text=Aktueller_Text)
-        Text_Anzeige_Label["justify"] = "left"
-        Text_Anzeige_Label.place(x=0, y=0)
+    Settings.Check_settings()
+    Load_settings.Load_Text_anzeiger()
+    Load_settings.Button_hervorhen_frabe()
 
 
 
