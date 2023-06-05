@@ -59,18 +59,17 @@ class Swich_generator:
     def switch_setting_off(self):
         with open(f"{self.Text_datei_save}", "w", encoding='utf8') as see_the_textinfo:
             see_the_textinfo.write("False")
-        Photo1 = Image.open("off-button.png")
-        Photo = ImageTk.PhotoImage(Photo1.resize((50,50)))
-        self.is_switch.configure(image=Photo, command= self.switch_setting_on)
-        self.is_switch.draw()
+        self.Photo1 = Image.open("off-button.png")
+        self.Photo = ImageTk.PhotoImage(self.Photo1.resize((50,50)))
+        self.is_switch.configure(image=self.Photo, command= self.switch_setting_on)
 
     def switch_setting_on(self):
         with open(f"{self.Text_datei_save}", "w", encoding='utf8') as see_the_textinfo:
             see_the_textinfo.write("True")
-        Photo1 = Image.open("on-button.png")
-        Photo = ImageTk.PhotoImage(Photo1.resize((50,50)))
-        self.is_switch.configure(image=Photo, command=self.switch_setting_off)
-        self.is_switch.draw()
+        self.Photo1 = Image.open("on-button.png")
+        self.Photo = ImageTk.PhotoImage(self.Photo1.resize((50,50)))
+        self.is_switch.configure(image=self.Photo, command=self.switch_setting_off)
+
 
 
 
@@ -91,4 +90,4 @@ def Info():
     Bild_für_opa = ImageTk.PhotoImage(image=Bild_für_opa1.resize((472,341))) 
     Bild_für_opa_Label = Label(Info_manager,image=Bild_für_opa)
     Bild_für_opa_Label.place(x=0,y=100)
-    Bild_für_opa_Label.draw()
+    Bild_für_opa_Label.update()
