@@ -13,7 +13,7 @@ def Load_Text_anzeiger():
             AnzeigeText.geometry(f"100x100+{Neue_Textmanager.Textmanager.winfo_screenwidth()}+0")
             AnzeigeText.overrideredirect(True)
             Text_Anzeige_Label = Label(AnzeigeText, font=Font1, fg="white", bg="black", wraplength=1920)
-            Text_Anzeige_Label.config(text="")
+            Text_Anzeige_Label.config(text="Hallo Wlet")
             Text_Anzeige_Label["justify"] = "left"
             Text_Anzeige_Label.place(x=0, y=0)
             AnzeigeText.geometry(f"{AnzeigeText.winfo_screenwidth()}x{AnzeigeText.winfo_screenheight()}")

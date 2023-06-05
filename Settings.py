@@ -6,7 +6,6 @@ from tkinter import *
 from PIL import Image, ImageTk
 import tkinter.font as tkFont
 from tkinter.colorchooser import askcolor
-from tkinter.colorchooser import ResponsiveWidget
 Programm_ort = os.getlogin()
 
 Bildschirm_auflösung_hoch = [
@@ -34,6 +33,16 @@ Bildschirm_auflösung_quere = [
     1920
 ]
 
+def ResponsiveWidget(widget, *args, **kwargs):
+    bindings = {'<Enter>': {'state': 'active'},
+                '<Leave>': {'state': 'normal'}}
+
+    w = widget(*args, **kwargs)
+
+    for (k, v) in bindings.items():
+        w.bind(k, lambda e, kwarg=v: e.widget.config(**kwarg))
+
+    return w
 
 def Check_settings():
     global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe
@@ -92,7 +101,7 @@ def make_settings():
         try: 
             global Text_größe_Textanzeiger
             Load_settings.AnzeigeText.config(bg=Textmanager_Hintergrund)
-            Text_größe_Textanzeiger = Scale(Settings_bildschirm, from_=0, to=100, orient= HORIZONTAL, background=Textmanager_Hintergrund, foreground=Textmanager_Textfarbe, bd=0,font=24, length=300, width=25, command=Text_size_def, tickinterval=25)
+            Text_größe_Textanzeiger = Scale(Settings_bildschirm, from_=0, to=100, orient= HORIZONTAL, background=Textmanager_Hintergrund, foreground=Textmanager_Textfarbe, font=24, length=300, width=25, command=Text_size_def, tickinterval=25, activebackground=Button_hervorheben_farbe)
             Text_größe_Textanzeiger.set(Text_anzeiger_textgröße)
             Text_größe_Textanzeiger.place(y=10, x=250)
         except: pass
@@ -102,9 +111,9 @@ def make_settings():
         Vers_kontroll_class = Swich_generator(Settings_bildschirm, 10, 130, "Vers Kontrolle", 70, f"Textmanager Daten\\Textmanager Daten\\Vers_kontroll.txt", Vers_kontroll, off, on)
         Bildschirm_opt = Bild_schirm_größe_class(Settings_bildschirm, 10, 250, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung", "Hauptbildschirm")
         Bildschirm_opt1 = Bild_schirm_größe_class(Settings_bildschirm, 240, 250, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm")
-        Textfarbe_auswahl = Button(Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Textfarbe\nauswählen", command=Textfarbe_farbe_def, border=0, activebackground=Button_hervorheben_farbe)
+        Textfarbe_auswahl = Button(Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Textfarbe\nauswählen", command=Textfarbe_farbe_def, border=0, activebackground="black", activeforeground="white",highlightbackground="black", highlightthickness="4",highlightcolor="green")
         Textfarbe_auswahl.place(x=10, y=370)
-        Hintergrndfarbe_auswahl = Button(Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Hintergrund Farbe\nauswählen", command=Hintergrundfarbe_farbe_def, border=0,activebackground=Button_hervorheben_farbe)
+        Hintergrndfarbe_auswahl = Button(Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Hintergrund Farbe\nauswählen", command=Hintergrundfarbe_farbe_def, border=0)
         Hintergrndfarbe_auswahl.place(x=220, y=370)
 
 
@@ -113,7 +122,7 @@ class Swich_generator:
         self.Text_datei_save = Text_datei_save
         self.def_bei_offbutton = def_bei_offbutton
         self.def_bei_onbutton = def_bei_onbutton
-        self.is_switch = Button(Settings_is,activebackground=Button_hervorheben_farbe)
+        self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground="green")
         self.switch_text = Label(Settings_is, font=("Helvetica", 12), bg=Textmanager_Hintergrund, fg=Textmanager_Textfarbe, text=Textnazeige)
         self.switch_text.place(x=x_pos_text, y=y_pos + 12)
         if not ob_True:
@@ -170,7 +179,7 @@ class Bild_schirm_größe_class:
         self.Bild_größe_stringvar_hoch.set(self.bildschirm_pos1)
         self.Bildschirm_größe_hoch_menü = OptionMenu(Seite, self.Bild_größe_stringvar_hoch, *bilschirm_größe_hoch)
         self.Bildschirm_größe_hoch_menü.place(x=100+x_pos, y=y_pos)
-        self.Bildschirm_bestätigen = Button(Seite, font=("Helvetica", 20), bg=Textmanager_Hintergrund, fg=Textmanager_Textfarbe, text="Bestätigen", command=self.Bildgröße_bestatigen, border=0, activebackground=Button_hervorheben_farbe)
+        self.Bildschirm_bestätigen = ResponsiveWidget(Button, Seite, highlightcolor="white",highlightbackground="black", font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, bd=0, text="Bestätigen", command=self.Bildgröße_bestatigen)
         self.Bildschirm_bestätigen.place(x=x_pos, y=y_pos+50)
         self.X_bildschirm = Label(Seite, font=("Helvetica", 20),bg=Textmanager_Hintergrund, fg=Textmanager_Textfarbe, text="X")
         self.X_bildschirm.place(x=x_pos+75, y=y_pos)
