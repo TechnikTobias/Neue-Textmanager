@@ -24,6 +24,7 @@ def Start():
     Load_Setting()
 
 def Menu_generator():
+    global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help
     Menu_Settings = Menu(Textmanager, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0)
     Menu_Info = Menu(Menu_Settings, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0)
     Menu_Kamera = Menu(Menu_Settings, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0)
@@ -45,6 +46,7 @@ def Menu_generator():
 def Load_Setting():
     Settings.Check_settings()
     Load_settings.Load_Text_anzeiger()
+    Load_settings.Button_hervorhen_frabe()
 
 
 
