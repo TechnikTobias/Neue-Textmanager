@@ -21,7 +21,6 @@ def Start():
     Textmanager.iconbitmap(f"C:\\Users\\{Programm_ort}\\Desktop\\Lieder\\picture_compress 1.ico")
     Menu_generator()
     Load_Setting()
-    Load_Setting()
 
 def Menu_generator():
     global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help
