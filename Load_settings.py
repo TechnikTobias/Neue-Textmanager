@@ -40,6 +40,9 @@ def Button_hervorhen_frabe():
             Settings.Button_Hintergrndfarbe_auswahl.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
             Settings.Button_Textfarbe_auswahl.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
         except: pass
+        try:
+            if Settings.see_the_text: Settings.Text_größe_Textanzeiger.config(activebackground=Settings.Button_hervorheben_farbe)
+        except: pass
         Neue_Textmanager.Menu_Info.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
         Neue_Textmanager.Menu_Help.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
         Neue_Textmanager.Menu_Kamera.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
@@ -53,6 +56,9 @@ def Button_hervorhen_frabe():
             Settings.Bildschirm_opt1.Bildschirm_bestätigen.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
             Settings.Button_Textfarbe_auswahl.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
             Settings.Button_Hintergrndfarbe_auswahl.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
+        except: pass
+        try: 
+            if Settings.see_the_text: Settings.Text_größe_Textanzeiger.config(activebackground=Settings.Textmanager_Hintergrund)
         except: pass
         Neue_Textmanager.Menu_Info.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
         Neue_Textmanager.Menu_Help.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
@@ -76,5 +82,7 @@ def Load_all_collor():
     Settings.Bildschirm_opt1.color()
     Settings.Hintergrndfarbe_auswahl.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
     Settings.Textfarbe_auswahl.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
+    Settings.Button_Textfarbe_auswahl.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
+    Settings.Button_Hintergrndfarbe_auswahl.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
     if Settings.see_the_text:
         Settings.Text_größe_Textanzeiger.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)

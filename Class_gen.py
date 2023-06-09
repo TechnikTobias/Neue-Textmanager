@@ -83,7 +83,7 @@ class Swich_generator:
         self.Text_datei_save = Text_datei_save
         self.def_bei_offbutton = def_bei_offbutton
         self.def_bei_onbutton = def_bei_onbutton
-        self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_hervorheben_farbe)
+        self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground=Settings.Textmanager_Hintergrund)
         self.switch_text = Label(Settings_is, font=("Helvetica", 12), bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text=Textnazeige)
         self.switch_text.place(x=x_pos_text, y=y_pos + 12)
         if not ob_True:
