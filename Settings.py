@@ -36,9 +36,7 @@ Bildschirm_auflösung_quere = [
 def ResponsiveWidget(widget, *args, **kwargs):
     bindings = {'<Enter>': {'state': 'active'},
                 '<Leave>': {'state': 'normal'}}
-
     w = widget(*args, **kwargs)
-
     for (k, v) in bindings.items():
         w.bind(k, lambda e, kwarg=v: e.widget.config(**kwarg))
 
@@ -111,9 +109,9 @@ def make_settings():
         Vers_kontroll_class = Swich_generator(Settings_bildschirm, 10, 130, "Vers Kontrolle", 70, f"Textmanager Daten\\Textmanager Daten\\Vers_kontroll.txt", Vers_kontroll, off, on)
         Bildschirm_opt = Bild_schirm_größe_class(Settings_bildschirm, 10, 250, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung", "Hauptbildschirm")
         Bildschirm_opt1 = Bild_schirm_größe_class(Settings_bildschirm, 240, 250, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm")
-        Textfarbe_auswahl = Button(Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Textfarbe\nauswählen", command=Textfarbe_farbe_def, border=0, activebackground="black", activeforeground="white",highlightbackground="black", highlightthickness="4",highlightcolor="green")
+        Textfarbe_auswahl = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Textfarbe\nauswählen", command=Textfarbe_farbe_def, border=0, activebackground="black", activeforeground="white",highlightbackground="black", highlightthickness="4",highlightcolor="green")
         Textfarbe_auswahl.place(x=10, y=370)
-        Hintergrndfarbe_auswahl = Button(Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Hintergrund Farbe\nauswählen", command=Hintergrundfarbe_farbe_def, border=0)
+        Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Hintergrund Farbe\nauswählen", command=Hintergrundfarbe_farbe_def, border=0)
         Hintergrndfarbe_auswahl.place(x=220, y=370)
 
 
