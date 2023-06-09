@@ -37,9 +37,7 @@ Bildschirm_auflösung_quere = [
 def ResponsiveWidget(widget, *args, **kwargs):
     bindings = {'<Enter>': {'state': 'active'},
                 '<Leave>': {'state': 'normal'}}
-
     w = widget(*args, **kwargs)
-
     for (k, v) in bindings.items():
         w.bind(k, lambda e, kwarg=v: e.widget.config(**kwarg))
     return w
