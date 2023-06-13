@@ -26,7 +26,7 @@ def Load_Text_anzeiger():
             AnzeigeText.geometry(f"100x100+{Plusor_muínus}+0")
             AnzeigeText.overrideredirect(True)
             Text_Anzeige_Label = Label(AnzeigeText, font=Font1, fg="white", bg="black", wraplength=int(Quere_auflösung1))
-            Text_Anzeige_Label.config(text="Hallo Welt, wie gehts euch, das ist ein testtext")
+            Text_Anzeige_Label.config(text="Hallo Welt, wie gehts euch, das ist ein test text, der text soll normal angezeigt werden")
             Text_Anzeige_Label["justify"] = "left"
             Text_Anzeige_Label.place(x=0, y=0)
             AnzeigeText.geometry(f"{Quere_auflösung1}x{Hoch_auflösung1}")

@@ -64,6 +64,7 @@ def Check_settings():
         Bildschirm_ausrichtung = Text_anzeiger_textgröße1.read() == "Rechts"
 
 
+
 def Textfarbe_farbe_def():
     color = askcolor()  
     if not (color[1]) == None:
@@ -121,16 +122,26 @@ def Links():
 def Auto_auflösung_def():
     Bildschirm_opt.Auto_auflösung(Neue_Textmanager.Textmanager)
     try:
+        Settings_test_auflösung = Tk()
+        Settings_test_auflösung.attributes("-fullscreen",1)
+        print(Settings_test_auflösung.winfo_height())
         Bildschirm_opt1.Auto_auflösung(Load_settings.AnzeigeText)
     except: pass
     if see_the_text:
         Textanzeiger_setting_class.switch_setting_off()
         Textanzeiger_setting_class.switch_setting_on()
 
+def Test(event=None):
+    print("hi")
+
+def Load_anzeige():
+    if see_the_text:
+        Textanzeiger_setting_class.switch_setting_off()
+        Textanzeiger_setting_class.switch_setting_on()
 
 def make_settings():
     Check_settings()
-    global Textanzeiger_setting_class, Button_hervorheben_class, Vers_kontroll_class, Settings_bildschirm, Bildschirm_opt, Bildschirm_opt1, Textfarbe_auswahl, Text_größe_Textanzeiger, Hintergrndfarbe_auswahl, Button_Textfarbe_auswahl, Button_Hintergrndfarbe_auswahl, Bildschirm_ausrichtung_button, Auto_auflösung
+    global Textanzeiger_setting_class, Button_hervorheben_class, Settings_bildschirm, Bildschirm_opt, Bildschirm_opt1, Textfarbe_auswahl, Text_größe_Textanzeiger, Hintergrndfarbe_auswahl, Button_Textfarbe_auswahl, Button_Hintergrndfarbe_auswahl, Bildschirm_ausrichtung_button, Auto_auflösung
     try: Settings_bildschirm.config(bg=Textmanager_Hintergrund)
     except:
         Settings_bildschirm = Toplevel(Neue_Textmanager.Textmanager)

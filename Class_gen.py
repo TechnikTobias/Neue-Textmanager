@@ -69,6 +69,7 @@ class Bild_schirm_größe_class:
             speicherort1.write(self.Bild_größe_stringvar_hoch.get())
         with open(f"{self.speicherort}quere.txt", "w", encoding="utf8") as speicherort1:
             speicherort1.write(self.Bild_größe_stringvar_quere.get())
+        Settings.Load_anzeige()
 
     def Auto_auflösung(self, Screen):
         with open(f"{self.speicherort}hoch.txt", "w", encoding="utf8") as speicherort1:
@@ -77,6 +78,7 @@ class Bild_schirm_größe_class:
         with open(f"{self.speicherort}quere.txt", "w", encoding="utf8") as speicherort1:
             speicherort1.write(str(Screen.winfo_screenwidth()))
         self.Bild_größe_stringvar_quere.set(Screen.winfo_screenwidth())
+        Settings.Load_anzeige()
 
 
     def color(self):

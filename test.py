@@ -3,8 +3,6 @@ from tkinter import *
 if 6:
     print("ölichduild")
 
-def nothing():
-    print("hi")
 
 def settings1():
     Setting1.config(bg="red")
@@ -28,6 +26,8 @@ def if_abfrage():
         print("not b")
 
 
+def nothing(event=None):
+    print("hi")
 
 ko = [
     "lhjksdfvkl",
@@ -41,6 +41,7 @@ hi.add_command(label="settings", command=settings)
 hi.add_checkbutton(label="test", command=if_abfrage)
 
 test.config(menu=hi)
+test.bind("<F11>", nothing)
 
 nom = Button(test)
 nom.config(text="moin")
