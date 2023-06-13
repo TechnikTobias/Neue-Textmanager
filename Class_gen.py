@@ -1,5 +1,6 @@
 import Settings
-
+import Load_settings
+import Neue_Textmanager
 
 from tkinter import *
 from PIL import Image, ImageTk
@@ -69,13 +70,24 @@ class Bild_schirm_größe_class:
         with open(f"{self.speicherort}quere.txt", "w", encoding="utf8") as speicherort1:
             speicherort1.write(self.Bild_größe_stringvar_quere.get())
 
+    def Auto_auflösung(self, Screen):
+        with open(f"{self.speicherort}hoch.txt", "w", encoding="utf8") as speicherort1:
+            speicherort1.write(str(Screen.winfo_screenheight()))
+        self.Bild_größe_stringvar_hoch.set(Screen.winfo_screenheight())
+        with open(f"{self.speicherort}quere.txt", "w", encoding="utf8") as speicherort1:
+            speicherort1.write(str(Screen.winfo_screenwidth()))
+        self.Bild_größe_stringvar_quere.set(Screen.winfo_screenwidth())
+
 
     def color(self):
         self.Bildschirm_bestätigen.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
         self.X_bildschirm.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
         self.Hauptbildschirm.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
 
-
+def Text_scalierung():
+    Settings.Text_größe_Textanzeiger = Scale(Settings.Settings_bildschirm, from_=0, to=100, orient= HORIZONTAL, background=Settings.Textmanager_Hintergrund, foreground=Settings.Textmanager_Textfarbe, bd=0,font=24, length=300, width=25, command=Settings.Text_size_def, tickinterval=25)
+    Settings.Text_größe_Textanzeiger.set(Settings.Text_anzeiger_textgröße)
+    Settings.Text_größe_Textanzeiger.place(y=10, x=250)
 
 
 class Swich_generator:

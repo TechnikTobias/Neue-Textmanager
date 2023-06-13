@@ -1,26 +1,37 @@
 import Settings
 import Neue_Textmanager
+import Class_gen
+
 from tkinter import *
 import tkinter.font as tkFont
+
 def Load_Text_anzeiger():
     if Settings.see_the_text:
         global AnzeigeText, Font1
         try: AnzeigeText.config(bg="black")
         except:
+            with open (f"Textmanager Daten\\Textmanager Daten\\Auflösungquere.txt", "r", encoding='utf8') as Hoch_auflösung:
+                Quere_auflösung = Hoch_auflösung.read()
+            with open (f"Textmanager Daten\\Textmanager Daten\\Auflösung2hoch.txt", "r", encoding='utf8') as Hoch_auflösung:
+                Hoch_auflösung1 = Hoch_auflösung.read()
+            with open (f"Textmanager Daten\\Textmanager Daten\\Auflösung2quere.txt", "r", encoding='utf8') as Hoch_auflösung:
+                Quere_auflösung1 = Hoch_auflösung.read()
+            if Settings.Bildschirm_ausrichtung:
+                Plusor_muínus = + int(Quere_auflösung)
+            else:
+                Plusor_muínus = - int(Quere_auflösung)
             Font1 = tkFont.Font(family="Helvetica",size= Settings.Text_anzeiger_textgröße)
             AnzeigeText = Toplevel(Neue_Textmanager.Textmanager)
             AnzeigeText.config(bg=Settings.Textmanager_Hintergrund)
-            AnzeigeText.geometry(f"100x100+{Neue_Textmanager.Textmanager.winfo_screenwidth()}+0")
+            AnzeigeText.geometry(f"100x100+{Plusor_muínus}+0")
             AnzeigeText.overrideredirect(True)
-            Text_Anzeige_Label = Label(AnzeigeText, font=Font1, fg="white", bg="black", wraplength=1920)
-            Text_Anzeige_Label.config(text="Hallo Welt")
+            Text_Anzeige_Label = Label(AnzeigeText, font=Font1, fg="white", bg="black", wraplength=int(Quere_auflösung1))
+            Text_Anzeige_Label.config(text="Hallo Welt, wie gehts euch, das ist ein testtext")
             Text_Anzeige_Label["justify"] = "left"
             Text_Anzeige_Label.place(x=0, y=0)
-            AnzeigeText.geometry(f"{AnzeigeText.winfo_screenwidth()}x{AnzeigeText.winfo_screenheight()}")
+            AnzeigeText.geometry(f"{Quere_auflösung1}x{Hoch_auflösung1}")
             try:
-                Settings.Text_größe_Textanzeiger = Scale(Settings.Settings_bildschirm, from_=1, to=200, orient= HORIZONTAL, background=Settings.Textmanager_Hintergrund, foreground=Settings.Textmanager_Textfarbe, bd=0,font=24, length=300, width=25, command=Settings.Text_size_def)
-                Settings.Text_größe_Textanzeiger.set(Settings.Text_anzeiger_textgröße)
-                Settings.Text_größe_Textanzeiger.place(y=10, x=250)
+                Class_gen.Text_scalierung()
             except: pass
     else: 
         try:
@@ -39,6 +50,8 @@ def Button_hervorhen_frabe():
             Settings.Bildschirm_opt1.Bildschirm_bestätigen.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
             Settings.Button_Hintergrndfarbe_auswahl.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
             Settings.Button_Textfarbe_auswahl.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
+            Settings.Bildschirm_ausrichtung_button.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
+            Settings.Auto_auflösung.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
         except: pass
         try:
             if Settings.see_the_text: Settings.Text_größe_Textanzeiger.config(activebackground=Settings.Button_hervorheben_farbe)
@@ -56,6 +69,8 @@ def Button_hervorhen_frabe():
             Settings.Bildschirm_opt1.Bildschirm_bestätigen.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
             Settings.Button_Textfarbe_auswahl.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
             Settings.Button_Hintergrndfarbe_auswahl.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
+            Settings.Auto_auflösung.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
+            Settings.Bildschirm_ausrichtung_button.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
         except: pass
         try: 
             if Settings.see_the_text: Settings.Text_größe_Textanzeiger.config(activebackground=Settings.Textmanager_Hintergrund)
