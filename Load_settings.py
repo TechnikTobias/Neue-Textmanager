@@ -29,11 +29,11 @@ def Load_Text_anzeiger():
             AnzeigeText.config(bg=Settings.Textmanager_Hintergrund)
             AnzeigeText.geometry(f"100x100+{Plusor_muínus}+0")
             AnzeigeText.overrideredirect(True)
-            Text_Anzeige_Label = Label(AnzeigeText, font=Font1, fg="white", bg="black", wraplength=int(Quere_auflösung1))
+            Text_Anzeige_Label = Label(AnzeigeText, font=Font1, fg="white", bg="black", wraplength=int(int(Quere_auflösung1)/int(Skalierung1)*100))
             Text_Anzeige_Label.config(text="Hallo Welt, wie gehts euch, das ist ein test text, der text soll normal angezeigt werden")
             Text_Anzeige_Label["justify"] = "left"
             Text_Anzeige_Label.place(x=0, y=0)
-            AnzeigeText.geometry(f"{Quere_auflösung1}x{Hoch_auflösung1}")
+            AnzeigeText.geometry(f"{int(int(Quere_auflösung1)/int(Skalierung1)*100)}x{int(int(Hoch_auflösung1)/int(Skalierung1)*100)}")
             try:
                 Settings.Setings_Textanzeiger = Settings.ResponsiveWidget(Button, Settings.Settings_bildschirm, font=("Helvetica", 20), fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, text="Einstellungen für\nTextanzeiger", bd=0, command=Class_gen.Settings_Textanzeiger_def)
                 Settings.Setings_Textanzeiger.place(y=10, x=250)
@@ -45,68 +45,37 @@ def Load_Text_anzeiger():
         except: pass
 
 
-def Button_hervorhen_frabe():
-    Settings.Check_settings()
-    if Settings.Button_hervorheben:
-        try:
-            Settings.Hintergrndfarbe_auswahl.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-            Settings.Textfarbe_auswahl.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-            Settings.Bildschirm_opt.Bildschirm_bestätigen.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-            Settings.Bildschirm_opt1.Bildschirm_bestätigen.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-            Settings.Button_Hintergrndfarbe_auswahl.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-            Settings.Button_Textfarbe_auswahl.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-            Settings.Bildschirm_ausrichtung_button.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-            Settings.Auto_auflösung.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-        except: pass
-        try:
-            if Settings.see_the_text: 
-                Settings.Setings_Textanzeiger.config(activebackground=Settings.Button_hervorheben_farbe)
-                Class_gen.Text_größe_Textanzeiger.config(activebackground=Settings.Button_hervorheben_farbe)
-        except: pass
-        Neue_Textmanager.Menu_Info.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-        Neue_Textmanager.Menu_Help.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-        Neue_Textmanager.Menu_Kamera.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-        Neue_Textmanager.Menu_LiedKontrolle.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-        Neue_Textmanager.Menu_Settings.config(activebackground=Settings.Button_hervorheben_farbe, activeforeground=Settings.Button_Textfarbe)
-    else:
-        try:
-            Settings.Hintergrndfarbe_auswahl.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-            Settings.Textfarbe_auswahl.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-            Settings.Bildschirm_opt.color()
-            Settings.Bildschirm_opt1.color()
-            Settings.Button_Textfarbe_auswahl.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-            Settings.Button_Hintergrndfarbe_auswahl.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-            Settings.Auto_auflösung.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-            Settings.Bildschirm_ausrichtung_button.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-        except: pass
-        try:
-            if Settings.see_the_text: 
-                Settings.Setings_Textanzeiger.config(activebackground=Settings.Textmanager_Hintergrund)
-                Class_gen.Text_größe_Textanzeiger.config(activebackground=Settings.Textmanager_Hintergrund)
-        except: pass
-        Neue_Textmanager.Menu_Info.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-        Neue_Textmanager.Menu_Help.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-        Neue_Textmanager.Menu_Kamera.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-        Neue_Textmanager.Menu_LiedKontrolle.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
-        Neue_Textmanager.Menu_Settings.config(activebackground=Settings.Textmanager_Hintergrund, activeforeground=Settings.Textmanager_Textfarbe)
 
 
 def Load_all_collor():
     Settings.Check_settings()
-    Neue_Textmanager.Menu_Settings.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-    Neue_Textmanager.Menu_Info.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-    Neue_Textmanager.Menu_LiedKontrolle.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-    Neue_Textmanager.Menu_Help.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-    Neue_Textmanager.Menu_Kamera.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-    Neue_Textmanager.Textmanager.config(bg=Settings.Textmanager_Hintergrund)
-    Settings.Textanzeiger_setting_class.color(Settings.Textmanager_Hintergrund, Settings.Textmanager_Textfarbe, Settings.Textmanager_Textfarbe, Settings.Textmanager_Hintergrund)
-    Settings.Button_hervorheben_class.color(Settings.Textmanager_Hintergrund, Settings.Textmanager_Textfarbe, Settings.Textmanager_Textfarbe, Settings.Textmanager_Hintergrund)
-    Settings.Settings_bildschirm.config(bg=Settings.Textmanager_Hintergrund)
-    Settings.Bildschirm_opt.color(Settings.Textmanager_Hintergrund, Settings.Textmanager_Textfarbe, Settings.Textmanager_Textfarbe, Settings.Textmanager_Hintergrund)
-    Settings.Bildschirm_opt1.color(Settings.Textmanager_Hintergrund, Settings.Textmanager_Textfarbe, Settings.Textmanager_Textfarbe, Settings.Textmanager_Hintergrund)
-    Settings.Hintergrndfarbe_auswahl.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-    Settings.Textfarbe_auswahl.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-    Settings.Button_Textfarbe_Button.color(Settings.Textmanager_Hintergrund, Settings.Textmanager_Textfarbe, Settings.Textmanager_Textfarbe, Settings.Textmanager_Hintergrund)
-    Settings.Button_Hintergrndfarbe_auswahl.color(Settings.Textmanager_Hintergrund, Settings.Textmanager_Textfarbe, Settings.Textmanager_Textfarbe, Settings.Textmanager_Hintergrund)
-    if Settings.see_the_text:
-        Settings.Setings_Textanzeiger.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
+    Hintergrund = Settings.Textmanager_Hintergrund
+    Textfarbe = Settings.Textmanager_Textfarbe
+    if Settings.Button_hervorheben:
+        Aufleuchtfarbe_Hintergrund = Settings.Button_hervorheben_farbe
+        Aufleuchtfarbe_Textfarbe = Settings.Button_Textfarbe
+    else:
+        Aufleuchtfarbe_Hintergrund = Settings.Textmanager_Hintergrund
+        Aufleuchtfarbe_Textfarbe = Settings.Textmanager_Textfarbe
+    Neue_Textmanager.Menu_Settings.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Menu_Info.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Menu_LiedKontrolle.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Menu_Help.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Menu_Kamera.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Textmanager.config(bg=Hintergrund)
+    try:
+        Settings.Settings_bildschirm.config(bg=Hintergrund)
+        Settings.Hintergrndfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Textfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Button_hervorheben_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Textanzeiger_setting_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Bildschirm_opt.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Bildschirm_opt1.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Button_Textfarbe_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Button_Hintergrndfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Auto_auflösung.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Settings.Bildschirm_ausrichtung_button.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        if Settings.see_the_text:
+            Settings.Setings_Textanzeiger.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+            Class_gen.Text_größe_Textanzeiger.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund)
+    except: pass

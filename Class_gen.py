@@ -91,7 +91,7 @@ class Bild_schirm_größe_class:
         Settings.Load_anzeige()
 
 
-    def color(self, bg_color, fg_color, activ_fg, activ_bg):
+    def color(self, bg_color, fg_color, activ_bg, activ_fg):
         self.Bildschirm_bestätigen.config(bg=bg_color,fg=fg_color, activebackground=activ_bg, activeforeground=activ_fg)
         self.X_bildschirm.config(bg=bg_color, fg=fg_color)
         self.Hauptbildschirm.config(bg=bg_color, fg=fg_color)
@@ -111,14 +111,13 @@ def Text_scalierung():
     Text_größe_Textanzeiger = Scale(Settings_Textanzeiger_Top, from_=0, to=100, orient= HORIZONTAL, background=Settings.Textmanager_Hintergrund, foreground=Settings.Textmanager_Textfarbe, bd=0,font=24, length=300, width=25, command=Settings.Text_size_def, tickinterval=25)
     Text_größe_Textanzeiger.set(Settings.Text_anzeiger_textgröße)
     Text_größe_Textanzeiger.place(y=10, x=10)
-    Load_settings.Button_hervorhen_frabe()
+    Load_settings.Load_all_collor()
 
 
 class Swich_generator:
-    def __init__(self, Settings_is, x_pos, y_pos, Textnazeige, x_pos_text, Text_datei_save, ob_True, def_bei_offbutton, def_bei_onbutton):
+    def __init__(self, Settings_is, x_pos, y_pos, Textnazeige, x_pos_text, Text_datei_save, ob_True, def_bei_offbutton):
         self.Text_datei_save = Text_datei_save
         self.def_bei_offbutton = def_bei_offbutton
-        self.def_bei_onbutton = def_bei_onbutton
         self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground=Settings.Textmanager_Hintergrund)
         self.switch_text = Label(Settings_is, font=("Helvetica", 12), bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text=Textnazeige)
         self.switch_text.place(x=x_pos_text, y=y_pos + 12)
@@ -133,7 +132,7 @@ class Swich_generator:
         self.is_switch.place(x=x_pos, y=y_pos)
 
 
-    def color(self, bg_color, fg_color):
+    def color(self, bg_color, fg_color, activ_bg, activ_fg):
         self.switch_text.config(bg=bg_color,fg=fg_color)
         self.is_switch.config(bg=bg_color)
 
@@ -155,7 +154,7 @@ class Swich_generator:
         self.Photo1 = Image.open("on-button.png")
         self.Photo = ImageTk.PhotoImage(self.Photo1.resize((50,50)))
         self.is_switch.configure(image=self.Photo, command=self.switch_setting_off)
-        self.def_bei_onbutton()
+        self.def_bei_offbutton()
         self.Photo1 = Image.open("on-button.png")
         self.Photo = ImageTk.PhotoImage(self.Photo1.resize((50,50)))
         self.is_switch.configure(image=self.Photo, command=self.switch_setting_off)
@@ -172,9 +171,9 @@ class Farben_class:
     def Farbe_def(self):
         color = askcolor()  
         if not (color[1]) == None:
-            with open(f"Textmanager Daten\\Textmanager Daten\\{self.Farbe_ort}txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
+            with open(f"Textmanager Daten\\Textmanager Daten\\{self.Farbe_ort}.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
                 Neue_Texmanager_Textfarbe.write(color[1])
-        Load_settings.Button_hervorhen_frabe()
+        Load_settings.Load_all_collor()
 
-    def color(self, bg_color, fg_color, activ_fg, activ_bg):
+    def color(self, bg_color, fg_color, activ_bg, activ_fg):
         self.Hintergrndfarbe_auswahl.config(bg=bg_color, fg=fg_color, activebackground=activ_bg, activeforeground=activ_fg)

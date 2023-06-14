@@ -45,7 +45,7 @@ def Menu_generator():
 def Load_Setting():
     Settings.Check_settings()
     Load_settings.Load_Text_anzeiger()
-    Load_settings.Button_hervorhen_frabe()
+    Load_settings.Load_all_collor()
 
 
 
