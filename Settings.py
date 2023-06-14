@@ -9,6 +9,14 @@ import tkinter.font as tkFont
 from tkinter.colorchooser import askcolor
 Programm_ort = os.getlogin()
 
+Skalierung = [
+    "100",
+    "125",
+    "150",
+    "175",
+    "200"
+]
+
 Bildschirm_auflösung_hoch = [
     600,
     768,
@@ -80,12 +88,7 @@ def Hintergrundfarbe_farbe_def():
     Load_settings.Load_all_collor()
 
 
-def Button_hervorheben_farben_def():
-    color = askcolor()  
-    if not (color[1]) == None:
-        with open(f"Textmanager Daten\\Textmanager Daten\\Button_Hintergrund.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
-            Neue_Texmanager_Textfarbe.write(color[1])
-    Load_settings.Button_hervorhen_frabe()
+
 
 
 def Button_texthervorheben_farben_def():
@@ -122,9 +125,9 @@ def Links():
 def Auto_auflösung_def():
     Bildschirm_opt.Auto_auflösung(Neue_Textmanager.Textmanager)
     try:
-        Settings_test_auflösung = Tk()
-        Settings_test_auflösung.attributes("-fullscreen",1)
-        print(Settings_test_auflösung.winfo_height())
+        #Settings_test_auflösung = Tk()
+        #Settings_test_auflösung.attributes("-fullscreen",1)
+        #print(Settings_test_auflösung.winfo_height())
         Bildschirm_opt1.Auto_auflösung(Load_settings.AnzeigeText)
     except: pass
     if see_the_text:
@@ -141,7 +144,7 @@ def Load_anzeige():
 
 def make_settings():
     Check_settings()
-    global Textanzeiger_setting_class, Button_hervorheben_class, Settings_bildschirm, Bildschirm_opt, Bildschirm_opt1, Textfarbe_auswahl, Text_größe_Textanzeiger, Hintergrndfarbe_auswahl, Button_Textfarbe_auswahl, Button_Hintergrndfarbe_auswahl, Bildschirm_ausrichtung_button, Auto_auflösung
+    global Textanzeiger_setting_class, Button_hervorheben_class, Settings_bildschirm, Bildschirm_opt, Bildschirm_opt1, Textfarbe_auswahl, Setings_Textanzeiger, Hintergrndfarbe_auswahl, Button_Textfarbe_auswahl, Button_Hintergrndfarbe_auswahl, Bildschirm_ausrichtung_button, Auto_auflösung, Button_Textfarbe_Button
     try: Settings_bildschirm.config(bg=Textmanager_Hintergrund)
     except:
         Settings_bildschirm = Toplevel(Neue_Textmanager.Textmanager)
@@ -149,11 +152,12 @@ def make_settings():
         Settings_bildschirm.config(bg=Textmanager_Hintergrund)
         Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_bildschirm, 10, 10, "Liedtextanzeige", 70, f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", see_the_text, Neue_Textmanager.Load_Setting, Neue_Textmanager.Load_Setting)
         if see_the_text:
-            Class_gen.Text_scalierung()
+            Setings_Textanzeiger = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Einstellungen für\nTextanzeiger", bd=0, command=Class_gen.Settings_Textanzeiger_def)
+            Setings_Textanzeiger.place(y=10, x=250)
 
         Button_hervorheben_class = Class_gen.Swich_generator(Settings_bildschirm, 10, 70, "Button hervorheben", 70, f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", Button_hervorheben, Neue_Textmanager.Load_Setting, Neue_Textmanager.Load_Setting)
-        Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Settings_bildschirm, 10, 250, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung", "Hauptbildschirm")
-        Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(Settings_bildschirm, 240, 250, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm")
+        Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Settings_bildschirm, 10, 200, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung", "Hauptbildschirm", Skalierung)
+        Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(Settings_bildschirm, 240, 200, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm", Skalierung)
         Auto_auflösung = ResponsiveWidget(Button,Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Auto Auflösung", command=Auto_auflösung_def, bd=0)
         Auto_auflösung.place(x=420, y=200)
         if Bildschirm_ausrichtung:
@@ -161,14 +165,12 @@ def make_settings():
         else:
             Bildschirm_ausrichtung_button = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Links", command=Rechts, bd=0)
         Bildschirm_ausrichtung_button.place(x=420,y=300)
-        Textfarbe_auswahl = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Textfarbe\nauswählen", command=Textfarbe_farbe_def, border=0, activebackground="black", activeforeground="white",highlightbackground="black", highlightthickness="4",highlightcolor="green")
+        Textfarbe_auswahl = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Textfarbe\nauswählen", command=Textfarbe_farbe_def, border=0)
         Textfarbe_auswahl.place(x=10, y=370)
-        Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Hintergrund Farbe\nauswählen", command=Hintergrundfarbe_farbe_def, border=0)
-        Hintergrndfarbe_auswahl.place(x=220, y=370)
-        Button_Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Hintergrund Button\n Farbe auswählen", command=Button_hervorheben_farben_def, border=0)
-        Button_Hintergrndfarbe_auswahl.place(x=220, y=480)
-        Button_Textfarbe_auswahl = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Textfarbe Button\n auswählen", command=Button_texthervorheben_farben_def, border=0)
-        Button_Textfarbe_auswahl.place(x=10, y=480)
+        Button_Textfarbe_Button = Class_gen.Farben_class(Settings_bildschirm, "Button_Hintergrund", 220, 370, "Button Textfarbe")
+        Button_Hintergrndfarbe_auswahl = Class_gen.Farben_class(Settings_bildschirm, Button_Textfarbe, 220, 480, "Button Hintergrund\nfarbe")
+        Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Textfarbe Button\n auswählen", command=Button_texthervorheben_farben_def, border=0)
+        Hintergrndfarbe_auswahl.place(x=10, y=480)
         Neue_Textmanager.Load_Setting()
 
 

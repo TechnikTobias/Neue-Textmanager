@@ -5,6 +5,8 @@ import Neue_Textmanager
 from tkinter import *
 from PIL import Image, ImageTk
 import tkinter.font as tkFont
+from tkinter.colorchooser import askcolor
+
 
 
 
@@ -42,7 +44,7 @@ class Test_info:
 
 class Bild_schirm_größe_class:
 
-    def __init__(self, Seite, x_pos, y_pos, bildschirm_große_quere, bilschirm_größe_hoch,  speicherort, Bildschirm):
+    def __init__(self, Seite, x_pos, y_pos, bildschirm_große_quere, bilschirm_größe_hoch,  speicherort, Bildschirm, skalierung_list):
         self.speicherort = speicherort
         self.Hauptbildschirm = Label(Seite, font=("Helvetica", 20), text=Bildschirm, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
         self.Hauptbildschirm.place(x=x_pos , y=y_pos-50)
@@ -59,9 +61,15 @@ class Bild_schirm_größe_class:
         self.Bildschirm_größe_hoch_menü = OptionMenu(Seite, self.Bild_größe_stringvar_hoch, *bilschirm_größe_hoch)
         self.Bildschirm_größe_hoch_menü.place(x=100+x_pos, y=y_pos)
         self.Bildschirm_bestätigen = ResponsiveWidget(Button, Seite, activebackground=Settings.Button_hervorheben_farbe, font=("Helvetica", 20), fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, bd=0, text="Bestätigen", command=self.Bildgröße_bestatigen, activeforeground=Settings.Button_hervorheben_farbe)
-        self.Bildschirm_bestätigen.place(x=x_pos, y=y_pos+50)
+        self.Bildschirm_bestätigen.place(x=x_pos, y=y_pos+100)
         self.X_bildschirm = Label(Seite, font=("Helvetica", 20),bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text="X")
         self.X_bildschirm.place(x=x_pos+75, y=y_pos)
+        with open(f"{speicherort}Skalierung.txt", "r", encoding="utf8") as Skalierung:
+            self.Skalierung = Skalierung.read()
+        self.Bildschirm_Skalierung_stringvar_quere = StringVar()
+        self.Bildschirm_Skalierung_stringvar_quere.set(self.Skalierung)
+        self.Bildschirm_skalierung_quere_menü = OptionMenu(Seite, self.Bildschirm_Skalierung_stringvar_quere, *skalierung_list)
+        self.Bildschirm_skalierung_quere_menü.place(x=x_pos, y=y_pos+50)
 
 
     def Bildgröße_bestatigen(self):
@@ -69,6 +77,8 @@ class Bild_schirm_größe_class:
             speicherort1.write(self.Bild_größe_stringvar_hoch.get())
         with open(f"{self.speicherort}quere.txt", "w", encoding="utf8") as speicherort1:
             speicherort1.write(self.Bild_größe_stringvar_quere.get())
+        with open(f"{self.speicherort}Skalierung.txt", "w", encoding="utf8") as Skalierung:
+            Skalierung.write(self.Bildschirm_Skalierung_stringvar_quere.get())
         Settings.Load_anzeige()
 
     def Auto_auflösung(self, Screen):
@@ -81,15 +91,27 @@ class Bild_schirm_größe_class:
         Settings.Load_anzeige()
 
 
-    def color(self):
-        self.Bildschirm_bestätigen.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-        self.X_bildschirm.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-        self.Hauptbildschirm.config(bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
+    def color(self, bg_color, fg_color, activ_fg, activ_bg):
+        self.Bildschirm_bestätigen.config(bg=bg_color,fg=fg_color, activebackground=activ_bg, activeforeground=activ_fg)
+        self.X_bildschirm.config(bg=bg_color, fg=fg_color)
+        self.Hauptbildschirm.config(bg=bg_color, fg=fg_color)
+
+
+def Settings_Textanzeiger_def():
+    global Settings_Textanzeiger_Top
+    Settings_Textanzeiger_Top = Toplevel()
+    Settings_Textanzeiger_Top.geometry("800x600")
+    Settings_Textanzeiger_Top.title("Einstellungen für Textanzeiger")
+    Settings_Textanzeiger_Top.config(bg=Settings.Textmanager_Hintergrund)
+    Text_scalierung()
+
 
 def Text_scalierung():
-    Settings.Text_größe_Textanzeiger = Scale(Settings.Settings_bildschirm, from_=0, to=100, orient= HORIZONTAL, background=Settings.Textmanager_Hintergrund, foreground=Settings.Textmanager_Textfarbe, bd=0,font=24, length=300, width=25, command=Settings.Text_size_def, tickinterval=25)
-    Settings.Text_größe_Textanzeiger.set(Settings.Text_anzeiger_textgröße)
-    Settings.Text_größe_Textanzeiger.place(y=10, x=250)
+    global Text_größe_Textanzeiger
+    Text_größe_Textanzeiger = Scale(Settings_Textanzeiger_Top, from_=0, to=100, orient= HORIZONTAL, background=Settings.Textmanager_Hintergrund, foreground=Settings.Textmanager_Textfarbe, bd=0,font=24, length=300, width=25, command=Settings.Text_size_def, tickinterval=25)
+    Text_größe_Textanzeiger.set(Settings.Text_anzeiger_textgröße)
+    Text_größe_Textanzeiger.place(y=10, x=10)
+    Load_settings.Button_hervorhen_frabe()
 
 
 class Swich_generator:
@@ -111,10 +133,9 @@ class Swich_generator:
         self.is_switch.place(x=x_pos, y=y_pos)
 
 
-    def Color(self):
-        self.switch_text.config(bg=Settings.Textmanager_Hintergrund,fg=Settings.Textmanager_Textfarbe)
-        self.is_switch.config(bg=Settings.Textmanager_Hintergrund)
-
+    def color(self, bg_color, fg_color):
+        self.switch_text.config(bg=bg_color,fg=fg_color)
+        self.is_switch.config(bg=bg_color)
 
     def switch_setting_off(self):
         with open(f"{self.Text_datei_save}", "w", encoding='utf8') as see_the_textinfo:
@@ -138,3 +159,22 @@ class Swich_generator:
         self.Photo1 = Image.open("on-button.png")
         self.Photo = ImageTk.PhotoImage(self.Photo1.resize((50,50)))
         self.is_switch.configure(image=self.Photo, command=self.switch_setting_off)
+
+
+class Farben_class:
+
+    def __init__(self, Anzeigefenster, Farbe, x_place, y_place, Name):
+        self.Farbe_ort = Farbe
+        self.Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Anzeigefenster, font=("Helvetica", 20), fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, text=Name, command=self.Farbe_def, border=0)
+        self.Hintergrndfarbe_auswahl.place(x= x_place, y= y_place)
+        
+        
+    def Farbe_def(self):
+        color = askcolor()  
+        if not (color[1]) == None:
+            with open(f"Textmanager Daten\\Textmanager Daten\\{self.Farbe_ort}txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
+                Neue_Texmanager_Textfarbe.write(color[1])
+        Load_settings.Button_hervorhen_frabe()
+
+    def color(self, bg_color, fg_color, activ_fg, activ_bg):
+        self.Hintergrndfarbe_auswahl.config(bg=bg_color, fg=fg_color, activebackground=activ_bg, activeforeground=activ_fg)
