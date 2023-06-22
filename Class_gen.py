@@ -5,6 +5,7 @@ import Neue_Textmanager
 from tkinter import *
 from PIL import Image, ImageTk
 import tkinter.font as tkFont
+from tktooltip import *
 from tkinter.colorchooser import askcolor
 
 
@@ -44,7 +45,7 @@ class Test_info:
 
 class Bild_schirm_größe_class:
 
-    def __init__(self, Seite, x_pos, y_pos, bildschirm_große_quere, bilschirm_größe_hoch,  speicherort, Bildschirm, skalierung_list):
+    def __init__(self, Seite, x_pos, y_pos, bildschirm_große_quere, bilschirm_größe_hoch,  speicherort, Bildschirm, skalierung_list, Text_hover = ""):
         self.speicherort = speicherort
         self.Hauptbildschirm = Label(Seite, font=("Helvetica", 20), text=Bildschirm, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
         self.Hauptbildschirm.place(x=x_pos , y=y_pos-50)
@@ -70,6 +71,8 @@ class Bild_schirm_größe_class:
         self.Bildschirm_Skalierung_stringvar_quere.set(self.Skalierung)
         self.Bildschirm_skalierung_quere_menü = OptionMenu(Seite, self.Bildschirm_Skalierung_stringvar_quere, *skalierung_list)
         self.Bildschirm_skalierung_quere_menü.place(x=x_pos, y=y_pos+50)
+        if len(Text_hover) > 0:
+            self.Text_anzeiger = ToolTip(self.Bildschirm_bestätigen, msg=Text_hover, delay=2, follow=True)
 
 
     def Bildgröße_bestatigen(self):
@@ -98,24 +101,32 @@ class Bild_schirm_größe_class:
 
 
 def Settings_Textanzeiger_def():
-    global Settings_Textanzeiger_Top
+    global Settings_Textanzeiger_Top, Textanzeiger_Textfarbe, Textanzeiger_Hintergrund, Bildschirm_opt1, Bildschirm_ausrichtung_button
     Settings_Textanzeiger_Top = Toplevel()
     Settings_Textanzeiger_Top.geometry("800x600")
     Settings_Textanzeiger_Top.title("Einstellungen für Textanzeiger")
     Settings_Textanzeiger_Top.config(bg=Settings.Textmanager_Hintergrund)
-    Text_scalierung()
+    Textanzeiger_Textfarbe = Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Textfarbe", 10, 100, "Textfarbe")
+    Textanzeiger_Hintergrund = Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Hintergrund", 150, 100, "Hintergrund")
+    Bildschirm_opt1 = Bild_schirm_größe_class(Settings_Textanzeiger_Top, 10, 220, Settings.Bildschirm_auflösung_quere, Settings.Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm", Settings.Skalierung)
+    if Settings.Bildschirm_ausrichtung:
+        Bildschirm_ausrichtung_button = ResponsiveWidget(Button,Settings_Textanzeiger_Top, font=("Helvetica", 20), text="Rechts", command=Settings.Links, bd=0)
+    else:
+        Bildschirm_ausrichtung_button = ResponsiveWidget(Button, Settings_Textanzeiger_Top, font=("Helvetica", 20), text="Links", command=Settings.Rechts, bd=0)
+    Bildschirm_ausrichtung_button.place(x=220,y=250)
+    Text_scalierung(Settings_Textanzeiger_Top, Settings.Text_size_def, 10, 10, from__=0, to_=100, orient_=HORIZONTAL, backgrund=Settings.Textmanager_Hintergrund, foregrund=Settings.Textmanager_Textfarbe)
 
 
-def Text_scalierung():
+def Text_scalierung(Anzeige_ort, command_, x_pos, y_pos, from__ = 0, to_= 100, orient_ = HORIZONTAL, backgrund= "Black", foregrund = "Withe", font_ = 24, lengt = 300, with_ = 300):
     global Text_größe_Textanzeiger
-    Text_größe_Textanzeiger = Scale(Settings_Textanzeiger_Top, from_=0, to=100, orient= HORIZONTAL, background=Settings.Textmanager_Hintergrund, foreground=Settings.Textmanager_Textfarbe, bd=0,font=24, length=300, width=25, command=Settings.Text_size_def, tickinterval=25)
+    Text_größe_Textanzeiger = Scale(Anzeige_ort, from_=from__, to=to_, orient= orient_, background=backgrund, foreground=foregrund, bd=0,font=24, length=300, width=25, command=command_, tickinterval=25)
     Text_größe_Textanzeiger.set(Settings.Text_anzeiger_textgröße)
-    Text_größe_Textanzeiger.place(y=10, x=10)
+    Text_größe_Textanzeiger.place(y=y_pos, x=x_pos)
     Load_settings.Load_all_collor()
 
 
 class Swich_generator:
-    def __init__(self, Settings_is, x_pos, y_pos, Textnazeige, x_pos_text, Text_datei_save, ob_True, def_bei_offbutton):
+    def __init__(self, Settings_is, x_pos, y_pos, Textnazeige, x_pos_text, Text_datei_save, ob_True, def_bei_offbutton, Text_hover = ""):
         self.Text_datei_save = Text_datei_save
         self.def_bei_offbutton = def_bei_offbutton
         self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground=Settings.Textmanager_Hintergrund)
@@ -129,6 +140,8 @@ class Swich_generator:
             self.Photo1 = Image.open("on-button.png")
             self.Photo = ImageTk.PhotoImage(self.Photo1.resize((50,50)))
             self.is_switch.config(image=self.Photo, bg=Settings.Textmanager_Hintergrund, border=0, command=self.switch_setting_off)
+        if len(Text_hover) > 0:
+            self.Text_anzeiger = ToolTip(self.is_switch, msg=Text_hover, delay=2, follow=True)
         self.is_switch.place(x=x_pos, y=y_pos)
 
 
@@ -162,10 +175,12 @@ class Swich_generator:
 
 class Farben_class:
 
-    def __init__(self, Anzeigefenster, Farbe, x_place, y_place, Name):
-        self.Farbe_ort = Farbe
+    def __init__(self, Anzeigefenster, Farbe_ort, x_place, y_place, Name, Text_hover = ""):
+        self.Farbe_ort = Farbe_ort
         self.Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Anzeigefenster, font=("Helvetica", 20), fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, text=Name, command=self.Farbe_def, border=0)
         self.Hintergrndfarbe_auswahl.place(x= x_place, y= y_place)
+        if len(Text_hover) > 0:
+            self.Text_anzeiger = ToolTip(self.Hintergrndfarbe_auswahl, msg=Text_hover, delay=2, follow=True)            
         
         
     def Farbe_def(self):
