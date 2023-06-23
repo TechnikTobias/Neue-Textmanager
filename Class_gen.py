@@ -117,13 +117,16 @@ def Settings_Textanzeiger_def():
     Text_scalierung(Settings_Textanzeiger_Top, Settings.Text_size_def, 10, 10, from__=0, to_=100, orient_=HORIZONTAL, backgrund=Settings.Textmanager_Hintergrund, foregrund=Settings.Textmanager_Textfarbe)
 
 
-def Text_scalierung(Anzeige_ort, command_, x_pos, y_pos, from__ = 0, to_= 100, orient_ = HORIZONTAL, backgrund= "Black", foregrund = "Withe", font_ = 24, lengt = 300, with_ = 300):
-    global Text_größe_Textanzeiger
-    Text_größe_Textanzeiger = Scale(Anzeige_ort, from_=from__, to=to_, orient= orient_, background=backgrund, foreground=foregrund, bd=0,font=24, length=300, width=25, command=command_, tickinterval=25)
-    Text_größe_Textanzeiger.set(Settings.Text_anzeiger_textgröße)
-    Text_größe_Textanzeiger.place(y=y_pos, x=x_pos)
-    Load_settings.Load_all_collor()
+class Text_scalierung():
+    def __init__(self, Anzeige_ort, command_, x_pos, y_pos, from__ = 0, to_= 100, orient_ = HORIZONTAL, backgrund= "Black", foregrund = "blue", font_ = 24, lengt = 300, with_ = 300):
+        self.Text_größe_Textanzeiger = Scale(Anzeige_ort, from_=from__, to=to_, orient= orient_, background=backgrund, foreground=foregrund, bd=0,font=font_, length=300, width=font_, command=command_, tickinterval=25)
+        self.Text_größe_Textanzeiger.set(Settings.Text_anzeiger_textgröße)
+        self.Text_größe_Textanzeiger.place(y=y_pos, x=x_pos)
+        Load_settings.Load_all_collor()
 
+class ijoih():
+    def __init__(self) -> None:
+        pass
 
 class Swich_generator:
     def __init__(self, Settings_is, x_pos, y_pos, Textnazeige, x_pos_text, Text_datei_save, ob_True, def_bei_offbutton, Text_hover = ""):
