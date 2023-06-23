@@ -101,7 +101,7 @@ class Bild_schirm_größe_class:
 
 
 def Settings_Textanzeiger_def():
-    global Settings_Textanzeiger_Top, Textanzeiger_Textfarbe, Textanzeiger_Hintergrund, Bildschirm_opt1, Bildschirm_ausrichtung_button
+    global Settings_Textanzeiger_Top, Textanzeiger_Textfarbe, Textanzeiger_Hintergrund, Bildschirm_opt1, Bildschirm_ausrichtung_button, Text_größe_ändern
     Settings_Textanzeiger_Top = Toplevel()
     Settings_Textanzeiger_Top.geometry("800x600")
     Settings_Textanzeiger_Top.title("Einstellungen für Textanzeiger")
@@ -114,7 +114,8 @@ def Settings_Textanzeiger_def():
     else:
         Bildschirm_ausrichtung_button = ResponsiveWidget(Button, Settings_Textanzeiger_Top, font=("Helvetica", 20), text="Links", command=Settings.Rechts, bd=0)
     Bildschirm_ausrichtung_button.place(x=220,y=250)
-    Text_scalierung(Settings_Textanzeiger_Top, Settings.Text_size_def, 10, 10, from__=0, to_=100, orient_=HORIZONTAL, backgrund=Settings.Textmanager_Hintergrund, foregrund=Settings.Textmanager_Textfarbe)
+    Text_größe_ändern = Text_scalierung(Settings_Textanzeiger_Top, Settings.Text_size_def, 10, 10, from__=0, to_=100, orient_=HORIZONTAL, backgrund=Settings.Textmanager_Hintergrund, foregrund=Settings.Textmanager_Textfarbe)
+    Load_settings.Load_all_collor()
 
 
 class Text_scalierung():
@@ -123,10 +124,9 @@ class Text_scalierung():
         self.Text_größe_Textanzeiger.set(Settings.Text_anzeiger_textgröße)
         self.Text_größe_Textanzeiger.place(y=y_pos, x=x_pos)
         Load_settings.Load_all_collor()
+    def color_farb(self,  active_vorgrund, backgrund, foregrund = "green"):
+        self.Text_größe_Textanzeiger.config(activebackground=active_vorgrund)
 
-class ijoih():
-    def __init__(self) -> None:
-        pass
 
 class Swich_generator:
     def __init__(self, Settings_is, x_pos, y_pos, Textnazeige, x_pos_text, Text_datei_save, ob_True, def_bei_offbutton, Text_hover = ""):
