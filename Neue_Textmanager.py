@@ -13,7 +13,7 @@ Programm_ort = os.getlogin()
 
 def Start():
     global Textmanager
-    Settings.Check_settings()
+    Settings.Check_settings(Tkfont=False)
     Textmanager = Tk()
     Textmanager.title("Textmanager")
     Textmanager.config(bg=Settings.Textmanager_Hintergrund)

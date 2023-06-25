@@ -33,9 +33,9 @@ def Load_Text_anzeiger():
             Text_Anzeige_Label.config(text="Hallo Welt, wie gehts euch, das ist ein test text, der text soll normal angezeigt werden")
             Text_Anzeige_Label["justify"] = "left"
             Text_Anzeige_Label.place(x=0, y=0)
-            AnzeigeText.geometry(f"{int(int(Quere_auflösung1)/int(Skalierung1)*100)}x{int(int(Hoch_auflösung1)/int(Skalierung1)*100)}")
+            AnzeigeText.geometry(f"{int(int(Quere_auflösung1)/int(Skalierung1)*100)}x{int(int(Hoch_auflösung1)/int(Skalierung1)*100)}+{Plusor_muínus}+0")
             try:
-                Settings.Setings_Textanzeiger = Settings.ResponsiveWidget(Button, Settings.Settings_bildschirm, font=("Helvetica", 20), fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, text="Einstellungen für\nTextanzeiger", bd=0, command=Class_gen.Settings_Textanzeiger_def)
+                Settings.Setings_Textanzeiger = Settings.ResponsiveWidget(Button, Settings.Settings_bildschirm, font=Settings.Textgröße_von_alle_Texte, fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, text="Einstellungen für\nTextanzeiger", bd=0, command=Class_gen.Settings_Textanzeiger_def)
                 Settings.Setings_Textanzeiger.place(y=10, x=250)
             except: pass
     else: 
@@ -89,3 +89,10 @@ def Load_all_collor():
         Settings.Button_Textfarbe_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
     except: pass
 
+
+def Load_text_size(Text_größe_übergabe):
+    Settings.Textgröße_von_alle_Texte.config(size=Text_größe_übergabe)
+    with open(f"Textmanager Daten\\Textmanager Daten\\text_size.txt", "w", encoding='utf8') as text_size:
+        text_size.write(Text_größe_übergabe)
+    Settings.Hintergrndfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte)
+    Settings.Textanzeiger_setting_class.Text_size(Settings.Textgröße_von_alle_Texte, int(Text_größe_übergabe))

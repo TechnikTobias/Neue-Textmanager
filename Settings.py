@@ -51,8 +51,8 @@ def ResponsiveWidget(widget, *args, **kwargs):
         w.bind(k, lambda e, kwarg=v: e.widget.config(**kwarg))
     return w
 
-def Check_settings():
-    global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe
+def Check_settings(Tkfont = True):
+    global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size
     with open(f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", "r", encoding='utf8') as see_the_textinfo:
         see_the_text = see_the_textinfo.read() == "True"
     with open(f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", "r", encoding='utf8') as see_the_textinfo:
@@ -75,6 +75,11 @@ def Check_settings():
         Button_Textfarbe = Text_anzeiger_textgröße1.read()
     with open(f"Textmanager Daten\\Textmanager Daten\\Bildschirm_ausrichtung.txt", "r", encoding='utf8') as Text_anzeiger_textgröße1:
         Bildschirm_ausrichtung = Text_anzeiger_textgröße1.read() == "Rechts"
+    if Tkfont:
+        with open(f"Textmanager Daten\\Textmanager Daten\\text_size.txt", "r", encoding='utf8') as text_size1:
+            text_size = text_size1.read()
+        Textgröße_von_alle_Texte = tkFont.Font(family="Helvetica", size=text_size)
+
 
 
 
@@ -141,27 +146,28 @@ def Load_anzeige():
 
 def make_settings():
     Check_settings()
-    global Textanzeiger_setting_class, Button_hervorheben_class, Settings_bildschirm, Bildschirm_opt, Textfarbe_auswahl, Setings_Textanzeiger, Hintergrndfarbe_auswahl, Button_Hintergrndfarbe_auswahl, Auto_auflösung, Button_Textfarbe_Button
+    global Textanzeiger_setting_class, Button_hervorheben_class, Settings_bildschirm, Bildschirm_opt, Textfarbe_auswahl, Setings_Textanzeiger, Hintergrndfarbe_auswahl, Button_Hintergrndfarbe_auswahl, Auto_auflösung, Button_Textfarbe_Button,Text_größe_anpassen
     try: 
         Settings_bildschirm.config(bg=Textmanager_Hintergrund)
     except:
         Settings_bildschirm = Toplevel(Neue_Textmanager.Textmanager)
         Settings_bildschirm.geometry("600x800")
         Settings_bildschirm.config(bg=Textmanager_Hintergrund)
-        Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_bildschirm, 10, 10, "Liedtextanzeige", 70, f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", see_the_text, Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm")
+        Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_bildschirm, 10, 10, "Liedtextanzeige", 70, f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", see_the_text, Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
         if see_the_text:
-            Setings_Textanzeiger = ResponsiveWidget(Button, Settings_bildschirm, font=("Helvetica", 20), fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Einstellungen für\nTextanzeiger", bd=0, command=Class_gen.Settings_Textanzeiger_def)
+            Setings_Textanzeiger = ResponsiveWidget(Button, Settings_bildschirm, font=Textgröße_von_alle_Texte, fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Einstellungen für\nTextanzeiger", bd=0, command=Class_gen.Settings_Textanzeiger_def)
             Setings_Textanzeiger.place(y=10, x=250)
             ToolTip(Setings_Textanzeiger, msg="Lädt alle Einstellungen für den Textanzeiger", delay=2, follow=True)
-        Button_hervorheben_class = Class_gen.Swich_generator(Settings_bildschirm, 10, 70, "Button hervorheben", 70, f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", Button_hervorheben, Neue_Textmanager.Load_Setting, Text_hover="Bringt die Butten in der eingestellte farbe zum Leuchten")
+        Button_hervorheben_class = Class_gen.Swich_generator(Settings_bildschirm, 10, 70, "Button hervorheben", 70, f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", Button_hervorheben, Neue_Textmanager.Load_Setting, Text_hover="Bringt die Butten in der eingestellte farbe zum Leuchten", zise=text_size)
         Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Settings_bildschirm, 10, 200, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung", "Hauptbildschirm", Skalierung, "Bestätigt die eingegebene Bildschirmgröße und Bildschirm Skalierung von Hauptbildschirm von Windows")
-        Auto_auflösung = ResponsiveWidget(Button,Settings_bildschirm, font=("Helvetica", 20), text="Auto Auflösung", command=Auto_auflösung_def, bd=0)
+        Auto_auflösung = ResponsiveWidget(Button,Settings_bildschirm, font=Textgröße_von_alle_Texte, text="Auto Auflösung", command=Auto_auflösung_def, bd=0)
 
 
         Hintergrndfarbe_auswahl = Class_gen.Farben_class(Settings_bildschirm, "Hintergrund", 10, 370, "Hintergrund Farbe\n auswählen", "Mit dem Button kann die Farbe des Hintergrund geändert werden")
         Textfarbe_auswahl = Class_gen.Farben_class(Settings_bildschirm, "Textfarbe", 260, 370, "Textfarbe\nauswählen", "Mit dem Button kann die Textfarbe geändert werden")
         Button_Textfarbe_Button = Class_gen.Farben_class(Settings_bildschirm, "Button_Textfarbe", 10, 480, "Button Textfarbe", "Mit dem Button kann die Textfarbe der button geändert werden die angezeigt wird, wenn der Mauszeiger uber einen Button geht")
         Button_Hintergrndfarbe_auswahl = Class_gen.Farben_class(Settings_bildschirm, "Button_Hintergrund", 260, 480, "Button Hintergrund\nfarbe", "Mit dem Button kann die Hintergrund geändert der Button werden, die angezeigt wird wenn der Mauszeiger uber einen Button geht")
+        Text_größe_anpassen = Class_gen.Text_scalierung(command_=Load_settings.Load_text_size, x_pos=10, y_pos=500, Anzeige_ort=Settings_bildschirm, aktuelle_zahl=text_size)
         Neue_Textmanager.Load_Setting()
 
 
