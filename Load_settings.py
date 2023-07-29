@@ -91,19 +91,18 @@ def Load_text_size(Text_größe_übergabe):
     Settings.Textgröße_von_alle_Texte.config(size=Text_größe_übergabe)
     with open(f"Textmanager Daten\\Textmanager Daten\\text_size.txt", "w", encoding='utf8') as text_size:
         text_size.write(Text_größe_übergabe)
-    Settings.Hintergrndfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte)
     Settings.text_size = Text_größe_übergabe
     try:
         Class_gen.Textanzeiger_setting_class.Text_size(Settings.Textgröße_von_alle_Texte, int(Text_größe_übergabe))
-        Class_gen.Textanzeiger_Hintergrund.Text_size(Settings.Text_anzeiger_textgröße)
-        Class_gen.Textanzeiger_Textfarbe.Text_size(Settings.Textgröße_von_alle_Texte)
+        Class_gen.Textanzeiger_Hintergrund.Text_size(Settings.Textgröße_von_alle_Texte, Factor_x=0, Factor_y=8)
+        Class_gen.Textanzeiger_Textfarbe.Text_size(Settings.Textgröße_von_alle_Texte, Factor_x=11, Factor_y=8)
         Class_gen.Bildschirm_opt1.Text_size(Settings.Textgröße_von_alle_Texte)
     except:
         pass
     try:
-        Settings.Hintergrndfarbe_auswahl.Place_def(Factor_y=18,Factor_x=0)
-        Settings.Textfarbe_auswahl.Place_def(Factor_x=13, Factor_y=18)
-        Settings.Button_Textfarbe_Button.Place_def(Factor_x=0, Factor_y=22)
-        Settings.Button_Hintergrndfarbe_auswahl.Place_def(Factor_x=13, Factor_y=22)
+        Settings.Hintergrndfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte,Factor_y=18,Factor_x=0)
+        Settings.Textfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte,Factor_x=13, Factor_y=18)
+        Settings.Button_Textfarbe_Button.Text_size(Settings.Textgröße_von_alle_Texte,Factor_x=0, Factor_y=22)
+        Settings.Button_Hintergrndfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte,Factor_x=13, Factor_y=22)
     except:
         pass
