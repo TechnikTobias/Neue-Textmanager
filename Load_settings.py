@@ -34,14 +34,9 @@ def Load_Text_anzeiger():
             Text_Anzeige_Label["justify"] = "left"
             Text_Anzeige_Label.place(x=0, y=0)
             AnzeigeText.geometry(f"{int(int(Quere_auflösung1)/int(Skalierung1)*100)}x{int(int(Hoch_auflösung1)/int(Skalierung1)*100)}+{Plusor_muínus}+0")
-            try:
-                Settings.Setings_Textanzeiger = Settings.ResponsiveWidget(Button, Settings.Settings_bildschirm, font=Settings.Textgröße_von_alle_Texte, fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, text="Einstellungen für\nTextanzeiger", bd=0, command=Class_gen.Settings_Textanzeiger_def)
-                Settings.Setings_Textanzeiger.place(y=10, x=250)
-            except: pass
     else: 
         try:
             AnzeigeText.destroy()
-            Settings.Setings_Textanzeiger.destroy()
         except: pass
 
 
@@ -60,16 +55,13 @@ def Load_all_collor():
     if Settings.see_the_text:
         AnzeigeText.config(bg=Settings.Textanzeiger_Hintergrund)
         Text_Anzeige_Label.config(bg=Settings.Textanzeiger_Hintergrund, fg=Settings.Textanzeiger_Textfarbe)
-        try: 
-            Class_gen.Text_größe_ändern.color_farb(backgrund=Hintergrund, foregrund=Textfarbe, active_vorgrund=Aufleuchtfarbe_Hintergrund)
-            Class_gen.Bildschirm_opt1.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-            Class_gen.Bildschirm_ausrichtung_button.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-            Class_gen.Textanzeiger_Hintergrund.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-            Class_gen.Textanzeiger_Textfarbe.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        except: pass
-        try:
-            Settings.Setings_Textanzeiger.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-        except: pass
+    try: 
+        Class_gen.Text_größe_ändern.color_farb(backgrund=Hintergrund, foregrund=Textfarbe, active_vorgrund=Aufleuchtfarbe_Hintergrund)
+        Class_gen.Bildschirm_opt1.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Class_gen.Bildschirm_ausrichtung_button.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Class_gen.Textanzeiger_Hintergrund.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Class_gen.Textanzeiger_Textfarbe.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+    except: pass
     Neue_Textmanager.Menu_Settings.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     Neue_Textmanager.Menu_Info.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     Neue_Textmanager.Menu_LiedKontrolle.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
@@ -77,16 +69,21 @@ def Load_all_collor():
     Neue_Textmanager.Menu_Kamera.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     Neue_Textmanager.Textmanager.config(bg=Hintergrund)
     try:
-        Settings.Settings_bildschirm.config(bg=Hintergrund)
+        Settings.Graphig_bildschirm.config(bg=Hintergrund)
         Settings.Hintergrndfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
         Settings.Textfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Button_hervorheben_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Textanzeiger_setting_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Bildschirm_opt.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
         Settings.Button_Textfarbe_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
         Settings.Button_Hintergrndfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Auto_auflösung.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-        Settings.Button_Textfarbe_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Text_größe_anpassen.color_farb(backgrund=Hintergrund, foregrund=Textfarbe, active_vorgrund=Aufleuchtfarbe_Hintergrund)
+    except:
+        pass
+    try:
+        Settings.Settings_bildschirm.config(bg=Hintergrund)
+        Settings.Setings_Textanzeiger.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Settings.Settings_Graphig_option.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Class_gen.Textanzeiger_setting_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Bildschirm_opt.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Button_hervorheben_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
     except: pass
 
 
@@ -95,4 +92,18 @@ def Load_text_size(Text_größe_übergabe):
     with open(f"Textmanager Daten\\Textmanager Daten\\text_size.txt", "w", encoding='utf8') as text_size:
         text_size.write(Text_größe_übergabe)
     Settings.Hintergrndfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte)
-    Settings.Textanzeiger_setting_class.Text_size(Settings.Textgröße_von_alle_Texte, int(Text_größe_übergabe))
+    Settings.text_size = Text_größe_übergabe
+    try:
+        Class_gen.Textanzeiger_setting_class.Text_size(Settings.Textgröße_von_alle_Texte, int(Text_größe_übergabe))
+        Class_gen.Textanzeiger_Hintergrund.Text_size(Settings.Text_anzeiger_textgröße)
+        Class_gen.Textanzeiger_Textfarbe.Text_size(Settings.Textgröße_von_alle_Texte)
+        Class_gen.Bildschirm_opt1.Text_size(Settings.Textgröße_von_alle_Texte)
+    except:
+        pass
+    try:
+        Settings.Hintergrndfarbe_auswahl.Place_def(Factor_y=18,Factor_x=0)
+        Settings.Textfarbe_auswahl.Place_def(Factor_x=13, Factor_y=18)
+        Settings.Button_Textfarbe_Button.Place_def(Factor_x=0, Factor_y=22)
+        Settings.Button_Hintergrndfarbe_auswahl.Place_def(Factor_x=13, Factor_y=22)
+    except:
+        pass

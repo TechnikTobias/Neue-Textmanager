@@ -54,12 +54,14 @@ class Bild_schirm_größe_class:
         self.Bild_größe_stringvar_quere = StringVar()
         self.Bild_größe_stringvar_quere.set(self.bildschirm_pos)
         self.Bildschirm_größe_quere_menü = OptionMenu(Seite, self.Bild_größe_stringvar_quere, *bildschirm_große_quere)
+        self.Bildschirm_größe_quere_menü.config(font=Settings.Textgröße_von_alle_Texte)
         self.Bildschirm_größe_quere_menü.place(x=x_pos, y=y_pos)
         with open(f"{speicherort}hoch.txt", "r", encoding="utf8") as speicherort1:
             self.bildschirm_pos1 = speicherort1.read()
         self.Bild_größe_stringvar_hoch = StringVar()
         self.Bild_größe_stringvar_hoch.set(self.bildschirm_pos1)
         self.Bildschirm_größe_hoch_menü = OptionMenu(Seite, self.Bild_größe_stringvar_hoch, *bilschirm_größe_hoch)
+        self.Bildschirm_größe_hoch_menü.config(font=Settings.Textgröße_von_alle_Texte)
         self.Bildschirm_größe_hoch_menü.place(x=100+x_pos, y=y_pos)
         self.Bildschirm_bestätigen = ResponsiveWidget(Button, Seite, activebackground=Settings.Button_hervorheben_farbe, font=Settings.Textgröße_von_alle_Texte, fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, bd=0, text="Bestätigen", command=self.Bildgröße_bestatigen, activeforeground=Settings.Button_hervorheben_farbe)
         self.Bildschirm_bestätigen.place(x=x_pos, y=y_pos+100)
@@ -70,6 +72,7 @@ class Bild_schirm_größe_class:
         self.Bildschirm_Skalierung_stringvar_quere = StringVar()
         self.Bildschirm_Skalierung_stringvar_quere.set(self.Skalierung)
         self.Bildschirm_skalierung_quere_menü = OptionMenu(Seite, self.Bildschirm_Skalierung_stringvar_quere, *skalierung_list)
+        self.Bildschirm_skalierung_quere_menü.config(font=Settings.Textgröße_von_alle_Texte)
         self.Bildschirm_skalierung_quere_menü.place(x=x_pos, y=y_pos+50)
         if len(Text_hover) > 0:
             self.Text_anzeiger = ToolTip(self.Bildschirm_bestätigen, msg=Text_hover, delay=2, follow=True)
@@ -79,6 +82,8 @@ class Bild_schirm_größe_class:
         self.Bildschirm_größe_hoch_menü.config(font=Font_)
         self.Bildschirm_bestätigen.config(font=Font_)
         self.X_bildschirm.config(font=Font_)
+        self.Bildschirm_größe_quere_menü.config(font=Font_)
+
 
 
     def Bildgröße_bestatigen(self):
@@ -107,20 +112,21 @@ class Bild_schirm_größe_class:
 
 
 def Settings_Textanzeiger_def():
-    global Settings_Textanzeiger_Top, Textanzeiger_Textfarbe, Textanzeiger_Hintergrund, Bildschirm_opt1, Bildschirm_ausrichtung_button, Text_größe_ändern
+    global Settings_Textanzeiger_Top, Textanzeiger_Textfarbe, Textanzeiger_Hintergrund, Bildschirm_opt1, Bildschirm_ausrichtung_button, Text_größe_ändern, Textanzeiger_setting_class
     Settings_Textanzeiger_Top = Toplevel()
-    Settings_Textanzeiger_Top.geometry("800x600")
+    Settings_Textanzeiger_Top.geometry("500x800")
     Settings_Textanzeiger_Top.title("Einstellungen für Textanzeiger")
     Settings_Textanzeiger_Top.config(bg=Settings.Textmanager_Hintergrund)
-    Textanzeiger_Textfarbe = Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Textfarbe", 10, 100, "Textfarbe")
-    Textanzeiger_Hintergrund = Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Hintergrund", 150, 100, "Hintergrund")
-    Bildschirm_opt1 = Bild_schirm_größe_class(Settings_Textanzeiger_Top, 10, 220, Settings.Bildschirm_auflösung_quere, Settings.Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm", Settings.Skalierung)
+    Textanzeiger_setting_class = Swich_generator(Settings_Textanzeiger_Top, 10, 10, "Liedtextanzeige", f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", Settings.see_the_text, Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=Settings.text_size)
+    Textanzeiger_Textfarbe = Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Textfarbe", 10, 170, "Textfarbe")
+    Textanzeiger_Hintergrund = Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Hintergrund", 200, 170, "Hintergrund")
+    Bildschirm_opt1 = Bild_schirm_größe_class(Settings_Textanzeiger_Top, 10, 270, Settings.Bildschirm_auflösung_quere, Settings.Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm", Settings.Skalierung)
     if Settings.Bildschirm_ausrichtung:
         Bildschirm_ausrichtung_button = ResponsiveWidget(Button,Settings_Textanzeiger_Top, font=Settings.Textgröße_von_alle_Texte, text="Rechts", command=Settings.Links, bd=0)
     else:
         Bildschirm_ausrichtung_button = ResponsiveWidget(Button, Settings_Textanzeiger_Top, font=Settings.Textgröße_von_alle_Texte, text="Links", command=Settings.Rechts, bd=0)
-    Bildschirm_ausrichtung_button.place(x=220,y=250)
-    Text_größe_ändern = Text_scalierung(Settings_Textanzeiger_Top, Settings.Text_size_def, 10, 10, from__=0, to_=100, orient_=HORIZONTAL, backgrund=Settings.Textmanager_Hintergrund, foregrund=Settings.Textmanager_Textfarbe, aktuelle_zahl=Settings.Text_anzeiger_textgröße)
+    Bildschirm_ausrichtung_button.place(x=270,y=250)
+    Text_größe_ändern = Text_scalierung(Settings_Textanzeiger_Top, Settings.Text_size_def, 10, 80, from__=0, to_=100, orient_=HORIZONTAL, backgrund=Settings.Textmanager_Hintergrund, foregrund=Settings.Textmanager_Textfarbe, aktuelle_zahl=Settings.Text_anzeiger_textgröße)
     Load_settings.Load_all_collor()
 
 
@@ -135,20 +141,22 @@ class Text_scalierung():
 
 
 class Swich_generator:
-    def __init__(self, Settings_is, x_pos, y_pos, Textnazeige, x_pos_text, Text_datei_save, ob_True, def_bei_offbutton, Text_hover = "", zise = 10):
+    def __init__(self, Settings_is, x_pos, y_pos, Textnazeige, Text_datei_save, ob_True, def_bei_offbutton, Text_hover = "", zise = 10):
+        self.y_pos = y_pos
+        self.x_pos = x_pos
         self.Text_datei_save = Text_datei_save
         self.def_bei_offbutton = def_bei_offbutton
-        self.zise = int(zise)
+        self.zise = int(Settings.text_size)
         self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground=Settings.Textmanager_Hintergrund)
-        self.switch_text = Label(Settings_is, font=("Helvetica", 12), bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text=Textnazeige)
-        self.switch_text.place(x=x_pos_text, y=y_pos + 12)
+        self.switch_text = Label(Settings_is, font=("Helvetica", zise), bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text=Textnazeige)
+        self.switch_text.place(y=self.y_pos + 0.8*int(zise)-4, x=self.x_pos+int(zise)*3)
         if not ob_True:
             self.Photo1 = Image.open("off-button.png")
-            self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(zise),3*int(zise))))
+            self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
             self.is_switch.config(image=self.Photo, bg=Settings.Textmanager_Hintergrund, border=0, command=self.switch_setting_on)
         else:
             self.Photo1 = Image.open("on-button.png")
-            self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(zise),3*int(zise))))
+            self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
             self.is_switch.config(image=self.Photo, bg=Settings.Textmanager_Hintergrund, border=0, command=self.switch_setting_off)
         if len(Text_hover) > 0:
             self.Text_anzeiger = ToolTip(self.is_switch, msg=Text_hover, delay=2, follow=True)
@@ -157,13 +165,13 @@ class Swich_generator:
 
     def color(self, bg_color, fg_color, activ_bg, activ_fg):
         self.switch_text.config(bg=bg_color,fg=fg_color)
-        self.is_switch.config(bg=bg_color)
+        self.is_switch.config(bg=bg_color, activebackground=Settings.Textmanager_Hintergrund)
 
     def switch_setting_off(self):
         with open(f"{self.Text_datei_save}", "w", encoding='utf8') as see_the_textinfo:
             see_the_textinfo.write("False")
         self.Photo1 = Image.open("off-button.png")
-        self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*self.zise,3*self.zise)))
+        self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
         self.is_switch.configure(image=self.Photo, command= self.switch_setting_on)
         self.def_bei_offbutton()
 
@@ -173,15 +181,16 @@ class Swich_generator:
         with open(f"{self.Text_datei_save}", "w", encoding='utf8') as see_the_textinfo:
             see_the_textinfo.write("True")
         self.Photo1 = Image.open("on-button.png")
-        self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*self.zise,3*self.zise)))
+        self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
         self.is_switch.configure(image=self.Photo, command=self.switch_setting_off)
         self.def_bei_offbutton()
 
     def Text_size(self, Font_, size):
         self.switch_text.config(font=Font_)
+        self.switch_text.place(y=self.y_pos + 0.8*int(size)-4, x=self.x_pos+size*3)
         self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*size,3*size)))
         self.is_switch.configure(image=self.Photo)
-        self.is_switch.place()
+
 
 
 class Farben_class:
@@ -206,3 +215,6 @@ class Farben_class:
     
     def Text_size(self, Font_):
         self.Hintergrndfarbe_auswahl.config(font= Font_)
+
+    def Place_def(self, Factor_y, Factor_x):
+        self.Hintergrndfarbe_auswahl.place(x= 10+Factor_x*int(Settings.text_size), y= 10+Factor_y*int(Settings.text_size))

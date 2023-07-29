@@ -19,6 +19,7 @@ def Start():
     Textmanager.config(bg=Settings.Textmanager_Hintergrund)
     Textmanager.geometry("1040x800")
     Textmanager.iconbitmap(f"C:\\Users\\{Programm_ort}\\Desktop\\Lieder\\picture_compress 1.ico")
+    Textmanager.bind("<F11>", Settings.Test)
     Menu_generator()
     Load_Setting()
 

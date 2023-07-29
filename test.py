@@ -1,4 +1,5 @@
 from tkinter import * 
+import traceback
 
 if 6:
     print("ölichduild")
@@ -24,6 +25,10 @@ def if_abfrage():
         print("b")
     if not b:
         print("not b")
+
+
+
+    print(traceback.format_exc())  # Drucken Sie den Fehlerstapel
 
 
 def nothing(event=None):
