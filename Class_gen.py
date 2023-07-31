@@ -48,25 +48,21 @@ class Bild_schirm_größe_class:
     def __init__(self, Seite, x_pos, y_pos, bildschirm_große_quere, bilschirm_größe_hoch,  speicherort, Bildschirm, skalierung_list, Text_hover = ""):
         self.speicherort = speicherort
         self.Hauptbildschirm = Label(Seite, font=Settings.Textgröße_von_alle_Texte, text=Bildschirm, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
-        self.Hauptbildschirm.place(x=x_pos , y=y_pos-50)
         with open(f"{speicherort}quere.txt", "r", encoding="utf8") as speicherort1:
             self.bildschirm_pos = speicherort1.read()
         self.Bild_größe_stringvar_quere = StringVar()
         self.Bild_größe_stringvar_quere.set(self.bildschirm_pos)
         self.Bildschirm_größe_quere_menü = OptionMenu(Seite, self.Bild_größe_stringvar_quere, *bildschirm_große_quere)
         self.Bildschirm_größe_quere_menü.config(font=Settings.Textgröße_von_alle_Texte)
-        self.Bildschirm_größe_quere_menü.place(x=x_pos, y=y_pos)
         with open(f"{speicherort}hoch.txt", "r", encoding="utf8") as speicherort1:
             self.bildschirm_pos1 = speicherort1.read()
         self.Bild_größe_stringvar_hoch = StringVar()
         self.Bild_größe_stringvar_hoch.set(self.bildschirm_pos1)
         self.Bildschirm_größe_hoch_menü = OptionMenu(Seite, self.Bild_größe_stringvar_hoch, *bilschirm_größe_hoch)
         self.Bildschirm_größe_hoch_menü.config(font=Settings.Textgröße_von_alle_Texte)
-        self.Bildschirm_größe_hoch_menü.place(x=float(Settings.text_size)*6.4+x_pos, y=y_pos)
         self.Bildschirm_bestätigen = ResponsiveWidget(Button, Seite, activebackground=Settings.Button_hervorheben_farbe, font=Settings.Textgröße_von_alle_Texte, fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, bd=0, text="Bestätigen", command=self.Bildgröße_bestatigen, activeforeground=Settings.Button_hervorheben_farbe)
         self.Bildschirm_bestätigen.place(x=x_pos, y=y_pos+100)
         self.X_bildschirm = Label(Seite, font=Settings.Textgröße_von_alle_Texte,bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text="X")
-        self.X_bildschirm.place(x=x_pos+int(Settings.text_size)*5.2, y=y_pos)
         with open(f"{speicherort}Skalierung.txt", "r", encoding="utf8") as Skalierung:
             self.Skalierung = Skalierung.read()
         self.Bildschirm_Skalierung_stringvar_quere = StringVar()
@@ -74,16 +70,25 @@ class Bild_schirm_größe_class:
         self.Bildschirm_skalierung_quere_menü = OptionMenu(Seite, self.Bildschirm_Skalierung_stringvar_quere, *skalierung_list)
         self.Bildschirm_skalierung_quere_menü.config(font=Settings.Textgröße_von_alle_Texte)
         self.Bildschirm_skalierung_quere_menü.place(x=x_pos, y=y_pos+int(Settings.text_size)*2)
+        self.Hauptbildschirm.place(x=x_pos , y=y_pos-50)
+        self.Bildschirm_größe_quere_menü.place(x=x_pos, y=y_pos)
+        self.Bildschirm_größe_hoch_menü.place(x=float(Settings.text_size)*6.4+x_pos, y=y_pos)
+        self.X_bildschirm.place(x=x_pos+int(Settings.text_size)*5.2, y=y_pos)
         if len(Text_hover) > 0:
             self.Text_anzeiger = ToolTip(self.Bildschirm_bestätigen, msg=Text_hover, delay=2, follow=True)
-    def Text_size(self, Font_):
+    def Text_size(self, Font_, size=10, x_pos = 20, y_pos= 50):
         self.Hauptbildschirm.config(font=Font_)
         self.Bildschirm_größe_quere_menü.config(font=Font_)
         self.Bildschirm_größe_hoch_menü.config(font=Font_)
         self.Bildschirm_bestätigen.config(font=Font_)
         self.X_bildschirm.config(font=Font_)
-        self.Bildschirm_größe_quere_menü.config(font=Font_)
-
+        self.Bildschirm_skalierung_quere_menü.config(font=Font_)
+        self.Hauptbildschirm.place(x=x_pos, y=y_pos-int(Settings.text_size)*2.5)
+        self.Bildschirm_größe_hoch_menü.place(x=40+float(Settings.text_size)*4.4+x_pos, y=y_pos)
+        self.X_bildschirm.place(x=40+x_pos+int(Settings.text_size)*3.2, y=y_pos)
+        self.Bildschirm_größe_quere_menü.place(x=x_pos, y=y_pos)
+        self.Bildschirm_bestätigen.place(x=x_pos, y=y_pos+25+int(Settings.text_size)*5)
+        self.Bildschirm_skalierung_quere_menü.place(x=x_pos, y=y_pos+10+int(Settings.text_size)*2.7)
 
 
     def Bildgröße_bestatigen(self):
@@ -131,13 +136,17 @@ def Settings_Textanzeiger_def():
 
 
 class Text_scalierung():
-    def __init__(self, Anzeige_ort, command_, x_pos, y_pos, from__ = 0, to_= 100, orient_ = HORIZONTAL, backgrund= "Black", foregrund = "blue", font_ = 24, lengt = 300, with_ = 300, aktuelle_zahl = 10, size= 10):
-        self.Text_größe_Textanzeiger = Scale(Anzeige_ort, from_=from__, to=to_, orient= orient_, background=backgrund, foreground=foregrund, bd=0,font=font_, length=size*15, width=size*2, command=command_, tickinterval=25)
+    def __init__(self, Anzeige_ort, command_, x_pos, y_pos, from__ = 0, to_= 100, orient_ = HORIZONTAL, backgrund= "Black", foregrund = "blue", font_ = 24, lengt = 300, with_ = 300, aktuelle_zahl = 10, size= 10,tickinterval = 25):
+        self.Text_größe_Textanzeiger = Scale(Anzeige_ort, from_=from__, to=to_, orient= orient_, background=backgrund, foreground=foregrund, bd=0,font=font_, length=size*15, width=size*2, command=command_, tickinterval=tickinterval)
         self.Text_größe_Textanzeiger.set(aktuelle_zahl)
         self.Text_größe_Textanzeiger.place(y=y_pos, x=x_pos)
         Load_settings.Load_all_collor()
     def color_farb(self,  active_vorgrund, backgrund, foregrund = "green"):
         self.Text_größe_Textanzeiger.config(activebackground=active_vorgrund, bg=backgrund, fg=foregrund)
+
+    def Text_size(self, font_ = 10, size= 10, Y_ground = 10, Y_factor = 5):
+        self.Text_größe_Textanzeiger.config(font=font_, length=size*15, width=size*2)
+        self.Text_größe_Textanzeiger.place(y=Y_ground+Y_factor*size)
 
 
 class Swich_generator:
@@ -213,6 +222,6 @@ class Farben_class:
     def color(self, bg_color, fg_color, activ_bg, activ_fg):
         self.Hintergrndfarbe_auswahl.config(bg=bg_color, fg=fg_color, activebackground=activ_bg, activeforeground=activ_fg)
     
-    def Text_size(self, Font_, Factor_x =1, Factor_y = 1):
+    def Text_size(self, Font_, Factor_x =1, Factor_y = 1, x_start =10, Y_Start = 10):
         self.Hintergrndfarbe_auswahl.config(font= Font_)
-        self.Hintergrndfarbe_auswahl.place(x= 10+Factor_x*int(Settings.text_size), y= 10+Factor_y*int(Settings.text_size))
+        self.Hintergrndfarbe_auswahl.place(x= x_start+Factor_x*int(Settings.text_size), y= Y_Start+Factor_y*int(Settings.text_size))
