@@ -128,14 +128,12 @@ class Text_scalierung():
 
 
 class Swich_generator:
-    def __init__(self, Settings_is, x_pos, y_pos, Textnazeige, Text_datei_save, ob_True, def_bei_offbutton, Text_hover = "", zise = 10):
-        self.y_pos = y_pos
-        self.x_pos = x_pos
+    def __init__(self, Settings_is, Textanzeige, Text_datei_save, ob_True, def_bei_offbutton, Text_hover = "", zise = 10):
         self.Text_datei_save = Text_datei_save
         self.def_bei_offbutton = def_bei_offbutton
         self.zise = int(Settings.text_size)
         self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground=Settings.Textmanager_Hintergrund)
-        self.switch_text = Label(Settings_is, font=("Helvetica", zise), bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text=Textnazeige)
+        self.switch_text = Label(Settings_is, font=("Helvetica", zise), bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text=Textanzeige)
         self.Text_anzeiger2 = ToolTip(self.switch_text, msg=Text_hover, delay=2, follow=True)
         if not ob_True:
             self.Photo1 = Image.open("off-button.png")

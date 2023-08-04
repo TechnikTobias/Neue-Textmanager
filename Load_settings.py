@@ -61,6 +61,8 @@ def Load_all_collor():
         Settings.Bildschirm_ausrichtung_button.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
         Settings.Textanzeiger_Hintergrund_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
         Settings.Textanzeiger_Textfarbe_button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Textanzeiger_setting_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Liedvorschau.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     except: pass
     Neue_Textmanager.Menu_Settings.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     Neue_Textmanager.Menu_Info.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
@@ -75,15 +77,15 @@ def Load_all_collor():
         Settings.Button_Textfarbe_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
         Settings.Button_Hintergrndfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
         Settings.Text_größe_anpassen.color_farb(backgrund=Hintergrund, foregrund=Textfarbe, active_vorgrund=Aufleuchtfarbe_Hintergrund)
+        Settings.Bildschirm_opt.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Button_hervorheben_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
     except:
         pass
     try:
         Settings.Settings_bildschirm.config(bg=Hintergrund)
         Settings.Setings_Textanzeiger.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
         Settings.Settings_Graphig_option.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-        Settings.Textanzeiger_setting_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Bildschirm_opt.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Button_hervorheben_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Smarte_unterstüzung_button.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     except: pass
 
 
@@ -111,7 +113,14 @@ def Load_text_size(Text_größe_übergabe):
         Settings.Bildschirm_opt.Text_size(Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size), x_pos=10, y_pos=50+11*int(Settings.text_size))
         Settings.Button_hervorheben_class.Text_size(Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size))
     except: pass
-    Settings.Settings_Graphig_option.config(font=Settings.Textgröße_von_alle_Texte)
-    Settings.Setings_Textanzeiger.config(font=Settings.Textgröße_von_alle_Texte)
-    Settings.Settings_Graphig_option.place(x=10, y=20+4*int(Settings.text_size))
-    Settings.Setings_Textanzeiger.place(y=10, x=10)
+    try:
+        Settings.Settings_Graphig_option.config(font=Settings.Textgröße_von_alle_Texte)
+        Settings.Setings_Textanzeiger.config(font=Settings.Textgröße_von_alle_Texte)
+        Settings.Settings_Graphig_option.place(x=10, y=20+4*int(Settings.text_size))
+        Settings.Setings_Textanzeiger.place(y=10, x=10)
+        Settings.Smarte_unterstüzung_button.place(x=10, y=40+8*int(Settings.text_size))
+        Settings.Smarte_unterstüzung_button.config(font= Settings.Textgröße_von_alle_Texte)
+    except: pass
+    try:
+        Settings.Smarte_Verse.Text_size(y_factor=0, x_factor=0, x_ground=10, y_ground=10, Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size))
+    except: pass
