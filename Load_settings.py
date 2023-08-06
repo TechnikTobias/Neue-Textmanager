@@ -123,4 +123,5 @@ def Load_text_size(Text_größe_übergabe):
     except: pass
     try:
         Settings.Smarte_Verse.Text_size(y_factor=0, x_factor=0, x_ground=10, y_ground=10, Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size))
+        Settings.RichtigeVersereihenfolge.Text_size(y_ground=20, y_factor=2, x_ground=10, x_factor=0, Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size))
     except: pass
