@@ -45,7 +45,7 @@ class Test_info:
 
 class Bild_schirm_größe_class:
 
-    def __init__(self, Seite, x_pos, y_pos, bildschirm_große_quere, bilschirm_größe_hoch,  speicherort, Bildschirm, skalierung_list, Text_hover = ""):
+    def __init__(self, Seite, bildschirm_große_quere, bilschirm_größe_hoch,  speicherort, Bildschirm, skalierung_list, Text_hover = ""):
         self.speicherort = speicherort
         self.Hauptbildschirm = Label(Seite, font=Settings.Textgröße_von_alle_Texte, text=Bildschirm, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
         with open(f"{speicherort}quere.txt", "r", encoding="utf8") as speicherort1:
@@ -115,7 +115,7 @@ class Bild_schirm_größe_class:
 
 
 class Text_scalierung():
-    def __init__(self, Anzeige_ort, command_, x_pos, y_pos, from__ = 0, to_= 100, orient_ = HORIZONTAL, backgrund= "Black", foregrund = "blue", font_ = 24, lengt = 300, with_ = 300, aktuelle_zahl = 10, size= 10,tickinterval = 25):
+    def __init__(self, Anzeige_ort, command_, from__ = 0, to_= 100, orient_ = HORIZONTAL, backgrund= "Black", foregrund = "blue", font_ = 24, lengt = 300, with_ = 300, aktuelle_zahl = 10, size= 10,tickinterval = 25):
         self.Text_größe_Textanzeiger = Scale(Anzeige_ort, from_=from__, to=to_, orient= orient_, background=backgrund, foreground=foregrund, bd=0,font=font_, length=size*15, width=size*2, command=command_, tickinterval=tickinterval)
         self.Text_größe_Textanzeiger.set(aktuelle_zahl)
         Load_settings.Load_all_collor()
@@ -180,7 +180,7 @@ class Swich_generator:
 
 class Farben_class:
 
-    def __init__(self, Anzeigefenster, Farbe_ort, x_place, y_place, Name, Text_hover = ""):
+    def __init__(self, Anzeigefenster, Farbe_ort, Name, Text_hover = ""):
         self.Farbe_ort = Farbe_ort
         self.Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Anzeigefenster, font=Settings.Textgröße_von_alle_Texte, fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, text=Name, command=self.Farbe_def, border=0)
         if len(Text_hover) > 0:

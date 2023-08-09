@@ -171,12 +171,12 @@ def Load_graphig_settings():
     Graphig_bildschirm = Toplevel(Neue_Textmanager.Textmanager)
     Graphig_bildschirm.geometry("600x800")
     Graphig_bildschirm.config(bg=Textmanager_Hintergrund)
-    Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Hintergrund", 10, 50+18*int(text_size), "Hintergrund Farbe\n auswählen", "Mit dem Button kann die Farbe des Hintergrund geändert werden")
-    Textfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Textfarbe", 30+12*int(text_size), 10+20*int(text_size), "Textfarbe\nauswählen", "Mit dem Button kann die Textfarbe geändert werden")
-    Button_Textfarbe_Button = Class_gen.Farben_class(Graphig_bildschirm, "Button_Textfarbe", 10, 10+24*int(text_size), "Button Textfarbe", "Mit dem Button kann die Textfarbe der button geändert werden die angezeigt wird, wenn der Mauszeiger uber einen Button geht")
-    Button_Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Button_Hintergrund", 10+13*int(text_size), 10+24*int(text_size), "Button Hintergrund\nfarbe", "Mit dem Button kann die Hintergrund geändert der Button werden, die angezeigt wird wenn der Mauszeiger uber einen Button geht")
-    Text_größe_anpassen = Class_gen.Text_scalierung(command_=Load_settings.Load_text_size, x_pos=10, y_pos=10+4*int(text_size), Anzeige_ort=Graphig_bildschirm, from__=5, to_=45, aktuelle_zahl=int(text_size), font_=Textgröße_von_alle_Texte, size=int(text_size), tickinterval=15)
-    Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Graphig_bildschirm, 10, 10+12*int(text_size), Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung", "Hauptbildschirm", Skalierung, "Bestätigt die eingegebene Bildschirmgröße und Bildschirm Skalierung von Hauptbildschirm von Windows")
+    Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Hintergrund", "Hintergrund Farbe\n auswählen", "Mit dem Button kann die Farbe des Hintergrund geändert werden")
+    Textfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Textfarbe", "Textfarbe\nauswählen", "Mit dem Button kann die Textfarbe geändert werden")
+    Button_Textfarbe_Button = Class_gen.Farben_class(Graphig_bildschirm, "Button_Textfarbe", "Button Textfarbe", "Mit dem Button kann die Textfarbe der button geändert werden die angezeigt wird, wenn der Mauszeiger uber einen Button geht")
+    Button_Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Button_Hintergrund", "Button Hintergrund\nfarbe", "Mit dem Button kann die Hintergrund geändert der Button werden, die angezeigt wird wenn der Mauszeiger uber einen Button geht")
+    Text_größe_anpassen = Class_gen.Text_scalierung(command_=Load_settings.Load_text_size, Anzeige_ort=Graphig_bildschirm, from__=5, to_=45, aktuelle_zahl=int(text_size), font_=Textgröße_von_alle_Texte, size=int(text_size), tickinterval=15)
+    Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Graphig_bildschirm, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung", "Hauptbildschirm", Skalierung, "Bestätigt die eingegebene Bildschirmgröße und Bildschirm Skalierung von Hauptbildschirm von Windows")
     Auto_auflösung = ResponsiveWidget(Button,Graphig_bildschirm, font=Textgröße_von_alle_Texte, text="Auto Auflösung", command=Auto_auflösung_def, bd=0)
     Button_hervorheben_class = Class_gen.Swich_generator(Graphig_bildschirm, "Button hervorheben", f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", Button_hervorheben, Neue_Textmanager.Load_Setting, Text_hover="Bringt die Butten in der eingestellte farbe zum Leuchten", zise=text_size)
     Neue_Textmanager.Load_Setting()
@@ -190,18 +190,18 @@ def Settings_Textanzeiger_def():
     Settings_Textanzeiger_Top.title("Einstellungen für Textanzeiger")
     Settings_Textanzeiger_Top.config(bg=Textmanager_Hintergrund)
     Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_Textanzeiger_Top, "Liedtextanzeige", f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", see_the_text, Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
-    Textanzeiger_Textfarbe_button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Textfarbe", 10, 170, "Textfarbe")
-    Textanzeiger_Hintergrund_Button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Hintergrund", 200, 170, "Hintergrund")
-    Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(Settings_Textanzeiger_Top, 10, 270, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm", Skalierung)
+    Textanzeiger_Textfarbe_button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Textfarbe", "Textfarbe")
+    Textanzeiger_Hintergrund_Button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Hintergrund", "Hintergrund")
+    Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(Settings_Textanzeiger_Top, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm", Skalierung)
     if Bildschirm_ausrichtung:
         Bildschirm_ausrichtung_button = ResponsiveWidget(Button,Settings_Textanzeiger_Top, font=Textgröße_von_alle_Texte, text="Rechts", command=Links, bd=0)
     else:
         Bildschirm_ausrichtung_button = ResponsiveWidget(Button, Settings_Textanzeiger_Top, font=Textgröße_von_alle_Texte, text="Links", command=Rechts, bd=0)
-    Text_größe_ändern = Class_gen.Text_scalierung(Settings_Textanzeiger_Top, Text_size_def, 10, 80, from__=0, to_=100, orient_=HORIZONTAL, backgrund=Textmanager_Hintergrund, foregrund=Textmanager_Textfarbe, aktuelle_zahl=int(Text_anzeiger_textgröße), font_=Textgröße_von_alle_Texte, size=int(text_size))
+    Text_größe_ändern = Class_gen.Text_scalierung(Settings_Textanzeiger_Top, Text_size_def, from__=0, to_=100, orient_=HORIZONTAL, backgrund=Textmanager_Hintergrund, foregrund=Textmanager_Textfarbe, aktuelle_zahl=int(Text_anzeiger_textgröße), font_=Textgröße_von_alle_Texte, size=int(text_size))
     Liedvorschau_Button = Class_gen.Swich_generator(Settings_is=Settings_Textanzeiger_Top, Textanzeige="Liedvorschau", Text_datei_save=f"Textmanager Daten\\Textmanager Daten\\Liedvorschau.txt", Text_hover="Diese Einstellung zeigt vor dem Gottesdienst die Lieder an", zise=text_size, ob_True=Liedvorschau, def_bei_offbutton=Test)
-    print(type(Liedvorschau))
     Load_settings.Load_all_collor()
     Load_settings.Load_text_size(text_size)
+
 
 def Load_SmarteSettings():
     global Settings_smarte_unterstüzung, Smarte_Verse, RichtigeVersereihenfolge
@@ -212,7 +212,6 @@ def Load_SmarteSettings():
     Smarte_Verse = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Smarte Verse", Text_datei_save=f"Textmanager Daten\\Textmanager Daten\\Smarte_verse.txt", Text_hover="Diese Einstellung schaltet Intiligente Verse ein, Falsche Verse werden gelöscht", zise=text_size, ob_True=Smarte_unterstüzung, def_bei_offbutton=Test)
     RichtigeVersereihenfolge = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Kronologische Vers Reihenfolge", Text_datei_save= f"Textmanager Daten\\Textmanager Daten\\Kronologische_Verse.txt", Text_hover="Sortiert die Verse in die Richtige reihenfolge", zise=text_size, ob_True=Kronologische_Verse, def_bei_offbutton=Test)
     Load_settings.Load_text_size(text_size)
-
 
 
 def Info():
