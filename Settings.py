@@ -52,7 +52,7 @@ def ResponsiveWidget(widget, *args, **kwargs):
     return w
 
 def Check_settings(Tkfont = True):
-    global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size, Liedvorschau,Smarte_unterstüzung, Kronologische_Verse
+    global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size, Liedvorschau,Smarte_unterstüzung, Kronologische_Verse, Smarte_Vorschläge
     with open(f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", "r", encoding='utf8') as see_the_textinfo:
         see_the_text = see_the_textinfo.read() == "True"
     with open(f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", "r", encoding='utf8') as see_the_textinfo:
@@ -81,6 +81,8 @@ def Check_settings(Tkfont = True):
         Smarte_unterstüzung = Smarte_unterstüzung1.read() == "True"
     with open(f"Textmanager Daten\\Textmanager Daten\\Kronologische_Verse.txt", "r", encoding='utf8') as Kronologische_Verse1:
         Kronologische_Verse = Kronologische_Verse1.read() == "True"
+    with open(f"Textmanager Daten\\Textmanager Daten\\Smarte_Vorschläge.txt", "r", encoding='utf8') as Smarte_Vorschläge1:
+        Smarte_Vorschläge = Smarte_Vorschläge1.read() == "True"
     if Tkfont:
         with open(f"Textmanager Daten\\Textmanager Daten\\text_size.txt", "r", encoding='utf8') as text_size1:
             text_size = text_size1.read()
@@ -204,14 +206,18 @@ def Settings_Textanzeiger_def():
 
 
 def Load_SmarteSettings():
-    global Settings_smarte_unterstüzung, Smarte_Verse, RichtigeVersereihenfolge
+    global Settings_smarte_unterstüzung, Smarte_Verse, RichtigeVersereihenfolge, Smarte_vorschlage_Button, Smarte_vorschlage_Button_top
     Settings_smarte_unterstüzung = Toplevel()
     Settings_smarte_unterstüzung.geometry("500x800")
     Settings_smarte_unterstüzung.title("Einstellungen für Smarte Unterstüzung")
     Settings_smarte_unterstüzung.config(bg=Textmanager_Hintergrund)
     Smarte_Verse = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Smarte Verse", Text_datei_save=f"Textmanager Daten\\Textmanager Daten\\Smarte_verse.txt", Text_hover="Diese Einstellung schaltet Intiligente Verse ein, Falsche Verse werden gelöscht", zise=text_size, ob_True=Smarte_unterstüzung, def_bei_offbutton=Test)
     RichtigeVersereihenfolge = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Kronologische Vers Reihenfolge", Text_datei_save= f"Textmanager Daten\\Textmanager Daten\\Kronologische_Verse.txt", Text_hover="Sortiert die Verse in die Richtige reihenfolge", zise=text_size, ob_True=Kronologische_Verse, def_bei_offbutton=Test)
+    Smarte_vorschlage_Button = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Smarte Vorschläge", Text_datei_save= f"Textmanager Daten\\Textmanager Daten\\Smarte_Vorschläge.txt", Text_hover="Lädt einprogrammierte ", zise=text_size, ob_True=Smarte_Vorschläge, def_bei_offbutton=Test)
+    Smarte_vorschlage_Button_top = ResponsiveWidget(Button, Settings_smarte_unterstüzung, font=Textgröße_von_alle_Texte, text="Vorschläge Bearbeiten", command=Test, bd=0)
     Load_settings.Load_text_size(text_size)
+    Load_settings.Load_all_collor()
+
 
 
 def Info():

@@ -87,7 +87,13 @@ def Load_all_collor():
         Settings.Settings_Graphig_option.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
         Settings.Smarte_unterstüzung_button.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     except: pass
-
+    try:
+        Settings.Settings_smarte_unterstüzung.config(bg=Settings.Textmanager_Hintergrund)
+        Settings.RichtigeVersereihenfolge.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Smarte_Verse.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Smarte_vorschlage_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Smarte_vorschlage_Button_top.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    except: pass
 
 def Load_text_size(Text_größe_übergabe):
     Settings.Textgröße_von_alle_Texte.config(size=Text_größe_übergabe)
@@ -124,4 +130,7 @@ def Load_text_size(Text_größe_übergabe):
     try:
         Settings.Smarte_Verse.Text_size(y_factor=0, x_factor=0, x_ground=10, y_ground=10, Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size))
         Settings.RichtigeVersereihenfolge.Text_size(y_ground=20, y_factor=2, x_ground=10, x_factor=0, Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size))
+        Settings.Smarte_vorschlage_Button.Text_size(y_ground=30, y_factor=4, x_ground=10, x_factor=0, Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size))
+        Settings.Smarte_vorschlage_Button_top.place(x=10, y=40+6*int(Settings.text_size))
+        Settings.Smarte_vorschlage_Button_top.config(font= Settings.Textgröße_von_alle_Texte)
     except: pass
