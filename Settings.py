@@ -95,6 +95,14 @@ def Check_settings(Tkfont = True):
             text_size = text_size1.read()
         Textgröße_von_alle_Texte = tkFont.Font(family="Helvetica", size=text_size)
 
+with open('deine_datei.txt', 'r') as datei:
+    zeilen = datei.readlines()
+
+# Beispiel: Ändere die erste Zeile
+zeilen[0] = "Dies ist die neue Zeile 1\n"
+
+with open('deine_datei.txt', 'w') as datei:
+    datei.writelines(zeilen)
 
 
 

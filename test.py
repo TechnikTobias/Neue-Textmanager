@@ -1,5 +1,12 @@
 from tkinter import * 
 import traceback
+import mysql.connector
+import os
+
+print(os.environ.get("PASS_CAM"))
+
+
+
 
 if 6:
     print("ölichduild")
