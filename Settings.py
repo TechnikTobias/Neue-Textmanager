@@ -54,7 +54,6 @@ def ResponsiveWidget(widget, *args, **kwargs):
 def Check_settings(Tkfont = True):
     global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size, Liedvorschau,Smarte_unterstüzung, Kronologische_Verse, Smarte_Vorschläge
     Speicherort = os.path.dirname(os.path.abspath(__file__))
-    
     with open(f"{Speicherort}\\Textmanager Daten\\Textmanager Daten\\see_the_text.txt", "r", encoding='utf8') as see_the_textinfo:
         see_the_text2 = see_the_textinfo.read()
         see_the_text = see_the_text2[0] == "True"
@@ -95,14 +94,6 @@ def Check_settings(Tkfont = True):
             text_size = text_size1.read()
         Textgröße_von_alle_Texte = tkFont.Font(family="Helvetica", size=text_size)
 
-with open('deine_datei.txt', 'r') as datei:
-    zeilen = datei.readlines()
-
-# Beispiel: Ändere die erste Zeile
-zeilen[0] = "Dies ist die neue Zeile 1\n"
-
-with open('deine_datei.txt', 'w') as datei:
-    datei.writelines(zeilen)
 
 
 
