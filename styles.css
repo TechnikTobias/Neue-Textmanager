@@ -1,0 +1,32 @@
+/* Styles für den "befehlContainer" (der Container für Befehle) */
+#befehlContainer {
+    border: 1px solid #ccc;
+    padding: 10px;
+    min-height: 100px;
+}
+
+/* Styles für die Befehle, die per Drag-and-Drop verschoben werden können */
+.befehl {
+    background-color: #f0f0f0;
+    border: 1px solid #aaa;
+    padding: 5px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+/* Styles für den "ablaufContainer" (der Container für die Abläufe) */
+#ablaufContainer {
+    border: 1px solid #ccc;
+    padding: 10px;
+    min-height: 200px;
+}
+
+/* Styles für den "Weiter"-Button */
+#weiterButton {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
