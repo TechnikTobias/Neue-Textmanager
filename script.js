@@ -5,46 +5,35 @@ const weiterButton = document.getElementById('weiterButton');
 neuerBefehlButton.addEventListener('click', () => {
     const newBefehl = document.createElement('div');
     newBefehl.className = 'befehl';
-    newBefehl.textContent = 'Neuer Befehl';
-    newBefehl.draggable = true;
+    newBefehl.innerHTML = `
+        <span class="up-arrow">&#9650;</span>
+        <span class="down-arrow">&#9660;</span>
+        <span class="befehl-text">Neuer Befehl</span>
+    `;
 
-    // Event-Listener für das Ziehen des Befehls
-    newBefehl.addEventListener('dragstart', (event) => {
-        event.dataTransfer.setData('text/plain', event.target.id);
-    });
+    befehlContainer.appendChild(newBefehl);
 
-    // Event-Listener für das Bearbeiten des Befehls
-    newBefehl.addEventListener('dblclick', () => {
-        const newName = prompt('Neuen Namen eingeben:', newBefehl.textContent);
-        if (newName !== null) {
-            newBefehl.textContent = newName;
+    // Event-Listener für das Ändern der Reihenfolge nach oben
+    const upArrow = newBefehl.querySelector('.up-arrow');
+    upArrow.addEventListener('click', () => {
+        const previousSibling = newBefehl.previousElementSibling;
+        if (previousSibling) {
+            befehlContainer.insertBefore(newBefehl, previousSibling);
         }
     });
 
-    befehlContainer.appendChild(newBefehl);
-});
-
-befehlContainer.addEventListener('dragstart', (event) => {
-    event.dataTransfer.setData('text/plain', event.target.id);
-});
-
-befehlContainer.addEventListener('dragover', (event) => {
-    event.preventDefault();
-});
-
-befehlContainer.addEventListener('drop', (event) => {
-    event.preventDefault();
-    const befehlId = event.dataTransfer.getData('text/plain');
-    const befehlElement = document.getElementById(befehlId);
-    
-    // Stellen Sie sicher, dass befehlElement ein gültiges Element ist
-    if (befehlElement) {
-        befehlContainer.insertBefore(befehlElement, event.target);
-    }
+    // Event-Listener für das Ändern der Reihenfolge nach unten
+    const downArrow = newBefehl.querySelector('.down-arrow');
+    downArrow.addEventListener('click', () => {
+        const nextSibling = newBefehl.nextElementSibling;
+        if (nextSibling) {
+            befehlContainer.insertBefore(nextSibling, newBefehl);
+        }
+    });
 });
 
 weiterButton.addEventListener('click', () => {
-    const befehle = document.querySelectorAll('.befehl');
+    const befehle = document.querySelectorAll('.befehl .befehl-text');
 
     befehle.forEach((befehl, index) => {
         console.log("Führe Befehl aus: " + befehl.textContent);
