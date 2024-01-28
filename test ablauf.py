@@ -10,12 +10,6 @@ def add_command():
         commands_list.insert(tk.END, f"Name: {command_name}, Befehl: {selected_command}")
         entry.delete(0, tk.END)
 
-def delete_command():
-    selected_index = commands_list.curselection()
-    if selected_index:
-        selected_index = selected_index[0]
-        commands_list.delete(selected_index)
-
 def move_up():
     selected_index = commands_list.curselection()
     if selected_index:
@@ -44,14 +38,20 @@ def on_key(event):
     elif event.keysym == 'Down':
         move_down()
 
-
 def execute_command():
-    selected_index = commands_list.curselection()
-    if selected_index:
-        selected_index = selected_index[0]
+    global current_index
+    selected_index = current_index
+    if selected_index is not None:
         command = commands_list.get(selected_index)
-        print("Executing command:", command)
-        # Hier können Sie den Befehl ausführen oder andere Aktionen durchführen
+        yes= command.split(",")
+        no= yes[1].split(":")
+        if no[1] == " Befehl 1":
+            print("Befehl 1 wurde ausgeführt")
+        elif no[1] == " Befehl 2":
+            print("Befehl 2 wurde ausgeführt")
+        elif no[1] == " Befehl 3":
+            print("Befehl 3 wurde ausgeführt")
+
 
 def confirm_commands():
     commands = list(commands_list.get(0, tk.END))
@@ -85,6 +85,22 @@ def update_display():
 
 
 def switch_to_navigation():
+    for i in range (1, len(commands_list)):
+        command = commands_list.get(i)
+        ablaufsteuerung = tk.Toplevel(root)
+        ablaufsteuerung.title("Ablaufsteuerung")
+        lable_name=tk.Label
+        liste = tk.StringVar()
+        liste.set(commands[0])
+        checkbutton_list = tk.OptionMenu(ablaufsteuerung, liste, *commands)
+        checkbutton_list.pack()
+
+        entry_buch = tk.Entry(ablaufsteuerung)
+        entry_buch.pack()
+        tk.Label
+        tk.Entry
+
+
     global current_index
     current_index = 0
     update_display()
@@ -121,10 +137,7 @@ command_combobox.pack(fill='x')
 add_button = tk.Button(frame, text="Hinzufügen", command=add_command)
 add_button.pack(fill='x')
 
-delete_button = tk.Button(frame, text="Löschen", command=delete_command)
-delete_button.pack(fill='x')
-
-commands_list = tk.Listbox(frame, selectmode=tk.SINGLE)
+commands_list = tk.Listbox(frame, selectmode=tk.SINGLE, width=35)
 commands_list.pack(fill='both', expand=True)
 
 commands_list.insert(tk.END, f"Name: Eingslied, Befehl: Befehl 1")
