@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
+Liste_der_Befehle = ["Textwort", "Lieder", "Kamera"]
+
 def add_command():
     command_name = entry.get()
     selected_command = command_combobox.get()
@@ -45,11 +47,11 @@ def execute_command():
         command = commands_list.get(selected_index)
         yes= command.split(",")
         no= yes[1].split(":")
-        if no[1] == " Befehl 1":
+        if no[1] == Liste_der_Befehle[0]:
             print("Befehl 1 wurde ausgeführt")
-        elif no[1] == " Befehl 2":
+        elif no[1] == Liste_der_Befehle[1]:
             print("Befehl 2 wurde ausgeführt")
-        elif no[1] == " Befehl 3":
+        elif no[1] == Liste_der_Befehle[2]:
             print("Befehl 3 wurde ausgeführt")
 
 
@@ -83,23 +85,56 @@ def update_display():
     selected_command = commands_list.get(selected_index)
     display_label.config(text=selected_command)
 
+def inhalt_auslesen():
+    for i in range (1, len(commands_list.get(0, tk.END))):
+        if (inhalt[i-1][0]) == Liste_der_Befehle[1]:
+            print(inhalt[i-1][1].get())
+        if (inhalt[i-1][0]) == Liste_der_Befehle[0]:
+            print("Textwort")
+        if (inhalt[i-1][0]) == Liste_der_Befehle[2]:
+            print("Kamera")
+
 
 def switch_to_navigation():
-    for i in range (1, len(commands_list)):
+    global inhalt 
+    inhalt = []
+    ablaufsteuerung = tk.Toplevel(root)
+    ablaufsteuerung.title("Ablaufsteuerung")
+    for i in range (1, len(commands_list.get(0, tk.END))):
+        aufbau = []
         command = commands_list.get(i)
-        ablaufsteuerung = tk.Toplevel(root)
-        ablaufsteuerung.title("Ablaufsteuerung")
-        lable_name=tk.Label
-        liste = tk.StringVar()
-        liste.set(commands[0])
-        checkbutton_list = tk.OptionMenu(ablaufsteuerung, liste, *commands)
-        checkbutton_list.pack()
+        command_split = command.split(",")
+        comand_split = command_split[0].split(":")
+        Befehl = command_split[1].split(":")
+        lable_eingabe = tk.LabelFrame(ablaufsteuerung, background="black")
+        lable_eingabe.pack()
+        lable_name=tk.Label(lable_eingabe, text=comand_split[1])
+        lable_name.pack()
+        if Befehl[1] == Liste_der_Befehle[1]:
+            aufbau.append(Liste_der_Befehle[1])
+            liste = tk.StringVar()
+            liste.set(Befehl[1])
+            checkbutton_list = tk.OptionMenu(lable_eingabe, liste, *Liste_der_Befehle)
+            checkbutton_list.pack()
+            liednummer_lable=tk.Label(lable_eingabe,text="Liednummer")
+            liednummer_lable.pack()
+            entry_buch = tk.Entry(lable_eingabe)
+            entry_buch.pack()
+            tk.Label
+            tk.Entry
+            aufbau.append(entry_buch)
 
-        entry_buch = tk.Entry(ablaufsteuerung)
-        entry_buch.pack()
-        tk.Label
-        tk.Entry
-
+        elif Befehl[1] == Liste_der_Befehle[0]:
+            aufbau.append(Liste_der_Befehle[0])
+            lable_kamera = tk.Button(lable_eingabe, text="Textwort")
+            lable_kamera.pack()
+        elif Befehl[1] == Liste_der_Befehle[2]:
+            aufbau.append(Liste_der_Befehle[2])
+            lable_ka = tk.Label(lable_eingabe, text="Kamera")
+            lable_ka.pack()
+        button_abgabe = tk.Button(ablaufsteuerung,text="Ausgabe", command=inhalt_auslesen)
+        button_abgabe.pack()
+        inhalt.append(aufbau)
 
     global current_index
     current_index = 0
@@ -130,8 +165,7 @@ entry.pack(fill='x')
 command_label = tk.Label(frame, text="Befehl auswählen:")
 command_label.pack(fill='x')
 
-commands = ["Befehl 1", "Befehl 2", "Befehl 3"]  # Hier können Sie Ihre Befehle hinzufügen
-command_combobox = ttk.Combobox(frame, values=commands)
+command_combobox = ttk.Combobox(frame, values=Liste_der_Befehle)
 command_combobox.pack(fill='x')
 
 add_button = tk.Button(frame, text="Hinzufügen", command=add_command)
@@ -140,12 +174,12 @@ add_button.pack(fill='x')
 commands_list = tk.Listbox(frame, selectmode=tk.SINGLE, width=35)
 commands_list.pack(fill='both', expand=True)
 
-commands_list.insert(tk.END, f"Name: Eingslied, Befehl: Befehl 1")
-commands_list.insert(tk.END, f"Name: Textwort, Befehl: Befehl 1")
-commands_list.insert(tk.END, f"Name: Amstwechsel, Befehl: Befehl 3")
-commands_list.insert(tk.END, f"Name: Bußlied <,Befehl: Befehl 1")
-commands_list.insert(tk.END, f"Name: Abendmahlslied, Befehl: Befehl 2")
-commands_list.insert(tk.END, f"Name: Schlusslied, Befehl: Befehl 1")
+commands_list.insert(tk.END, f"Name: Eingslied, Befehl:{Liste_der_Befehle[1]}")
+commands_list.insert(tk.END, f"Name: Textwort, Befehl:{Liste_der_Befehle[1]}")
+commands_list.insert(tk.END, f"Name: Amstwechsel, Befehl:{Liste_der_Befehle[2]}")
+commands_list.insert(tk.END, f"Name: Bußlied,Befehl:{Liste_der_Befehle[0]}")
+commands_list.insert(tk.END, f"Name: Abendmahlslied, Befehl:{Liste_der_Befehle[1]}")
+commands_list.insert(tk.END, f"Name: Schlusslied, Befehl:{Liste_der_Befehle[1]}")
 
 up_button = tk.Button(frame, text="Nach oben", command=move_up)
 up_button.pack(fill='x')
