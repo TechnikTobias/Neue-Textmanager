@@ -7,6 +7,16 @@ print(os.environ.get("PASS_CAM"))
 
 
 
+def ResponsiveWidget(widget, *args, **kwargs):
+    bindings = {'<Enter>': {'state': 'active'},
+                '<Leave>': {'state': 'normal'}}
+    w = widget(*args, **kwargs)
+    for (k, v) in bindings.items():
+        w.bind(k, lambda e, kwarg=v: e.widget.config(**kwarg))
+    return w
+
+Button_test = ResponsiveWidget(Button, test)
+
 if 6:
     print("ölichduild")
 

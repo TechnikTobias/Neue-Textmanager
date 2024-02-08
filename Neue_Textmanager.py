@@ -5,10 +5,11 @@ import os
 import Settings
 import Kamera
 import Lied_Kontrolle
-import Help
 import Load_settings
 
-Programm_ort = os.getlogin()
+All_entitie_save = []
+
+Programm_ort = os.path.dirname(os.path.abspath(__file__))
 
 
 def Start():
@@ -18,7 +19,7 @@ def Start():
     Textmanager.title("Textmanager")
     Textmanager.config(bg=Settings.Textmanager_Hintergrund)
     Textmanager.geometry("1040x800")
-    Textmanager.iconbitmap(f"C:\\Users\\{Programm_ort}\\Desktop\\Lieder\\picture_compress 1.ico")
+    Textmanager.iconbitmap(f"{Programm_ort}\\Bild.ico")
     Textmanager.bind("<F11>", Settings.Test)
     Menu_generator()
     Load_Setting()
@@ -40,7 +41,7 @@ def Menu_generator():
     Menu_Kamera.add_command(label="Position", command=Kamera.Position)
     Menu_LiedKontrolle.add_command(label="Einstellungen", command=Lied_Kontrolle.Settings)
     Menu_LiedKontrolle.add_command(label="Lied Kontrolieren", command=Lied_Kontrolle.controll)
-    Menu_Help.add_command(label="Hilfe", command=Help.Help)
+    Menu_Help.add_command(label="Hilfe")
     Textmanager.config(menu=Menu_Settings)
 
 def Load_Setting():
