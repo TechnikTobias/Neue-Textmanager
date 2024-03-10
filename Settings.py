@@ -57,8 +57,6 @@ def Check_settings(Tkfont = True):
     with open(f"{Speicherort}\\Textmanager Daten\\Textmanager Daten\\see_the_text.txt", "r", encoding='utf8') as see_the_textinfo:
         see_the_text2 = see_the_textinfo.read()
         see_the_text = see_the_text2[0] == "True"
-    print((see_the_text2[0]))
-    print(see_the_text)
     if str(see_the_text2) == see_the_text:
         print("Ja")
     with open(f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", "r", encoding='utf8') as see_the_textinfo:

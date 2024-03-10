@@ -1,6 +1,6 @@
 import sqlite3 as db
 
-conn = db.connect("C:\\Users\\tobia\\Github\\Neue Textmanager\\Neue-Textmanager\\Textmanager Daten\\Lieder Datenbank\\Textmanager Datenbank.db")
+conn = db.connect("C:\\Users\\tobia\\Github\\Neue Textmanager\\Textmanager Daten\\Lieder Datenbank\\Textmanager Datenbank.db")
 cursor = conn.cursor()
 
 
