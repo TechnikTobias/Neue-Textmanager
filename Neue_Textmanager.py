@@ -34,12 +34,20 @@ def Start():
     Textmanager.geometry("1040x800")
     Textmanager.iconbitmap(f"{Programm_ort}\\Bild.ico")
     Textmanager.bind("<F11>", Settings.Test)
+    Textmanager.bind("<Configure>", on_resize)
     Menu_generator()
     Load_Setting()
 
     for pos,i in enumerate (input_lieder):
-        alle_inhalt.append(gegerator_lieder(i))
-    posistion()
+        alle_inhalt.append(gegerator_lieder(i, pos))
+
+
+
+def on_resize(event):
+    with_size= Textmanager.winfo_width()
+    hight_size = Textmanager.winfo_height()
+    posistion(with_size, hight_size)
+
 
 def Menu_generator():
     global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help
@@ -68,30 +76,56 @@ def Load_Setting():
 
 
 
-def gegerator_lieder(input):
+def gegerator_lieder(input, pos):
     ja = input.split(",")
     name_lied = ja[0].split(":")
     aktion = ja[1].split(":")
     inhalt = []
-    main = Label(Textmanager, width=500, height=30, font=("Helvetica", 1))
-    Lied_start = Button(main, text=name_lied[1])
-    Lied_start.place(relx=0,rely=0)
+    inhalt.append(aktion[1])
+    Lied_start = Label(Textmanager, text=name_lied[1])
+    Lied_start.place(relwidth=0.15, relheight=0.05)
+    inhalt.append(Lied_start)
     if aktion[1] == " Textwort":
-        Button_Textwrt = Button(main, text="Textwort")
-        Button_Textwrt.place(relx=0,rely=0.45)
+        Button_Textwrt = Button(Textmanager, text="Textwort")
+        #Button_Textwrt.place(relx=0,rely=0.05,relwidth=0.02, relheight=0.01)
+        inhalt.append(Button_Textwrt)
     elif aktion[1] == " Kamera":
-        Lable_Kamer = Label(main, text="Kamera")
-        Lable_Kamer.place(relx=0,rely=0.45)
+        Lable_Kamer = Button(Textmanager, text="Kamera")
+        #Lable_Kamer.place(relx=0,rely=0.05,relwidth=0.2, relheight=0.1)
+        befehle = ["Kamera", "Textwort", "Lied"]
+        clicked = StringVar()
+        clicked.set(befehle[0])
+        opt = OptionMenu(Textmanager, clicked, *befehle)
+        opt.config(font=('Helvetica', 15), fg="black", bg="white")
+        #opt.place(relx=0.12, rely=0.15,relwidth=0.2, relheight=0.1)
+        eingabe_Lied = Entry(Textmanager, )
+        #eingabe_Lied.place(rely= 0, relx= 0.03,relwidth=0.2, relheight=0.1)
+        inhalt.append(eingabe_Lied)
     elif aktion[1] == " Lied":
-        lied_weiter = Button(main, text= "servus")
-        lied_weiter.place(relx=0,rely=0.45)
-    inhalt.append(main)
+        lied_weiter = Button(Textmanager, text= "servus", border=0)
+        lied_weiter.place(relwidth=0.15, relheight=0.05)
+        inhalt.append(lied_weiter)
     return inhalt
 
 
-def posistion():
+def posistion(fenster_width, fenster_height):
     for pos, i in enumerate (alle_inhalt):
-        for o in i:
-            o.place(y=pos*80)
-
+        text_size = min( int(i[1].winfo_height()/3), int(i[1].winfo_width()/10))
+        i[1].config(font=('Helvetica', text_size))
+        if pos == 0:
+            i[1].place(x= 0, y= 0)
+            if i[0] == " Textwort":
+                pass
+            elif i[0] == " Kamera":
+                pass
+            elif i[0] == " Lied":
+                pass
+        else:
+            i[1].place(x= 0, y= pos*fenster_height/9)
+            if i[0] == " Textwort":
+                pass
+            elif i[0] == " Kamera":
+                pass
+            elif i[0] == " Lied":
+                i[2].place(x= 0, y= pos*fenster_height/9+i[1].winfo_height()+2)
 
