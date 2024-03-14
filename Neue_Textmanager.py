@@ -44,6 +44,7 @@ def Start():
 
 
 def on_resize(event):
+    print(event)
     with_size= Textmanager.winfo_width()
     hight_size = Textmanager.winfo_height()
     posistion(with_size, hight_size)
@@ -89,19 +90,24 @@ def gegerator_lieder(input, pos):
         Button_Textwrt = Button(Textmanager, text="Textwort")
         #Button_Textwrt.place(relx=0,rely=0.05,relwidth=0.02, relheight=0.01)
         inhalt.append(Button_Textwrt)
-    elif aktion[1] == " Kamera":
+    elif aktion[1] == " Lied":
         Lable_Kamer = Button(Textmanager, text="Kamera")
-        #Lable_Kamer.place(relx=0,rely=0.05,relwidth=0.2, relheight=0.1)
+        Lable_Kamer.place(relwidth=0.15, relheight=0.05)
+        inhalt.append(Lable_Kamer)
         befehle = ["Kamera", "Textwort", "Lied"]
         clicked = StringVar()
         clicked.set(befehle[0])
         opt = OptionMenu(Textmanager, clicked, *befehle)
         opt.config(font=('Helvetica', 15), fg="black", bg="white")
-        #opt.place(relx=0.12, rely=0.15,relwidth=0.2, relheight=0.1)
+        opt.place(relwidth=0.15, relheight=0.05)
+        inhalt.append(opt)
         eingabe_Lied = Entry(Textmanager, )
-        #eingabe_Lied.place(rely= 0, relx= 0.03,relwidth=0.2, relheight=0.1)
+        eingabe_Lied.place(relwidth=0.15, relheight=0.05)
         inhalt.append(eingabe_Lied)
-    elif aktion[1] == " Lied":
+        eingabe_Vers = Entry(Textmanager, )
+        eingabe_Vers.place(relwidth=0.15, relheight=0.05)
+        inhalt.append(eingabe_Vers)
+    elif aktion[1] == " Kamera":
         lied_weiter = Button(Textmanager, text= "servus", border=0)
         lied_weiter.place(relwidth=0.15, relheight=0.05)
         inhalt.append(lied_weiter)
@@ -124,8 +130,15 @@ def posistion(fenster_width, fenster_height):
             i[1].place(x= 0, y= pos*fenster_height/9)
             if i[0] == " Textwort":
                 pass
-            elif i[0] == " Kamera":
-                pass
             elif i[0] == " Lied":
+                i[2].place(x= 0, y= pos*fenster_height/9+i[1].winfo_height()+2)
+                i[2].config(font=('Helvetica', text_size))
+                i[3].place(x= i[1].winfo_width()+2, y= pos*fenster_height/9)
+                i[3].config(font=('Helvetica', text_size))
+                i[4].place(x= i[1].winfo_width()+2+i[2].winfo_width()+2, y= pos*fenster_height/9)
+                i[4].config(font=('Helvetica', text_size))
+                i[5].place(x= i[1].winfo_width()+2+i[2].winfo_width()+2, y= pos*fenster_height/9+i[4].winfo_height()+2)
+                i[5].config(font=('Helvetica', text_size))
+            elif i[0] == " Kamera":
                 i[2].place(x= 0, y= pos*fenster_height/9+i[1].winfo_height()+2)
 
