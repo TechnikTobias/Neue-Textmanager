@@ -55,10 +55,7 @@ def Check_settings(Tkfont = True):
     global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size, Liedvorschau,Smarte_unterstüzung, Kronologische_Verse, Smarte_Vorschläge
     Speicherort = os.path.dirname(os.path.abspath(__file__))
     with open(f"{Speicherort}\\Textmanager Daten\\Textmanager Daten\\see_the_text.txt", "r", encoding='utf8') as see_the_textinfo:
-        see_the_text2 = see_the_textinfo.read()
-        see_the_text = see_the_text2[0] == "True"
-    if str(see_the_text2) == see_the_text:
-        print("Ja")
+        see_the_text = see_the_textinfo.read() == "True"
     with open(f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", "r", encoding='utf8') as see_the_textinfo:
         Button_hervorheben = see_the_textinfo.read() == "True"
     with open(f"Textmanager Daten\\Textmanager Daten\\Vers_kontroll.txt", "r", encoding='utf8') as see_the_textinfo:
