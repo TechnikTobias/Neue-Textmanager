@@ -8,7 +8,7 @@ import Lied_Kontrolle
 import Load_settings
 
 Speicherort = os.path.dirname(os.path.abspath(__file__))
-factor = 1.
+factor = 1.2
 
 conn = sqlite3.connect(f"{Speicherort}\\Textmanager Daten\\Lieder Datenbank\\Lieder Datenbank.db")
 cursor = conn.cursor()
@@ -89,7 +89,7 @@ def gegerator_lieder(input, pos, factor):
         #Button_Textwrt.place(relx=0,rely=0.05,relwidth=0.02, relheight=0.01)
         inhalt.append(Button_Textwrt)
     elif aktion[1] == " Lied":
-        Lable_Kamer = Button(Textmanager, text="Kamera")
+        Lable_Kamer = Button(Textmanager, text="Kamera", border=0)
         inhalt.append(Lable_Kamer)
         befehle = ["Kamera", "Textwort", "Lied"]
         clicked = StringVar()
@@ -101,6 +101,12 @@ def gegerator_lieder(input, pos, factor):
         inhalt.append(eingabe_Lied)
         eingabe_Vers = Entry(Textmanager, )
         inhalt.append(eingabe_Vers)
+        befehle_buch = ["Kamera", "Textwort", "Lied"]
+        clicked_buch = StringVar()
+        clicked_buch.set(befehle[0])
+        opt_buch = OptionMenu(Textmanager, clicked_buch, *befehle_buch)
+        opt_buch.config(font=('Helvetica', 15), fg="black", bg="white", )
+        inhalt.append(opt_buch)
     elif aktion[1] == " Kamera":
         lied_weiter = Button(Textmanager, text= "servus", border=0)
         inhalt.append(lied_weiter)
@@ -115,20 +121,21 @@ def posistion(fenster_width, fenster_height, factor):
             i[1].place(x= 0, y= 0,relwidth=0.15*factor, relheight=0.05*factor)
             i[1].config(font=('Helvetica', text_size))
         else:
-            i[1].place(x= 0, y= pos*fenster_height/9*factor,relwidth=0.15*factor, relheight=0.05*factor)
+            i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[1].config(font=('Helvetica', text_size))
         if i[0] == " Textwort":
             pass
         elif i[0] == " Lied":
-            i[2].place(x= 0, y= pos*fenster_height/9*factor+2+i[1].winfo_height(),relwidth=0.15*factor, relheight=0.05*factor)
+            i[2].place(x= 0, y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].config(font=('Helvetica', text_size))
-            i[3].place(x= (i[1].winfo_width()+2), y= pos*fenster_height/9*factor,relwidth=0.15*factor, relheight=0.05*factor)
+            i[3].place(x= (i[1].winfo_width()+1), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[3].config(font=('Helvetica', text_size))
-            i[4].place(x= (i[1].winfo_width()+4+i[2].winfo_width()), y= pos*fenster_height/9*factor,relwidth=0.15*factor, relheight=0.05*factor)
+            i[4].place(x= (i[1].winfo_width()+2+i[2].winfo_width()), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[4].config(font=('Helvetica', text_size))
-            i[5].place(x= (i[1].winfo_width()+4+i[2].winfo_width()), y= pos*fenster_height/9*factor+i[4].winfo_height()+2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[5].place(x= (i[1].winfo_width()+2+i[2].winfo_width()), y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[5].config(font=('Helvetica', text_size))
+            i[6].place(x= (i[1].winfo_width()+2+i[2].winfo_width())+2+i[2].winfo_width(), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
         elif i[0] == " Kamera":
-            i[2].place(x= 0, y= pos*fenster_height/9*factor+i[1].winfo_height()+2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[2].place(x= 0, y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].config(font=('Helvetica', text_size))
 
