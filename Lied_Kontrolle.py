@@ -1,4 +1,5 @@
 from tkinter import *
+import datenverarbeiten
 
 
 
@@ -7,4 +8,4 @@ def Settings():
     pass
 
 def controll():
-    pass
+    datenverarbeiten.setup_ui()

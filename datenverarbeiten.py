@@ -17,6 +17,9 @@ def add_or_edit_song(song_id=None):
         nonlocal song_id
         book_name = book_name_entry.get()
         song_number = song_number_entry.get()
+        Uhrheberecht = Uhrheberecht_strinVar.get()
+        min_vers = min_vers_entry.get()
+        song_name = song_name_entry.get()
 
         if not book_name or not song_number:
             print("Buchname und Liednummer müssen ausgefüllt werden.")
@@ -26,7 +29,7 @@ def add_or_edit_song(song_id=None):
             conn = get_db_connection()
             cursor = conn.cursor()
             if song_id:  # Update existing song
-                cursor.execute("UPDATE songs SET book_name = ?, song_number = ? WHERE song_id = ?", (book_name, song_number, song_id))
+                cursor.execute("UPDATE songs SET book_name = ?, song_number = ?, Uhrheberecht = ?, min_vers = ?, song_name = ? WHERE song_id = ?", (book_name, song_number, Uhrheberecht, min_vers, song_name, song_id))
             else:  # Add new song
                 cursor.execute("INSERT INTO songs (book_name, song_number) VALUES (?, ?)", (book_name, song_number))
                 song_id = cursor.lastrowid
@@ -69,6 +72,18 @@ def add_or_edit_song(song_id=None):
     song_number_label.pack(side=tk.LEFT)
     song_number_entry = tk.Entry(top_frame)
     song_number_entry.pack(side=tk.LEFT)
+
+    Uhrheberecht_wahl = ["Geschüschtz", "Nicht geschütz"]
+    Uhrheberecht_strinVar = StringVar()
+    Uhrheberecht_strinVar.set(Uhrheberecht_wahl[1])
+    Uhrheberecht_optionMenü = OptionMenu(top_frame, Uhrheberecht_strinVar, *Uhrheberecht_wahl)
+    Uhrheberecht_optionMenü.pack(side=tk.LEFT)
+
+    min_vers_entry = tk.Entry(top_frame)
+    min_vers_entry.pack(side=tk.LEFT)
+
+    song_name_entry = tk.Entry(top_frame)
+    song_name_entry.pack(side=tk.LEFT)
 
     canvas = tk.Canvas(edit_window)
     scrollbar = tk.Scrollbar(edit_window, command=canvas.yview)

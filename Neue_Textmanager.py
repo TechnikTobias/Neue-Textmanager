@@ -10,19 +10,19 @@ import Load_settings
 Speicherort = os.path.dirname(os.path.abspath(__file__))
 factor = 1.2
 
-conn = sqlite3.connect(f"{Speicherort}\\Textmanager Daten\\Lieder Datenbank\\Lieder Datenbank.db")
-cursor = conn.cursor()
-cursor.execute("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Ablauf",))
-verses = cursor.fetchall()
-input_lieder = (str(verses[0]).split("!"))
-zeichen_zum_entfernen = "'()"
+def Einstellung_laden(Einstellugen_name):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT supjekt FROM Einstellungen WHERE name = ?", (Einstellugen_name,))
+    verses = cursor.fetchall()
+    input_lieder = (str(verses[0]).split("!"))
+    zeichen_zum_entfernen = "'()"
+    input_lieder = [element.translate({ord(zeichen): None for zeichen in zeichen_zum_entfernen}) for element in input_lieder]
+    return input_lieder
 
-# Entferne die Zeichen aus dem String
-input_lieder = [element.translate({ord(zeichen): None for zeichen in zeichen_zum_entfernen}) for element in input_lieder]
-All_entitie_save = []
-
-Programm_ort = os.path.dirname(os.path.abspath(__file__))
-
+def get_db_connection():
+    conn = sqlite3.connect(f"{Speicherort}\\Textmanager Daten\\Lieder Datenbank\\Lieder Datenbank.db")
+    return conn
 
 def Start():
     global Textmanager, alle_inhalt
@@ -32,14 +32,15 @@ def Start():
     Textmanager.title("Textmanager")
     Textmanager.config(bg=Settings.Textmanager_Hintergrund)
     Textmanager.geometry("1040x800")
-    Textmanager.iconbitmap(f"{Programm_ort}\\Bild.ico")
+    Textmanager.iconbitmap(f"{Speicherort}\\Bild.ico")
     Textmanager.bind("<F11>", Settings.Test)
     Textmanager.bind("<Configure>", on_resize)
     Menu_generator()
     Load_Setting()
 
-    for pos,i in enumerate (input_lieder):
+    for pos,i in enumerate (Einstellung_laden("Ablauf")):
         alle_inhalt.append(gegerator_lieder(i, pos, factor))
+    eingabe_änderung("hallo")
 
 
 
@@ -89,60 +90,97 @@ def gegerator_lieder(input, pos, factor):
         #Button_Textwrt.place(relx=0,rely=0.05,relwidth=0.02, relheight=0.01)
         inhalt.append(Button_Textwrt)
     elif aktion[1] == " Lied":
-        Lable_Kamer = Button(Textmanager, text="Kamera", border=0)
-        inhalt.append(Lable_Kamer)
+        Lable_Kamera = Button(Textmanager, text="Kamera", border=0)
+        inhalt.append(Lable_Kamera)
         befehle = ["Kamera", "Textwort", "Lied"]
         clicked = StringVar()
         clicked.set(befehle[0])
         opt = OptionMenu(Textmanager, clicked, *befehle)
         opt.config(font=('Helvetica', 15), fg="black", bg="white")
+        inhalt.append(clicked)
         inhalt.append(opt)
         eingabe_Lied = Entry(Textmanager)
         eingabe_Lied.bind("<KeyRelease>", eingabe_änderung)
         inhalt.append(eingabe_Lied)
         eingabe_Vers = Entry(Textmanager)
+        eingabe_Vers.bind("<KeyRelease>", eingabe_änderung)
         inhalt.append(eingabe_Vers)
-        befehle_buch = ["Kamera", "Textwort", "Lied"]
+        befehle_buch = ["Gesangbuch", "Textwort", "Lied"]
         clicked_buch = StringVar()
         clicked_buch.set(befehle[0])
-        opt_buch = OptionMenu(Textmanager, clicked_buch, *befehle_buch)
+        opt_buch = OptionMenu(Textmanager, clicked_buch, *befehle_buch, command=eingabe_änderung)
         opt_buch.config(font=('Helvetica', 15), fg="black", bg="white", )
+        inhalt.append(clicked_buch)
         inhalt.append(opt_buch)
         Tex_lied_lable = Label(Textmanager)
         inhalt.append(Tex_lied_lable)
     elif aktion[1] == " Kamera":
         lied_weiter = Button(Textmanager, text= "servus", border=0)
         inhalt.append(lied_weiter)
+        befehle = ["Kamera", "Textwort", "Lied"]
+        clicked = StringVar()
+        clicked.set(befehle[0])
+        opt = OptionMenu(Textmanager, clicked, *befehle)
+        opt.config(font=('Helvetica', 15), fg="black", bg="white")
+        inhalt.append(clicked)
     return inhalt
 
 
 def eingabe_änderung(event):
-    print(True)
+    for pos, i in enumerate(alle_inhalt):
+        if i[0] == " Textwort":
+            pass
+        elif i[0] == " Lied":
+            i[3].get()
+            i[5].get()
+            i[6].get()
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT song_name FROM songs WHERE song_number = ? AND book_name = ?", (i[5].get(),i[7].get()))
+            song = cursor.fetchone()
+            Vers_info = i[6].get()
+            if not Vers_info:
+                text_einfügen = ""
+            elif len(Vers_info) == 1:
+                text_einfügen = f"Vers {Vers_info}"
+            elif len(Vers_info) > 1:
+                text_einfügen = f"Verse {Vers_info}"
+            if song:
+                Text_speicher = f"{i[7].get()} Liednummer {i[5].get()} {text_einfügen}\n{song[0]}"
+                i[9].config(text= Text_speicher)
+            else:
+                i[9].config(text = "Bitte geben sie eine Nummer ein")
+        elif i[0] == " Kamera":
+            pass
+            #cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? ORDER BY verse_number", (song_id,))
+            #verses = cursor.fetchall()
+            #for i, verse_text in enumerate(verses):
+                #verse_widget = tk.Text(verse_frame, font=("Helvetica", 10), height=12, width=44)
+                #verse_widget.grid(row=i // 3, column=i % 3, padx=5, pady=5)
+                #verse_widget.insert(tk.END, verse_text[0])
+                #verse_widgets.append(verse_widget)
+
 
 
 def posistion(fenster_width, fenster_height, factor):
     for pos, i in enumerate (alle_inhalt):
         text_size = min( int(i[1].winfo_height()/3*factor), int(i[1].winfo_width()/10*factor))
         i[1].config(font=('Helvetica', text_size))
-        if pos == 0:
-            i[1].place(x= 0, y= 0,relwidth=0.15*factor, relheight=0.05*factor)
-            i[1].config(font=('Helvetica', text_size))
-        else:
-            i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
-            i[1].config(font=('Helvetica', text_size))
+        i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
+        i[1].config(font=('Helvetica', text_size))
         if i[0] == " Textwort":
             pass
         elif i[0] == " Lied":
             i[2].place(x= 0, y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].config(font=('Helvetica', text_size))
-            i[3].place(x= (i[1].winfo_width()+1), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
-            i[3].config(font=('Helvetica', text_size))
-            i[4].place(x= (i[1].winfo_width()+2+i[2].winfo_width()), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[4].place(x= (i[1].winfo_width()+1), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
             i[4].config(font=('Helvetica', text_size))
-            i[5].place(x= (i[1].winfo_width()+2+i[2].winfo_width()), y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
+            i[5].place(x= (i[1].winfo_width()+2+i[4].winfo_width()), y= pos*i[1].winfo_height()*2+pos*2-1,relwidth=0.1*factor, relheight=0.05*factor)
             i[5].config(font=('Helvetica', text_size))
-            i[6].place(x= i[1].winfo_width()+2+i[3].winfo_width()+2+i[4].winfo_width(), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
-            i[7].place(x= i[1].winfo_width()+2+i[3].winfo_width()+2+i[4].winfo_width()+2+i[6].winfo_width(), y= pos*(i[1].winfo_height()+1)*2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[6].place(x= (i[1].winfo_width()+2+i[4].winfo_width()), y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height(),relwidth=0.1*factor, relheight=0.05*factor)
+            i[6].config(font=('Helvetica', text_size))
+            i[8].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width(), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
+            i[9].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width()+2+i[6].winfo_width(), y= pos*(i[1].winfo_height()+1)*2,relwidth=0.15*factor, relheight=0.05*factor)
         elif i[0] == " Kamera":
             i[2].place(x= 0, y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].config(font=('Helvetica', text_size))
