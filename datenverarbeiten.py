@@ -21,8 +21,8 @@ def add_or_edit_song(song_id=None):
         min_vers = min_vers_entry.get()
         song_name = song_name_entry.get()
 
-        if not book_name or not song_number:
-            print("Buchname und Liednummer müssen ausgefüllt werden.")
+        if not book_name or not song_number or not Uhrheberecht or not min_vers or not song_name:
+            print("Buchname, Liednummer, mindest Anzahl der Verse und Liedname müssen ausgefüllt werden.")
             return
 
         try:
@@ -41,9 +41,9 @@ def add_or_edit_song(song_id=None):
                     cursor.execute("SELECT verse_id FROM verses WHERE song_id = ? AND verse_number = ?", (song_id, i + 1))
                     verse = cursor.fetchone()
                     if verse:  # Update existing verse
-                        cursor.execute("UPDATE verses SET verse_text = ? WHERE verse_id = ?", (verse_text, verse[0]))
+                        cursor.execute("UPDATE verses SET verse_text = ?, book_name = ? WHERE verse_id = ?", (verse_text, book_name, verse[0]))
                     else:  # Insert new verse
-                        cursor.execute("INSERT INTO verses (song_id, verse_number, verse_text) VALUES (?, ?, ?)", (song_id, i + 1, verse_text))
+                        cursor.execute("INSERT INTO verses (song_id, verse_number, verse_text, book_name) VALUES (?, ?, ?)", (song_id, i + 1, verse_text, book_name))
 
             conn.commit()
         except sqlite3.Error as e:
@@ -79,10 +79,15 @@ def add_or_edit_song(song_id=None):
     Uhrheberecht_optionMenü = OptionMenu(top_frame, Uhrheberecht_strinVar, *Uhrheberecht_wahl)
     Uhrheberecht_optionMenü.pack(side=tk.LEFT)
 
+
+    min_vers_lable = Label(top_frame, text="Mindest Versanzahl")
+    min_vers_lable.pack(side=tk.LEFT)
     min_vers_entry = tk.Entry(top_frame)
     min_vers_entry.pack(side=tk.LEFT)
 
-    song_name_entry = tk.Entry(top_frame)
+    song_name_lable = Label(top_frame, text="Liedname")
+    song_name_lable.pack(side=tk.LEFT)
+    song_name_entry = tk.Entry(top_frame, width=30)
     song_name_entry.pack(side=tk.LEFT)
 
     canvas = tk.Canvas(edit_window)
@@ -99,12 +104,15 @@ def add_or_edit_song(song_id=None):
     if song_id:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT book_name, song_number FROM songs WHERE song_id = ?", (song_id,))
+        cursor.execute("SELECT book_name, song_number, Uhrheberecht, min_vers, song_name FROM songs WHERE song_id = ?", (song_id,))
         song = cursor.fetchone()
         book_name_entry.insert(0, song[0])
         song_number_entry.insert(0, song[1])
+        Uhrheberecht_strinVar.set(song[2])
+        min_vers_entry.insert(0, song[3])
+        song_name_entry.insert(0, song[4])
 
-        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? ORDER BY verse_number", (song_id,))
+        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? AND book_name = ?", (song_id, song[0]))
         verses = cursor.fetchall()
         for i, verse_text in enumerate(verses):
             verse_widget = tk.Text(verse_frame, font=("Helvetica", 10), height=12, width=44)

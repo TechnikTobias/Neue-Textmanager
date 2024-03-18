@@ -8,7 +8,7 @@ import Lied_Kontrolle
 import Load_settings
 
 Speicherort = os.path.dirname(os.path.abspath(__file__))
-factor = 1.2
+factor = 1
 
 def Einstellung_laden(Einstellugen_name):
     conn = get_db_connection()
@@ -41,6 +41,7 @@ def Start():
     for pos,i in enumerate (Einstellung_laden("Ablauf")):
         alle_inhalt.append(gegerator_lieder(i, pos, factor))
     eingabe_änderung("hallo")
+    alle_inhalt.append(button_generator())
 
 
 
@@ -76,6 +77,19 @@ def Load_Setting():
     Load_settings.Load_all_collor()
 
 
+def button_generator():
+    rückgabe = []
+    rückgabe.append("Button")
+    Bestätigen = Button(Textmanager, text="Bestätigen")
+    rückgabe.append(Bestätigen)
+    Wiederherstellen = Button(Textmanager, text="Wiederherstellen")
+    rückgabe.append(Wiederherstellen)
+    Löschen = Button(Textmanager, text="Löschen", command=delete)
+    rückgabe.append(Löschen)
+    Präsentation = Button(Textmanager, text="Präsentation")
+    rückgabe.append(Präsentation)
+    return rückgabe
+
 
 def gegerator_lieder(input, pos, factor):
     ja = input.split(",")
@@ -87,7 +101,6 @@ def gegerator_lieder(input, pos, factor):
     inhalt.append(Lied_start)
     if aktion[1] == " Textwort":
         Button_Textwrt = Button(Textmanager, text="Textwort")
-        #Button_Textwrt.place(relx=0,rely=0.05,relwidth=0.02, relheight=0.01)
         inhalt.append(Button_Textwrt)
     elif aktion[1] == " Lied":
         Lable_Kamera = Button(Textmanager, text="Kamera", border=0)
@@ -105,9 +118,9 @@ def gegerator_lieder(input, pos, factor):
         eingabe_Vers = Entry(Textmanager)
         eingabe_Vers.bind("<KeyRelease>", eingabe_änderung)
         inhalt.append(eingabe_Vers)
-        befehle_buch = ["Gesangbuch", "Textwort", "Lied"]
+        befehle_buch = ["Gesangbuch", "Chorbuch", "Jugendliederbuch"]
         clicked_buch = StringVar()
-        clicked_buch.set(befehle[0])
+        clicked_buch.set(befehle_buch[0])
         opt_buch = OptionMenu(Textmanager, clicked_buch, *befehle_buch, command=eingabe_änderung)
         opt_buch.config(font=('Helvetica', 15), fg="black", bg="white", )
         inhalt.append(clicked_buch)
@@ -124,6 +137,15 @@ def gegerator_lieder(input, pos, factor):
         opt.config(font=('Helvetica', 15), fg="black", bg="white")
         inhalt.append(clicked)
     return inhalt
+
+def delete():
+    for i in alle_inhalt:
+        if i[0] == " Textwort":
+            pass
+        elif i[0] == " Lied":
+            i[5].delete(0, "end")
+            i[6].delete(0, "end")
+    eingabe_änderung("")
 
 
 def eingabe_änderung(event):
@@ -146,7 +168,7 @@ def eingabe_änderung(event):
             elif len(Vers_info) > 1:
                 text_einfügen = f"Verse {Vers_info}"
             if song:
-                Text_speicher = f"{i[7].get()} Liednummer {i[5].get()} {text_einfügen}\n{song[0]}"
+                Text_speicher = f"{i[7].get()} {i[5].get()} {text_einfügen}\n{song[0]}"
                 i[9].config(text= Text_speicher)
             else:
                 i[9].config(text = "Bitte geben sie eine Nummer ein")
@@ -166,11 +188,12 @@ def posistion(fenster_width, fenster_height, factor):
     for pos, i in enumerate (alle_inhalt):
         text_size = min( int(i[1].winfo_height()/3*factor), int(i[1].winfo_width()/10*factor))
         i[1].config(font=('Helvetica', text_size))
-        i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
-        i[1].config(font=('Helvetica', text_size))
         if i[0] == " Textwort":
-            pass
+            i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[2].place(x= (i[1].winfo_width()+1), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.3*factor, relheight=0.1*factor)
+            i[2].config(font=('Helvetica', text_size))
         elif i[0] == " Lied":
+            i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].place(x= 0, y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].config(font=('Helvetica', text_size))
             i[4].place(x= (i[1].winfo_width()+1), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
@@ -179,9 +202,19 @@ def posistion(fenster_width, fenster_height, factor):
             i[5].config(font=('Helvetica', text_size))
             i[6].place(x= (i[1].winfo_width()+2+i[4].winfo_width()), y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height(),relwidth=0.1*factor, relheight=0.05*factor)
             i[6].config(font=('Helvetica', text_size))
-            i[8].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width(), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
-            i[9].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width()+2+i[6].winfo_width(), y= pos*(i[1].winfo_height()+1)*2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[8].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width(), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[8].config(font=('Helvetica', text_size))
+            i[9].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width()+2+i[8].winfo_width(), y= pos*(i[1].winfo_height()+1)*2,relwidth=0.3*factor, relheight=0.1*factor)
+            i[9].config(font=('Helvetica', text_size))
         elif i[0] == " Kamera":
+            i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].place(x= 0, y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].config(font=('Helvetica', text_size))
-
+        elif i[0] == "Button":
+            i[1].place(x=fenster_width-i[1].winfo_width()-15, y=10, relwidth=0.12*factor, relheight=0.07*factor)
+            i[2].place(x=fenster_width-i[2].winfo_width()-15, y=i[1].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
+            i[2].config(font=('Helvetica', text_size))
+            i[3].place(x=fenster_width-i[1].winfo_width()-15, y=i[1].winfo_height()+i[2].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
+            i[3].config(font=('Helvetica', text_size))
+            i[4].place(x=fenster_width-i[1].winfo_width()-15, y=i[1].winfo_height()+i[2].winfo_height()+i[3].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
+            i[4].config(font=('Helvetica', text_size))
