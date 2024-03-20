@@ -3,6 +3,8 @@ import sqlite3
 import tkinter as tk
 from tkinter import *
 
+import Neue_Textmanager
+
 Speicherort = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -31,7 +33,7 @@ def add_or_edit_song(song_id=None):
             if song_id:  # Update existing song
                 cursor.execute("UPDATE songs SET book_name = ?, song_number = ?, Uhrheberecht = ?, min_vers = ?, song_name = ? WHERE song_id = ?", (book_name, song_number, Uhrheberecht, min_vers, song_name, song_id))
             else:  # Add new song
-                cursor.execute("INSERT INTO songs (book_name, song_number) VALUES (?, ?)", (book_name, song_number))
+                cursor.execute("INSERT INTO songs (book_name, song_number, Uhrheberecht, min_vers, song_name) VALUES (?, ?, ?, ?, ?)", (book_name, song_number, Uhrheberecht, min_vers, song_name))
                 song_id = cursor.lastrowid
 
             # Verse speichern oder aktualisieren
@@ -43,7 +45,7 @@ def add_or_edit_song(song_id=None):
                     if verse:  # Update existing verse
                         cursor.execute("UPDATE verses SET verse_text = ?, book_name = ? WHERE verse_id = ?", (verse_text, book_name, verse[0]))
                     else:  # Insert new verse
-                        cursor.execute("INSERT INTO verses (song_id, verse_number, verse_text, book_name) VALUES (?, ?, ?)", (song_id, i + 1, verse_text, book_name))
+                        cursor.execute("INSERT INTO verses (song_id, verse_number, verse_text, book_name) VALUES (?, ?, ?, ?)", (song_id, i + 1, verse_text, book_name))
 
             conn.commit()
         except sqlite3.Error as e:
@@ -108,11 +110,14 @@ def add_or_edit_song(song_id=None):
         song = cursor.fetchone()
         book_name_entry.insert(0, song[0])
         song_number_entry.insert(0, song[1])
-        Uhrheberecht_strinVar.set(song[2])
-        min_vers_entry.insert(0, song[3])
-        song_name_entry.insert(0, song[4])
+        if song[2]:
+            Uhrheberecht_strinVar.set(song[2])
+        if song[3]:
+            min_vers_entry.insert(0, song[3])
+        if song[4]:
+            song_name_entry.insert(0, song[4])
 
-        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? AND book_name = ?", (song_id, song[0]))
+        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? OR book_name = ?", (song_id, "d"))
         verses = cursor.fetchall()
         for i, verse_text in enumerate(verses):
             verse_widget = tk.Text(verse_frame, font=("Helvetica", 10), height=12, width=44)
@@ -185,7 +190,7 @@ def view_songs():
 
     song_list.delete(0, tk.END)
     for song in songs:
-        song_list.insert(tk.END, (song[0], f"{song[1]} - Lied {song[2]}"))
+        song_list.insert(tk.END, (song[0],song[1] ,song[2]))
 
 # Lied auswählen und bearbeiten
 def edit_selected_song():
@@ -198,10 +203,11 @@ def edit_selected_song():
 def display_verses():
     selected = song_list.curselection()  # Abrufen der ausgewählten Song-ID direkt aus der Listbox
     if selected:
-        selected_song_id = song_list.get(selected[0])[0]  # Extrahieren der ausgewählten Song-ID
+        selected_song_id = song_list.get(selected[0])  # Extrahieren der ausgewählten Song-ID
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? ORDER BY verse_number", (selected_song_id,))
+        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? AND book_name = ?", (selected_song_id[0],selected_song_id[1]))
+        #cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ? AND book_name", (selected_song_id,))
         verses = cursor.fetchall()
         conn.close()
 
@@ -213,24 +219,50 @@ def display_verses():
 
         for verse in verses:
             verse_text_display.insert(tk.END, verse[0] + "\n\n")
+        
+
+        # Verbindung zur Datenbank herstellen
+        conn = sqlite3.connect("deine_datenbank.db")
+        cursor = conn.cursor()
+
+        # SQL-Abfrage, um alle einzigartigen Bücher zu ermitteln
+        unique_books_query = "SELECT DISTINCT buch FROM deine_tabelle"
+        cursor.execute(unique_books_query)
+        unique_books = cursor.fetchall()
+
+        # Schleife über jedes einzigartige Buch
+        for book in unique_books:
+            # Buchname extrahieren (nehmen Sie an, dass der Buchname im ersten Element der Tupel ist)
+            book_name = book[0]
+            
+            # SQL-Abfrage zum Löschen aller vorhandenen Daten für dieses Buch
+            delete_query = f"DELETE FROM deine_tabelle WHERE buch = ?"
+            cursor.execute(delete_query, (book_name,))
+            
+            # SQL-Abfrage zum Einfügen der sortierten Daten für dieses Buch
+            insert_query = f"INSERT INTO deine_tabelle SELECT * FROM deine_tabelle WHERE buch = ? ORDER BY buch"
+            cursor.execute(insert_query, (book_name,))
+            
+        # Bestätige die Änderungen und schließe die Verbindung zur Datenbank
+        conn.commit()
+        conn.close()
+
 
 
 # Haupt UI Setup
 def setup_ui():
     global window, song_list
-    window = tk.Tk()
+    window = tk.Toplevel(Neue_Textmanager.Textmanager)
     window.title("Lieder Datenbank")
 
-    song_list = tk.Listbox(window)
+    song_list = tk.Listbox(window, width=50, height=10)
     song_list.pack()
 
     tk.Button(window, text="Lied Hinzufügen", command=lambda: add_or_edit_song()).pack()
     tk.Button(window, text="Lied Bearbeiten", command=edit_selected_song).pack()
-    tk.Button(window, text="Lieder Anzeigen", command=view_songs).pack()
-    tk.Button(window, text="Verse Anzeigen", command=lambda: display_verses()).pack()
     
-    window.mainloop()
-
+    view_songs()
+    
 # Hauptprogramm
 if __name__ == "__main__":
     setup_ui()

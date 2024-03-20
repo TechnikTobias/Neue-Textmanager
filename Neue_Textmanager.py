@@ -4,7 +4,7 @@ import sqlite3
 
 import Settings
 import Kamera
-import Lied_Kontrolle
+import datenverarbeiten
 import Load_settings
 
 Speicherort = os.path.dirname(os.path.abspath(__file__))
@@ -66,8 +66,8 @@ def Menu_generator():
     Menu_Info.add_command(label= "Info", command=Settings.Info)
     Menu_Kamera.add_command(label="Einstellungen", command=Kamera.Settings)
     Menu_Kamera.add_command(label="Position", command=Kamera.Position)
-    Menu_LiedKontrolle.add_command(label="Einstellungen", command=Lied_Kontrolle.Settings)
-    Menu_LiedKontrolle.add_command(label="Lied Kontrolieren", command=Lied_Kontrolle.controll)
+    Menu_LiedKontrolle.add_command(label="Einstellungen", )
+    Menu_LiedKontrolle.add_command(label="Lied Kontrolieren", command=datenverarbeiten.setup_ui)
     Menu_Help.add_command(label="Hilfe")
     Textmanager.config(menu=Menu_Settings)
 
