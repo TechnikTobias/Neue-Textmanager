@@ -22,51 +22,48 @@ def add_or_edit_song(song_id=None):
         Uhrheberecht = Uhrheberecht_strinVar.get()
         min_vers = min_vers_entry.get()
         song_name = song_name_entry.get()
-
+        conn = get_db_connection()
+        cursor = conn.cursor()
         if not book_name or not song_number or not Uhrheberecht or not min_vers or not song_name:
             print("Buchname, Liednummer, mindest Anzahl der Verse und Liedname müssen ausgefüllt werden.")
             return
 
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT song_id FROM songs WHERE book_name = ? AND song_number = ?", (book_name, song_number))
-        lied = cursor.fetchall()
-        if not lied:
 
-            try:
-                conn = get_db_connection()
-                cursor = conn.cursor()
-                if song_id:  # Update existing song
-                    cursor.execute("UPDATE songs SET book_name = ?, song_number = ?, Uhrheberecht = ?, min_vers = ?, song_name = ? WHERE song_id = ?", (book_name, song_number, Uhrheberecht, min_vers, song_name, song_id))
-                else:  # Add new song
-                    cursor.execute("INSERT INTO songs (book_name, song_number, Uhrheberecht, min_vers, song_name) VALUES (?, ?, ?, ?, ?)", (book_name, song_number, Uhrheberecht, min_vers, song_name))
-                    song_id = cursor.lastrowid
-
-                # Verse speichern oder aktualisieren
-                for i, verse_widget in enumerate(verse_widgets):
-                    verse_text = verse_widget.get("1.0", "end-1c").strip()
-                    if verse_text:
-                        cursor.execute("SELECT verse_id FROM verses WHERE song_id = ? AND verse_number = ?", (song_id, i + 1))
-                        verse = cursor.fetchone()
-                        if verse:  # Update existing verse
-                            cursor.execute("UPDATE verses SET verse_text = ?, book_name = ? WHERE verse_id = ?", (verse_text, book_name, verse[0]))
-                        else:  # Insert new verse
-                            cursor.execute("INSERT INTO verses (song_id, verse_number, verse_text, book_name) VALUES (?, ?, ?, ?)", (song_id, i + 1, verse_text, book_name))
-
-                conn.commit()
-            except sqlite3.Error as e:
-                print(f"Ein Fehler ist aufgetreten: {e}")
-            finally:
-                conn.close()
-
-            edit_window.destroy()
-            view_songs()
+        if song_id:
+            cursor.execute("UPDATE songs SET  Uhrheberecht = ?, min_vers = ?, song_name = ? WHERE song_number = ? AND book_name = ?", (Uhrheberecht, min_vers, song_name, song_number, book_name))
         else:
-            edit_window = Toplevel(window)
-            edit_window.title("Lied Bearbeiten" if song_id else "Lied Hinzufügen")
-            edit_window.geometry('400x200')
-            error = Label(edit_window, text="Das Lied exesietrt schon bitte anders lied eingeben oder nicht speichern")
-            error.pack()
+    
+
+            cursor.execute("SELECT song_id FROM songs WHERE book_name = ? AND song_number = ?", (book_name, song_number))
+            lied = cursor.fetchall()
+            if not lied:
+
+
+
+                    cursor.execute("INSERT INTO songs (book_name, song_number, Uhrheberecht, min_vers, song_name) VALUES (?, ?, ?, ?, ?)", (book_name, song_number, Uhrheberecht, min_vers, song_name))
+            else:
+                error_window = Toplevel(window)
+                error_window.title("Errormeldung")
+                error_window.geometry('400x200')
+                error = Label(error_window, text="Das Lied exesistiert schon bitte anders lied eingeben oder nicht speichern")
+                error.pack()
+                return
+        # Verse speichern oder aktualisieren
+        for i, verse_widget in enumerate(verse_widgets):
+            verse_text = verse_widget.get("1.0", "end-1c").strip()
+            if verse_text:
+                cursor.execute("SELECT verse_id FROM verses WHERE song_number = ? AND verse_number = ?", (song_number, i + 1))
+                verse = cursor.fetchone()
+                if verse:  # Update existing verse
+                    cursor.execute("UPDATE verses SET verse_text = ? WHERE verse_id = ?" , (verse_text, verse[0]))
+                else:  # Insert new verse
+                    cursor.execute("INSERT INTO verses (song_number, verse_number, verse_text, book_name) VALUES (?, ?, ?, ?)", (song_number, i + 1, verse_text, book_name))
+
+        conn.commit()
+        conn.close()
+        edit_window.destroy()
+        view_songs()
+
 
 
     edit_window = Toplevel(window)
@@ -113,12 +110,11 @@ def add_or_edit_song(song_id=None):
 
     verse_frame = tk.Frame(canvas)  # Rahmen für Verse
     canvas.create_window((0, 0), window=verse_frame, anchor="nw")
-
     verse_widgets = []  # Liste, um die Textfelder zu speichern
     if song_id:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT book_name, song_number, Uhrheberecht, min_vers, song_name FROM songs WHERE song_id = ?", (song_id,))
+        cursor.execute("SELECT book_name, song_number, Uhrheberecht, min_vers, song_name FROM songs WHERE song_number = ? AND book_name = ?", (song_id[1], song_id[0]))
         song = cursor.fetchone()
         book_name_entry.insert(0, song[0])
         song_number_entry.insert(0, song[1])
@@ -129,7 +125,7 @@ def add_or_edit_song(song_id=None):
         if song[4]:
             song_name_entry.insert(0, song[4])
 
-        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? OR book_name = ?", (song_id, "d"))
+        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? AND book_name = ?", (song_id[1], song_id[0]))
         verses = cursor.fetchall()
         for i, verse_text in enumerate(verses):
             verse_widget = tk.Text(verse_frame, font=("Helvetica", 10), height=12, width=44)
@@ -196,7 +192,7 @@ def add_or_edit_verses(song_id):
 def view_songs():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT song_id, book_name, song_number FROM songs")
+    cursor.execute("SELECT book_name, song_number, song_name FROM songs")
     songs = cursor.fetchall()
     conn.close()
 
@@ -208,7 +204,8 @@ def view_songs():
 def edit_selected_song():
     selected = song_list.curselection()
     if selected:
-        song_id = song_list.get(selected[0])[0]
+        song_id = song_list.get(selected)
+        print(song_id)
         add_or_edit_song(song_id)
 
 
@@ -218,7 +215,7 @@ def display_verses():
         selected_song_id = song_list.get(selected[0])  # Extrahieren der ausgewählten Song-ID
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? AND book_name = ?", (selected_song_id[0],selected_song_id[1]))
+        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? AND book_name = ?", (selected_song_id[2],selected_song_id[1]))
         #cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ? AND book_name", (selected_song_id,))
         verses = cursor.fetchall()
         conn.close()

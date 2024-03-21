@@ -171,7 +171,7 @@ def eingabe_änderung(event):
                 Text_speicher = f"{i[7].get()} {i[5].get()} {text_einfügen}\n{song[0]}"
                 i[9].config(text= Text_speicher)
             else:
-                i[9].config(text = "Bitte geben sie eine Nummer ein")
+                i[9].config(text = "Bitte geben sie eine Nummer ein\n")
         elif i[0] == " Kamera":
             pass
             #cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? ORDER BY verse_number", (song_id,))
