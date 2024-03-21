@@ -27,34 +27,46 @@ def add_or_edit_song(song_id=None):
             print("Buchname, Liednummer, mindest Anzahl der Verse und Liedname müssen ausgefüllt werden.")
             return
 
-        try:
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            if song_id:  # Update existing song
-                cursor.execute("UPDATE songs SET book_name = ?, song_number = ?, Uhrheberecht = ?, min_vers = ?, song_name = ? WHERE song_id = ?", (book_name, song_number, Uhrheberecht, min_vers, song_name, song_id))
-            else:  # Add new song
-                cursor.execute("INSERT INTO songs (book_name, song_number, Uhrheberecht, min_vers, song_name) VALUES (?, ?, ?, ?, ?)", (book_name, song_number, Uhrheberecht, min_vers, song_name))
-                song_id = cursor.lastrowid
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT song_id FROM songs WHERE book_name = ? AND song_number = ?", (book_name, song_number))
+        lied = cursor.fetchall()
+        if not lied:
 
-            # Verse speichern oder aktualisieren
-            for i, verse_widget in enumerate(verse_widgets):
-                verse_text = verse_widget.get("1.0", "end-1c").strip()
-                if verse_text:
-                    cursor.execute("SELECT verse_id FROM verses WHERE song_id = ? AND verse_number = ?", (song_id, i + 1))
-                    verse = cursor.fetchone()
-                    if verse:  # Update existing verse
-                        cursor.execute("UPDATE verses SET verse_text = ?, book_name = ? WHERE verse_id = ?", (verse_text, book_name, verse[0]))
-                    else:  # Insert new verse
-                        cursor.execute("INSERT INTO verses (song_id, verse_number, verse_text, book_name) VALUES (?, ?, ?, ?)", (song_id, i + 1, verse_text, book_name))
+            try:
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                if song_id:  # Update existing song
+                    cursor.execute("UPDATE songs SET book_name = ?, song_number = ?, Uhrheberecht = ?, min_vers = ?, song_name = ? WHERE song_id = ?", (book_name, song_number, Uhrheberecht, min_vers, song_name, song_id))
+                else:  # Add new song
+                    cursor.execute("INSERT INTO songs (book_name, song_number, Uhrheberecht, min_vers, song_name) VALUES (?, ?, ?, ?, ?)", (book_name, song_number, Uhrheberecht, min_vers, song_name))
+                    song_id = cursor.lastrowid
 
-            conn.commit()
-        except sqlite3.Error as e:
-            print(f"Ein Fehler ist aufgetreten: {e}")
-        finally:
-            conn.close()
+                # Verse speichern oder aktualisieren
+                for i, verse_widget in enumerate(verse_widgets):
+                    verse_text = verse_widget.get("1.0", "end-1c").strip()
+                    if verse_text:
+                        cursor.execute("SELECT verse_id FROM verses WHERE song_id = ? AND verse_number = ?", (song_id, i + 1))
+                        verse = cursor.fetchone()
+                        if verse:  # Update existing verse
+                            cursor.execute("UPDATE verses SET verse_text = ?, book_name = ? WHERE verse_id = ?", (verse_text, book_name, verse[0]))
+                        else:  # Insert new verse
+                            cursor.execute("INSERT INTO verses (song_id, verse_number, verse_text, book_name) VALUES (?, ?, ?, ?)", (song_id, i + 1, verse_text, book_name))
 
-        edit_window.destroy()
-        view_songs()
+                conn.commit()
+            except sqlite3.Error as e:
+                print(f"Ein Fehler ist aufgetreten: {e}")
+            finally:
+                conn.close()
+
+            edit_window.destroy()
+            view_songs()
+        else:
+            edit_window = Toplevel(window)
+            edit_window.title("Lied Bearbeiten" if song_id else "Lied Hinzufügen")
+            edit_window.geometry('400x200')
+            error = Label(edit_window, text="Das Lied exesietrt schon bitte anders lied eingeben oder nicht speichern")
+            error.pack()
 
 
     edit_window = Toplevel(window)
