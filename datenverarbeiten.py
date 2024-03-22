@@ -52,11 +52,13 @@ def add_or_edit_song(song_id=None):
         for i, verse_widget in enumerate(verse_widgets):
             verse_text = verse_widget.get("1.0", "end-1c").strip()
             if verse_text:
-                cursor.execute("SELECT verse_id FROM verses WHERE song_number = ? AND verse_number = ?", (song_number, i + 1))
+                cursor.execute("SELECT verse_id FROM verses WHERE song_number = ? AND verse_number = ? AND book_name = ?", (song_number, i + 1, book_name))
                 verse = cursor.fetchone()
                 if verse:  # Update existing verse
+                    print("true")
                     cursor.execute("UPDATE verses SET verse_text = ? WHERE verse_id = ?" , (verse_text, verse[0]))
                 else:  # Insert new verse
+                    print("hallo")
                     cursor.execute("INSERT INTO verses (song_number, verse_number, verse_text, book_name) VALUES (?, ?, ?, ?)", (song_number, i + 1, verse_text, book_name))
 
         conn.commit()
@@ -125,7 +127,7 @@ def add_or_edit_song(song_id=None):
         if song[4]:
             song_name_entry.insert(0, song[4])
 
-        cursor.execute("SELECT verse_text FROM verses WHERE song_id = ? AND book_name = ?", (song_id[1], song_id[0]))
+        cursor.execute("SELECT verse_text FROM verses WHERE song_number = ? AND book_name = ?", (song_id[1], song_id[0]))
         verses = cursor.fetchall()
         for i, verse_text in enumerate(verses):
             verse_widget = tk.Text(verse_frame, font=("Helvetica", 10), height=12, width=44)
