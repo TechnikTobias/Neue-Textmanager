@@ -163,11 +163,11 @@ def bestätigen():
     data = []
     for i in alle_inhalt:
         if i[0][0] == " Lied":
-            data.append(f"{i[0][0]},{i[0][1]},{i[3].get()},{i[5].get()},{i[6].get()},{i[7].get()}")
+            data.append(f"{i[0][0]};{i[0][1]};{i[3].get()};{i[5].get()};{i[6].get()};{i[7].get()}")
         elif i[0][0] == " Kamera":
-            data.append(f"{i[0][0]},{i[0][1]}")
+            data.append(f"{i[0][0]};{i[0][1]}")
         elif i[0][0] == " Textwort":
-            data.append(f"{i[0][0]},{i[0][1]}")
+            data.append(f"{i[0][0]};{i[0][1]}")
     data_ready = "!".join(data,)
     get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (data_ready, "speichern"), False)
 

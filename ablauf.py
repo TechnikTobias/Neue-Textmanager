@@ -25,8 +25,6 @@ def on_key(event):
 
 def weiter_vers():
     ablauf_varables[2] += 1
-    if ablauf_varables[2] >=1 and ablauf_varables [2] < alle_inhalt[ablauf_varables[1]][1][3]:
-        print(alle_inhalt[ablauf_varables[1]][1][3])
     ablauf_akualisieren()
 
 def weiter_lied():
@@ -55,23 +53,37 @@ def ende_ablauf():
 
 
 def ablauf_akualisieren():
-    print(alle_inhalt[ablauf_varables[1]][1][1])
+    übergabe = alle_inhalt[ablauf_varables[1]][1][3].split(",")
+    print(len(übergabe))
+    if ablauf_varables[2] >=1 and ablauf_varables[2] < len(übergabe):
+        print(übergabe[ablauf_varables[2]-1])
+    elif ablauf_varables[2] <= 0:
+        ablauf_varables[1] -= 1
+        ablauf_varables[2] = 1
+        print(True)
+    elif ablauf_varables [2] > len(alle_inhalt[ablauf_varables[1]][1][3]):
+        ablauf_varables[1] += 1
+        ablauf_varables[2] = 1
+        print(False)
 
 
 def on_resize(event):
     Position_präsi(1)
 
 def gegerator_lieder(input):
-    ja = input.split(",")
+    ja = input.split(";")
     name_lied = ja[1]
     aktion = ja[0]
+    Liednummer = ja[3]
+    Buch = ja[5]
+    Vers_nummer = ja[4]
     inhalt = []
     Lied_start = Label(Neue_Textmanager.Textmanager, text=name_lied)
     inhalt.append(Lied_start)
     if aktion == " Textwort":
         inhalt.append([aktion, name_lied])
     elif aktion == " Lied":
-        inhalt.append([aktion, name_lied, ja[5], ja[3], ja[4]])
+        inhalt.append([aktion, name_lied, Liednummer, Vers_nummer, Buch])
         Lable_Kamera = Button(Neue_Textmanager.Textmanager, text="Kamera", border=0)
         inhalt.append(Lable_Kamera)
         Tex_lied_lable = Label(Neue_Textmanager.Textmanager)
@@ -95,7 +107,7 @@ def Position_präsi(factor):
             i[2].config(font=('Helvetica', text_size))
             i[3].place(x= (i[0].winfo_width()+1), y= pos*i[0].winfo_height()*2+pos*2,relwidth=0.4*factor, relheight=0.1*factor)
             i[3].config(font=('Helvetica', text_size))
-            song = Neue_Textmanager.get_db_connection("SELECT song_name FROM songs WHERE song_number = ? AND book_name = ?", (str(i[1][3]),str(i[1][2])), True)
+            song = Neue_Textmanager.get_db_connection("SELECT song_name FROM songs WHERE song_number = ? AND book_name = ?", (str(i[1][2]),str(i[1][4])), True)
             if not i[1][3]:
                 text_einfügen = ""
             elif len(i[1][3]) == 1:
@@ -103,7 +115,7 @@ def Position_präsi(factor):
             elif len(i[1][3]) > 1:
                 text_einfügen = f"Verse {i[1][3]}"
             if song:
-                Text_speicher = f"{i[1][4]} {i[1][2]} {text_einfügen}\n{song[0]}"
+                Text_speicher = f"{i[1][2]} {i[1][4]} {text_einfügen}\n{song[0]}"
                 i[3].config(text= Text_speicher)
             else:
                 i[3].config(text = "Bitte geben sie eine Nummer ein\n")
