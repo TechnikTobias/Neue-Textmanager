@@ -31,12 +31,12 @@ def get_db_connection(input_db, input_db_variabel, get_output):
 
 def Start():
     global Textmanager, alle_inhalt
-    setting = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrund",), True)
+    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",), True)
     alle_inhalt = []
     Settings.Check_settings(Tkfont=False)
     Textmanager = Tk()
     Textmanager.title("Textmanager")
-    Textmanager.config(bg=setting)
+    Textmanager.config(bg=hintergrund_farbe)
     Textmanager.geometry("1040x800")
     Textmanager.iconbitmap(f"{Speicherort}\\Bild.ico")
     Textmanager.bind("<Configure>", on_resize)
@@ -81,17 +81,22 @@ def Load_Setting():
 
 
 def button_generator():
-    rückgabe = []
-    rückgabe.append("Button")
+    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",), True)
+    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Textfarbe",), True)
+    rueckgabe = []
+    rueckgabe.append("Button")
     Bestätigen = Button(Textmanager, text="Bestätigen", command=bestätigen)
-    rückgabe.append(Bestätigen)
+    rueckgabe.append(Bestätigen)
     Wiederherstellen = Button(Textmanager, text="Wiederherstellen")
-    rückgabe.append(Wiederherstellen)
+    rueckgabe.append(Wiederherstellen)
     Löschen = Button(Textmanager, text="Löschen", command=delete)
-    rückgabe.append(Löschen)
+    rueckgabe.append(Löschen)
     Präsentation = Button(Textmanager, text="Präsentation", command=ablauf.Präsentation_starten)
-    rückgabe.append(Präsentation)
-    return rückgabe
+    rueckgabe.append(Präsentation)
+    for i in rueckgabe:
+        if isinstance(i, Widget):
+            i.config(bg=hintergrund_farbe, fg=text_farbe)
+    return rueckgabe
 
 
 def gegerator_lieder(input):
@@ -165,9 +170,9 @@ def bestätigen():
         if i[0][0] == " Lied":
             data.append(f"{i[0][0]};{i[0][1]};{i[3].get()};{i[5].get()};{i[6].get()};{i[7].get()}")
         elif i[0][0] == " Kamera":
-            data.append(f"{i[0][0]};{i[0][1]}")
+            data.append(f"{i[0][0]};{i[0][1]};{i[3].get()};0;1;0")
         elif i[0][0] == " Textwort":
-            data.append(f"{i[0][0]};{i[0][1]}")
+            data.append(f"{i[0][0]};{i[0][1]};0;0;1;0")
     data_ready = "!".join(data,)
     get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (data_ready, "speichern"), False)
 
