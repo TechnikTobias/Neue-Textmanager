@@ -23,7 +23,12 @@ def get_db_connection(input_db, input_db_variabel, get_output):
     if get_output:
         verses = cursor.fetchall()
         zeichen_zum_entfernen = "'()"
-        cleaned_verses = [element[0].translate({ord(zeichen): None for zeichen in zeichen_zum_entfernen}) for element in verses]
+        cleaned_verses = []
+        for element in verses:
+            if not isinstance(element[0], int):
+                cleaned_verses.append(element[0].translate({ord(zeichen): None for zeichen in zeichen_zum_entfernen}))
+            else:
+                cleaned_verses.append(element[0])
         return cleaned_verses
     else:
         conn.commit()

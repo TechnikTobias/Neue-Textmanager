@@ -1,4 +1,5 @@
 import Neue_Textmanager
+import Load_settings
 
 from tkinter import *
 alle_inhalt = []
@@ -60,14 +61,14 @@ def ende_ablauf():
 
 
 def ablauf_aktualisieren_vers():
-    übergabe = alle_inhalt[ablauf_varables[1]][1][3].split(",")
+    übergabe = gesamt_verse()
     if ablauf_varables[2] >=1 and ablauf_varables[2] <= len(übergabe):
         alle_inhalt[ablauf_varables[1]][0].config(bg="green")
         vers_anzeigen()
     elif ablauf_varables[2] <= 0:
         if ablauf_varables[1] > 0:
             ablauf_varables[1] -= 1
-            übergabe = alle_inhalt[ablauf_varables[1]][1][3].split(",")
+            übergabe = gesamt_verse()
             ablauf_varables[2] = len(übergabe) +1
         grund_farbe()
         alle_inhalt[ablauf_varables[1]][0].config(bg="yellow")
@@ -99,9 +100,19 @@ def ablauf_aktualisieren_lied():
 
 
 def vers_anzeigen():
+    numbers = gesamt_verse()
     aktuelles_lied = alle_inhalt[ablauf_varables[1]]
-    song_name = Neue_Textmanager.get_db_connection("SELECT song_name FROM songs WHERE song_number = ? AND book_name = ?", (str(aktuelles_lied[1][2]),str(aktuelles_lied[1][4])), True)
-    song_min_vers = Neue_Textmanager.get_db_connection("SELECT min_vers FROM songs WHERE song_number = ? AND book_name = ?", (str(aktuelles_lied[1][2]),str(aktuelles_lied[1][4])), True)
+    song_name = Neue_Textmanager.get_db_connection("SELECT verse_text FROM verses WHERE song_number = ? AND book_name = ? AND verse_number = ?", (str(aktuelles_lied[1][2]),aktuelles_lied[1][4], numbers[ablauf_varables[2]-1]), True)
+    Load_settings.Text_Anzeige_Label.config(text=song_name[0])
+
+
+def gesamt_verse():
+    aktuelles_lied = alle_inhalt[ablauf_varables[1]]
+    if aktuelles_lied[1][2]:
+        song_min_vers = Neue_Textmanager.get_db_connection("SELECT min_vers FROM songs WHERE song_number = ? AND book_name = ?", (str(aktuelles_lied[1][2]),str(aktuelles_lied[1][4])), True)
+    else:
+        song_min_vers = []
+        song_min_vers.append(1)        
     if aktuelles_lied[1][3]:
         numbers = []
         parts = aktuelles_lied[1][3].split(',')  # Teile die Eingabe anhand des Kommas
@@ -112,13 +123,15 @@ def vers_anzeigen():
             else:
                 numbers.append(int(part))  # Füge einzelne Zahlen zur Liste hinzu
     else:
-        numbers = list(range(1, song_min_vers + 1))
-    print(numbers)
+        numbers = list(range(1, song_min_vers[0] + 1))
+    return numbers
+
 
 def grund_farbe():
     for i in alle_inhalt:
         hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",), True)
         i[0].config(bg=hintergrund_farbe)
+    Load_settings.Text_Anzeige_Label.config(text="")
 
 
 def on_resize(event):
