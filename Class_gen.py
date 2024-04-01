@@ -152,8 +152,7 @@ class Swich_generator:
         self.is_switch.config(bg=bg_color, activebackground=Settings.Textmanager_Hintergrund)
 
     def switch_setting_off(self):
-        with open(f"{self.Text_datei_save}", "w", encoding='utf8') as see_the_textinfo:
-            see_the_textinfo.write("False")
+        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("False",f"{self.Text_datei_save}"), False)
         self.Photo1 = Image.open("off-button.png")
         self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
         self.is_switch.configure(image=self.Photo, command= self.switch_setting_on)
@@ -162,8 +161,7 @@ class Swich_generator:
 
 
     def switch_setting_on(self):
-        with open(f"{self.Text_datei_save}", "w", encoding='utf8') as see_the_textinfo:
-            see_the_textinfo.write("True")
+        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("True",f"{self.Text_datei_save}"), False)
         self.Photo1 = Image.open("on-button.png")
         self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
         self.is_switch.configure(image=self.Photo, command=self.switch_setting_off)

@@ -32,6 +32,7 @@ def get_db_connection(input_db, input_db_variabel, get_output):
         return cleaned_verses
     else:
         conn.commit()
+    conn.close()
 
 
 def Start():
@@ -46,7 +47,7 @@ def Start():
     Textmanager.iconbitmap(f"{Speicherort}\\Bild.ico")
     Textmanager.bind("<Configure>", on_resize)
     Menu_generator()
-
+    Load_settings.Load_Text_anzeiger()
     for pos,i in enumerate (Einstellung_laden("Ablauf")):
         alle_inhalt.append(gegerator_lieder(i))
     eingabe_änderung("hallo")

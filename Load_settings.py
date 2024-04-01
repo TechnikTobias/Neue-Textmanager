@@ -6,7 +6,8 @@ from tkinter import *
 import tkinter.font as tkFont
 
 def Load_Text_anzeiger():
-    if Settings.see_the_text:
+    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
+    if see_the_text[0] == "True":
         global AnzeigeText, Font1, Text_Anzeige_Label
         try: AnzeigeText.config(bg="black")
         except:
@@ -52,7 +53,8 @@ def Load_all_collor():
     else:
         Aufleuchtfarbe_Hintergrund = Settings.Textmanager_Hintergrund
         Aufleuchtfarbe_Textfarbe = Settings.Textmanager_Textfarbe
-    if Settings.see_the_text:
+    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
+    if see_the_text[0] == "True":
         AnzeigeText.config(bg=Settings.Textanzeiger_Hintergrund)
         Text_Anzeige_Label.config(bg=Settings.Textanzeiger_Hintergrund, fg=Settings.Textanzeiger_Textfarbe)
     try: 

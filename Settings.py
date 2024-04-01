@@ -111,7 +111,8 @@ def Hintergrundfarbe_farbe_def():
 
 
 def Text_size_def(var):
-    if see_the_text:
+    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
+    if see_the_text[0] == "True":
         Load_settings.Font1.config(size= var)
         with open(f"Textmanager Daten\\Textmanager Daten\\Text_anzeiger_textgröße.txt", "w", encoding='utf8') as Text_anzeiger_textgröße1:
             Text_anzeiger_textgröße1.write(var)
@@ -122,7 +123,8 @@ def Rechts():
     with open(f"Textmanager Daten\\Textmanager Daten\\Bildschirm_ausrichtung.txt", "w", encoding='utf8') as Bildschirm_ausrichtung:
         Bildschirm_ausrichtung.write("Rechts")
     Bildschirm_ausrichtung_button.config(text="Rechts", command=Links)
-    if see_the_text:
+    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
+    if see_the_text[0] == "True":
         Textanzeiger_setting_class.switch_setting_off()
         Textanzeiger_setting_class.switch_setting_on()
 
@@ -130,7 +132,8 @@ def Links():
     with open(f"Textmanager Daten\\Textmanager Daten\\Bildschirm_ausrichtung.txt", "w", encoding='utf8') as Bildschirm_ausrichtung:
         Bildschirm_ausrichtung.write("Links")
     Bildschirm_ausrichtung_button.config(text="Links", command=Rechts)
-    if see_the_text:
+    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
+    if see_the_text[0] == "True":
         Textanzeiger_setting_class.switch_setting_off()
         Textanzeiger_setting_class.switch_setting_on()
 
@@ -148,7 +151,8 @@ def Test(event=None):
     print("hi")
 
 def Load_anzeige():
-    if see_the_text:
+    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
+    if see_the_text[0] == "True":
         Textanzeiger_setting_class.switch_setting_off()
         Textanzeiger_setting_class.switch_setting_on()
 
@@ -188,11 +192,12 @@ def Load_graphig_settings():
 
 def Settings_Textanzeiger_def():
     global Settings_Textanzeiger_Top, Textanzeiger_Textfarbe_button, Textanzeiger_Hintergrund_Button, Bildschirm_opt1, Bildschirm_ausrichtung_button, Text_größe_ändern, Textanzeiger_setting_class, Liedvorschau_Button
+    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
     Settings_Textanzeiger_Top = Toplevel()
     Settings_Textanzeiger_Top.geometry("500x800")
     Settings_Textanzeiger_Top.title("Einstellungen für Textanzeiger")
     Settings_Textanzeiger_Top.config(bg=Textmanager_Hintergrund)
-    Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_Textanzeiger_Top, "Liedtextanzeige", f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", see_the_text, Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
+    Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_Textanzeiger_Top, "Liedtextanzeige", f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", see_the_text[0] == "True", Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
     Textanzeiger_Textfarbe_button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Textfarbe", "Textfarbe")
     Textanzeiger_Hintergrund_Button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Hintergrund", "Hintergrund")
     Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(Settings_Textanzeiger_Top, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm", Skalierung)

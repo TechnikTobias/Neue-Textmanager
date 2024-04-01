@@ -44,9 +44,9 @@ def zurueck_lied():
     if ablauf_varables[1] >= 0:
         ablauf_varables[1] -= 1
         ablauf_varables[2] = 0
+        ablauf_varables[3] = True
         ablauf_aktualisieren_lied()
-    else:
-        print(ablauf_varables[1])
+        
 
 def anfang_ablauf():
     global ablauf_varables
@@ -54,6 +54,7 @@ def anfang_ablauf():
     ablauf_varables.append(alle_inhalt)
     ablauf_varables.append(0) 
     ablauf_varables.append(0) 
+    ablauf_varables.append(False) 
 
 def ende_ablauf():
     global ablauf_varables
@@ -72,14 +73,16 @@ def ablauf_aktualisieren_vers():
             ablauf_varables[2] = len(übergabe) +1
         grund_farbe()
         alle_inhalt[ablauf_varables[1]][0].config(bg="yellow")
+        if ablauf_varables[3]:
+            ablauf_varables[3] = False
+            zurueck_vers()
     elif ablauf_varables [2] > len(übergabe):
         try:
             grund_farbe()
             alle_inhalt[ablauf_varables[1]+1][0].config(bg="yellow")
             ablauf_varables[1] += 1
             ablauf_varables[2] = 0
-        except Exception as i:
-            print(i)
+        except:
             alle_inhalt[ablauf_varables[1]][0].config(bg="pink")
             ablauf_varables[2] = len(übergabe) +1
 
@@ -103,7 +106,9 @@ def vers_anzeigen():
     numbers = gesamt_verse()
     aktuelles_lied = alle_inhalt[ablauf_varables[1]]
     song_name = Neue_Textmanager.get_db_connection("SELECT verse_text FROM verses WHERE song_number = ? AND book_name = ? AND verse_number = ?", (str(aktuelles_lied[1][2]),aktuelles_lied[1][4], numbers[ablauf_varables[2]-1]), True)
-    Load_settings.Text_Anzeige_Label.config(text=song_name[0])
+    if song_name:
+        Load_settings.Text_Anzeige_Label.config(text=song_name[0])
+
 
 
 def gesamt_verse():
@@ -151,10 +156,10 @@ def gegerator_lieder(input):
     Lied_start = Label(Neue_Textmanager.Textmanager, text=name_lied)
     Lied_start.config(bg=hintergrund_farbe, fg=text_farbe)
     inhalt.append(Lied_start)
+    inhalt.append([aktion, name_lied, Liednummer, Vers_nummer, Buch, Kamera])
     if aktion == " Textwort":
-        inhalt.append([aktion, name_lied, Vers_nummer, Kamera])
+        pass
     elif aktion == " Lied":
-        inhalt.append([aktion, name_lied, Liednummer, Vers_nummer, Buch, Kamera])
         lable_Kamera = Button(Neue_Textmanager.Textmanager, text="Kamera", border=0)
         lable_Kamera.config(bg=hintergrund_farbe, fg=text_farbe)
         inhalt.append(lable_Kamera)
@@ -162,7 +167,6 @@ def gegerator_lieder(input):
         text_lied_lable.config(bg=hintergrund_farbe, fg=text_farbe)
         inhalt.append(text_lied_lable)
     elif aktion == " Kamera":
-        inhalt.append([aktion, name_lied, Vers_nummer, Kamera])
         lied_weiter = Button(Neue_Textmanager.Textmanager, text= "servus", border=0)
         lied_weiter.config(bg=hintergrund_farbe, fg=text_farbe)
         inhalt.append(lied_weiter)
