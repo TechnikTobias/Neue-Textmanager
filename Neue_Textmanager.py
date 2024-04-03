@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter.ttk as ttk
 import os
 import sqlite3
 
@@ -65,11 +66,13 @@ def on_resize(event):
 
 def Menu_generator():
     global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help
-    Menu_Settings = Menu(Textmanager, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0, borderwidth=0, tearoff=False)
-    Menu_Info = Menu(Textmanager, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0, borderwidth=0, tearoff=False)
-    Menu_Kamera = Menu(Textmanager, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0, borderwidth=0, tearoff=False)
-    Menu_LiedKontrolle = Menu(Textmanager, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0, borderwidth=0, tearoff=False)
-    Menu_Help = Menu(Textmanager, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, border=0, borderwidth=0, tearoff=False)
+    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",))
+    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Textfarbe",))
+    Menu_Settings = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+    Menu_Info = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+    Menu_Kamera = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+    Menu_LiedKontrolle = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+    Menu_Help = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
     Menu_Settings.add_cascade(label="Info", menu=Menu_Info)
     Menu_Settings.add_cascade(label="Kamera", menu=Menu_Kamera)
     Menu_Settings.add_cascade(label="Lied Kontrolle", menu=Menu_LiedKontrolle)
@@ -150,10 +153,17 @@ def gegerator_lieder(input):
         befehle = ["Kamera", "Textwort", "Lied"]
         clicked = StringVar()
         clicked.set(befehle[0])
-        opt = OptionMenu(Textmanager, clicked, *befehle)
-        opt.config(font=('Helvetica', 15), fg="black", bg="white")
         inhalt.append(clicked)
+        opt = ttk.OptionMenu(Textmanager, clicked, *befehle)
+        opt.config()
+        change_style(opt)
+        inhalt.append(opt)
     return inhalt
+
+def change_style(widget):
+    style = ttk.Style()
+    style.configure('TMenubutton', relief='flat', borderwidth=0, font=('Helvetica', 12))
+    widget.config(style='TMenubutton')
 
 def delete():
     for i in alle_inhalt:
@@ -232,6 +242,7 @@ def posistion(factor = factor):
             i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].place(x= 0, y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].config(font=('Helvetica', text_size))
+            i[4].place(x= (i[1].winfo_width()+1), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
         elif i[0] == "Button":
             fenster_width= Textmanager.winfo_width()
             i[1].place(x=fenster_width-i[1].winfo_width()-15, y=10, relwidth=0.12*factor, relheight=0.07*factor)
