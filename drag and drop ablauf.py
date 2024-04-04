@@ -49,7 +49,7 @@ def on_key(event):
             delete_command()
 
 def bestätigen():
-    conn = sqlite3.connect(f"{Speicherort}\\Textmanager Daten\\Lieder Datenbank\\Lieder Datenbank.db")
+    conn = sqlite3.connect(f"{Speicherort}/Textmanager Daten/Lieder Datenbank/Lieder Datenbank.db")
     cursor = conn.cursor()
     commands_text = "!".join(commands_list.get(0, tk.END))
     cursor.execute("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (commands_text, "Ablauf"))

@@ -35,7 +35,7 @@ class Test_info:
         self.Info_zum_programm = Label(self.Info_manager, font=("Halvetica", 15), bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text=self.Text_für_Info, wraplength=800)
         self.Info_zum_programm["justify"] = "left"
         self.Info_zum_programm.place(x=0,y=0)
-        self.Bild_für_opa1 = Image.open(f"Textmanager Daten\\Textmanager Daten\\Sterbe Anzeige Opa.jpg")
+        self.Bild_für_opa1 = Image.open(f"Textmanager Daten/Textmanager Daten/Sterbe Anzeige Opa.jpg")
         self.Bild_für_opa = ImageTk.PhotoImage(image=self.Bild_für_opa1.resize((472,341))) 
         self.Bild_für_opa_Label = Label(self.Info_manager,image=self.Bild_für_opa)
         self.Bild_für_opa_Label.place(x=0,y=100)
@@ -188,7 +188,7 @@ class Farben_class:
     def Farbe_def(self):
         color = askcolor()  
         if not (color[1]) == None:
-            with open(f"Textmanager Daten\\Textmanager Daten\\{self.Farbe_ort}.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
+            with open(f"Textmanager Daten/Textmanager Daten/{self.Farbe_ort}.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
                 Neue_Texmanager_Textfarbe.write(color[1])
         Load_settings.Load_all_collor()
 

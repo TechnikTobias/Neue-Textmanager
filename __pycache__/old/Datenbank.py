@@ -1,6 +1,6 @@
 import sqlite3 as db
 
-conn = db.connect("C:\\Users\\tobia\\Github\\Neue Textmanager\\Textmanager Daten\\Lieder Datenbank\\Textmanager Datenbank.db")
+conn = db.connect("C:/Users/tobia/Github/Neue Textmanager/Textmanager Daten/Lieder Datenbank/Textmanager Datenbank.db")
 cursor = conn.cursor()
 
 
@@ -22,7 +22,7 @@ def Eingabe_Lieder(Datenbank, Versnummer, Buch, Liednummer):
 #Buch = "Gesangbuch"
 #Lied = 1
 #Vers = 1
-#Text = open(f"C:\\Users\\tobia\\Desktop\\Lieder\\Buch\\{Buch}\\{Lied} Vers {Vers}.txt", 'r', encoding='utf8')
+#Text = open(f"C:/Users/tobia/Desktop/Lieder/Buch/{Buch}/{Lied} Vers {Vers}.txt", 'r', encoding='utf8')
 #Nummer = 1  # Startnummer
 
 # Die Liste der Versnummern oder Dateinamen, die du verarbeiten möchtest
@@ -37,7 +37,7 @@ def Eingabe_Lieder(Datenbank, Versnummer, Buch, Liednummer):
         #try:
             #Buch = "Chorbuch"  # Setze das Buch entsprechend deiner Dateistruktur
 
-            #with open(f"C:\\Users\\tobia\\Desktop\\Lieder\\Buch\\{Buch}\\{Liednummer} Vers {Versnummer}.txt", 'r', encoding='utf8') as Text:
+            #with open(f"C:/Users/tobia/Desktop/Lieder/Buch/{Buch}/{Liednummer} Vers {Versnummer}.txt", 'r', encoding='utf8') as Text:
                 #Vers = Text.read()
 
             #Eingabe_Lieder(Liednummer=Liednummer, Versnummer=Vers, Buch=Buch, Datenbank="Lieder")

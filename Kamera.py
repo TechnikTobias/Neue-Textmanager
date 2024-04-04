@@ -1,6 +1,3 @@
-import onvif
-from tkinter import *
-
 
 
 def Settings():

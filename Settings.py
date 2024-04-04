@@ -53,39 +53,36 @@ def ResponsiveWidget(widget, *args, **kwargs):
 
 def Check_settings(Tkfont = True):
     global see_the_text, Textmanager_Hintergrund, Textmanager_Textfarbe, Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size, Liedvorschau,Smarte_unterstüzung, Kronologische_Verse, Smarte_Vorschläge
-    Speicherort = os.path.dirname(os.path.abspath(__file__))
-    with open(f"{Speicherort}\\Textmanager Daten\\Textmanager Daten\\see_the_text.txt", "r", encoding='utf8') as see_the_textinfo:
-        see_the_text = see_the_textinfo.read() == "True"
-    with open(f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", "r", encoding='utf8') as see_the_textinfo:
-        Button_hervorheben = see_the_textinfo.read() == "True"
-    with open(f"Textmanager Daten\\Textmanager Daten\\Vers_kontroll.txt", "r", encoding='utf8') as see_the_textinfo:
+    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",)) == "True"
+    Button_hervorheben = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hervorheben",)) == "True"
+    with open(f"Textmanager Daten/Textmanager Daten/Vers_kontroll.txt", "r", encoding='utf8') as see_the_textinfo:
         Vers_kontroll = see_the_textinfo.read() == "True"
-    with open(f"Textmanager Daten\\Textmanager Daten\\Hintergrund.txt", "r", encoding='utf8') as Neue_Texmanager_Hinregrund:
+    with open(f"Textmanager Daten/Textmanager Daten/Hintergrund.txt", "r", encoding='utf8') as Neue_Texmanager_Hinregrund:
         Textmanager_Hintergrund = Neue_Texmanager_Hinregrund.read()
-    with open(f"Textmanager Daten\\Textmanager Daten\\Textanzeiger_Hintergrund.txt", "r", encoding='utf8') as Neue_Texmanager_Hinregrund:
+    with open(f"Textmanager Daten/Textmanager Daten/Textanzeiger_Hintergrund.txt", "r", encoding='utf8') as Neue_Texmanager_Hinregrund:
         Textanzeiger_Hintergrund = Neue_Texmanager_Hinregrund.read()
-    with open(f"Textmanager Daten\\Textmanager Daten\\Textanzeiger_Textfarbe.txt", "r", encoding='utf8') as Neue_Texmanager_Hinregrund:
+    with open(f"Textmanager Daten/Textmanager Daten/Textanzeiger_Textfarbe.txt", "r", encoding='utf8') as Neue_Texmanager_Hinregrund:
         Textanzeiger_Textfarbe = Neue_Texmanager_Hinregrund.read()
-    with open(f"Textmanager Daten\\Textmanager Daten\\Textfarbe.txt", "r", encoding='utf8') as Neue_Texmanager_Textfarbe:
+    with open(f"Textmanager Daten/Textmanager Daten/Textfarbe.txt", "r", encoding='utf8') as Neue_Texmanager_Textfarbe:
         Textmanager_Textfarbe = Neue_Texmanager_Textfarbe.read()
-    with open(f"Textmanager Daten\\Textmanager Daten\\Text_anzeiger_textgröße.txt", "r", encoding='utf8') as Text_anzeiger_textgröße1:
+    with open(f"Textmanager Daten/Textmanager Daten/Text_anzeiger_textgröße.txt", "r", encoding='utf8') as Text_anzeiger_textgröße1:
         Text_anzeiger_textgröße = Text_anzeiger_textgröße1.read()
-    with open(f"Textmanager Daten\\Textmanager Daten\\Button_Hintergrund.txt", "r", encoding='utf8') as Text_anzeiger_textgröße1:
+    with open(f"Textmanager Daten/Textmanager Daten/Button_Hintergrund.txt", "r", encoding='utf8') as Text_anzeiger_textgröße1:
         Button_hervorheben_farbe = Text_anzeiger_textgröße1.read()
-    with open(f"Textmanager Daten\\Textmanager Daten\\Button_Textfarbe.txt", "r", encoding='utf8') as Text_anzeiger_textgröße1:
+    with open(f"Textmanager Daten/Textmanager Daten/Button_Textfarbe.txt", "r", encoding='utf8') as Text_anzeiger_textgröße1:
         Button_Textfarbe = Text_anzeiger_textgröße1.read()
-    with open(f"Textmanager Daten\\Textmanager Daten\\Bildschirm_ausrichtung.txt", "r", encoding='utf8') as Text_anzeiger_textgröße1:
+    with open(f"Textmanager Daten/Textmanager Daten/Bildschirm_ausrichtung.txt", "r", encoding='utf8') as Text_anzeiger_textgröße1:
         Bildschirm_ausrichtung = Text_anzeiger_textgröße1.read() == "Rechts"
-    with open(f"Textmanager Daten\\Textmanager Daten\\Liedvorschau.txt", "r", encoding='utf8') as Liedvorschau1:
+    with open(f"Textmanager Daten/Textmanager Daten/Liedvorschau.txt", "r", encoding='utf8') as Liedvorschau1:
         Liedvorschau = Liedvorschau1.read() == "True"
-    with open(f"Textmanager Daten\\Textmanager Daten\\Smarte_verse.txt", "r", encoding='utf8') as Smarte_unterstüzung1:
+    with open(f"Textmanager Daten/Textmanager Daten/Smarte_verse.txt", "r", encoding='utf8') as Smarte_unterstüzung1:
         Smarte_unterstüzung = Smarte_unterstüzung1.read() == "True"
-    with open(f"Textmanager Daten\\Textmanager Daten\\Kronologische_Verse.txt", "r", encoding='utf8') as Kronologische_Verse1:
+    with open(f"Textmanager Daten/Textmanager Daten/Kronologische_Verse.txt", "r", encoding='utf8') as Kronologische_Verse1:
         Kronologische_Verse = Kronologische_Verse1.read() == "True"
-    with open(f"Textmanager Daten\\Textmanager Daten\\Smarte_Vorschläge.txt", "r", encoding='utf8') as Smarte_Vorschläge1:
+    with open(f"Textmanager Daten/Textmanager Daten/Smarte_Vorschläge.txt", "r", encoding='utf8') as Smarte_Vorschläge1:
         Smarte_Vorschläge = Smarte_Vorschläge1.read() == "True"
     if Tkfont:
-        with open(f"Textmanager Daten\\Textmanager Daten\\text_size.txt", "r", encoding='utf8') as text_size1:
+        with open(f"Textmanager Daten/Textmanager Daten/text_size.txt", "r", encoding='utf8') as text_size1:
             text_size = text_size1.read()
         Textgröße_von_alle_Texte = tkFont.Font(family="Helvetica", size=text_size)
 
@@ -95,14 +92,14 @@ def Check_settings(Tkfont = True):
 def Textfarbe_farbe_def():
     color = askcolor()  
     if not (color[1]) == None:
-        with open(f"Textmanager Daten\\Textmanager Daten\\Textfarbe.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
+        with open(f"Textmanager Daten/Textmanager Daten/textfarbe.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
             Neue_Texmanager_Textfarbe.write(color[1])
     Load_settings.Load_all_collor()
 
 def Hintergrundfarbe_farbe_def():
     color = askcolor()  
     if not (color[1]) == None:
-        with open(f"Textmanager Daten\\Textmanager Daten\\Hintergrund.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
+        with open(f"Textmanager Daten/Textmanager Daten/Hintergrund.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
             Neue_Texmanager_Textfarbe.write(color[1])
     Load_settings.Load_all_collor()
 
@@ -114,13 +111,13 @@ def Text_size_def(var):
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
     if see_the_text[0] == "True":
         Load_settings.Font1.config(size= var)
-        with open(f"Textmanager Daten\\Textmanager Daten\\Text_anzeiger_textgröße.txt", "w", encoding='utf8') as Text_anzeiger_textgröße1:
+        with open(f"Textmanager Daten/Textmanager Daten/Text_anzeiger_textgröße.txt", "w", encoding='utf8') as Text_anzeiger_textgröße1:
             Text_anzeiger_textgröße1.write(var)
 
 
 
 def Rechts():
-    with open(f"Textmanager Daten\\Textmanager Daten\\Bildschirm_ausrichtung.txt", "w", encoding='utf8') as Bildschirm_ausrichtung:
+    with open(f"Textmanager Daten/Textmanager Daten/Bildschirm_ausrichtung.txt", "w", encoding='utf8') as Bildschirm_ausrichtung:
         Bildschirm_ausrichtung.write("Rechts")
     Bildschirm_ausrichtung_button.config(text="Rechts", command=Links)
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
@@ -129,7 +126,7 @@ def Rechts():
         Textanzeiger_setting_class.switch_setting_on()
 
 def Links():
-    with open(f"Textmanager Daten\\Textmanager Daten\\Bildschirm_ausrichtung.txt", "w", encoding='utf8') as Bildschirm_ausrichtung:
+    with open(f"Textmanager Daten/Textmanager Daten/Bildschirm_ausrichtung.txt", "w", encoding='utf8') as Bildschirm_ausrichtung:
         Bildschirm_ausrichtung.write("Links")
     Bildschirm_ausrichtung_button.config(text="Links", command=Rechts)
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
@@ -151,7 +148,7 @@ def Test(event=None):
     print("hi")
 
 def Load_anzeige():
-    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
+    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",))
     if see_the_text[0] == "True":
         Textanzeiger_setting_class.switch_setting_off()
         Textanzeiger_setting_class.switch_setting_on()
@@ -159,15 +156,17 @@ def Load_anzeige():
 def make_settings():
     Check_settings()
     global Settings_bildschirm, Setings_Textanzeiger, Settings_Graphig_option, Smarte_unterstüzung_button
+    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textfarbe",))
     try: 
-        Settings_bildschirm.config(bg=Textmanager_Hintergrund)
+        Settings_bildschirm.config(bg=hintergrund_farbe)
     except:
         Settings_bildschirm = Toplevel(Neue_Textmanager.Textmanager)
         Settings_bildschirm.geometry("600x800")
         Settings_bildschirm.config(bg=Textmanager_Hintergrund)
-        Settings_Graphig_option = ResponsiveWidget(Button, Settings_bildschirm, font=Textgröße_von_alle_Texte, fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, command=Load_graphig_settings, text= "Einstellung für\nGraphig", bd=0)
-        Setings_Textanzeiger = ResponsiveWidget(Button, Settings_bildschirm, font=Textgröße_von_alle_Texte, fg=Textmanager_Textfarbe, bg=Textmanager_Hintergrund, text="Einstellungen für\nTextanzeiger", bd=0, command=Settings_Textanzeiger_def)
-        Smarte_unterstüzung_button = ResponsiveWidget(Button, Settings_bildschirm, font= Textgröße_von_alle_Texte, fg= Textmanager_Textfarbe, bg= Textmanager_Hintergrund, command= Load_SmarteSettings, bd= 0, text= "Intelligente Unterstützung")
+        Settings_Graphig_option = ResponsiveWidget(Button, Settings_bildschirm, font=Textgröße_von_alle_Texte, fg=text_farbe, bg=hintergrund_farbe, command=Load_graphig_settings, text= "Einstellung für\nGraphig", bd=0)
+        Setings_Textanzeiger = ResponsiveWidget(Button, Settings_bildschirm, font=Textgröße_von_alle_Texte, fg=text_farbe, bg=hintergrund_farbe, text="Einstellungen für\nTextanzeiger", bd=0, command=Settings_Textanzeiger_def)
+        Smarte_unterstüzung_button = ResponsiveWidget(Button, Settings_bildschirm, font= Textgröße_von_alle_Texte, fg= text_farbe, bg= hintergrund_farbe, command= Load_SmarteSettings, bd= 0, text= "Intelligente Unterstützung")
         ToolTip(Setings_Textanzeiger, msg="Lädt alle Einstellungen für den Textanzeiger", delay=2, follow=True)
         Neue_Textmanager.Load_Setting()
         Load_settings.Load_text_size(text_size)
@@ -179,13 +178,13 @@ def Load_graphig_settings():
     Graphig_bildschirm.geometry("600x800")
     Graphig_bildschirm.config(bg=Textmanager_Hintergrund)
     Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Hintergrund", "Hintergrund Farbe\n auswählen", "Mit dem Button kann die Farbe des Hintergrund geändert werden")
-    Textfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Textfarbe", "Textfarbe\nauswählen", "Mit dem Button kann die Textfarbe geändert werden")
-    Button_Textfarbe_Button = Class_gen.Farben_class(Graphig_bildschirm, "Button_Textfarbe", "Button Textfarbe", "Mit dem Button kann die Textfarbe der button geändert werden die angezeigt wird, wenn der Mauszeiger uber einen Button geht")
+    Textfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "textfarbe", "textfarbe\nauswählen", "Mit dem Button kann die textfarbe geändert werden")
+    Button_Textfarbe_Button = Class_gen.Farben_class(Graphig_bildschirm, "Button_Textfarbe", "Button textfarbe", "Mit dem Button kann die textfarbe der button geändert werden die angezeigt wird, wenn der Mauszeiger uber einen Button geht")
     Button_Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Button_Hintergrund", "Button Hintergrund\nfarbe", "Mit dem Button kann die Hintergrund geändert der Button werden, die angezeigt wird wenn der Mauszeiger uber einen Button geht")
     Text_größe_anpassen = Class_gen.Text_scalierung(command_=Load_settings.Load_text_size, Anzeige_ort=Graphig_bildschirm, from__=5, to_=45, aktuelle_zahl=int(text_size), font_=Textgröße_von_alle_Texte, size=int(text_size), tickinterval=15)
-    Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Graphig_bildschirm, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung", "Hauptbildschirm", Skalierung, "Bestätigt die eingegebene Bildschirmgröße und Bildschirm Skalierung von Hauptbildschirm von Windows")
+    Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Graphig_bildschirm, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung", "Hauptbildschirm", Skalierung, "Bestätigt die eingegebene Bildschirmgröße und Bildschirm Skalierung von Hauptbildschirm von Windows")
     Auto_auflösung = ResponsiveWidget(Button,Graphig_bildschirm, font=Textgröße_von_alle_Texte, text="Auto Auflösung", command=Auto_auflösung_def, bd=0)
-    Button_hervorheben_class = Class_gen.Swich_generator(Graphig_bildschirm, "Button hervorheben", f"Textmanager Daten\\Textmanager Daten\\Button_hervorheben.txt", Button_hervorheben, Neue_Textmanager.Load_Setting, Text_hover="Bringt die Butten in der eingestellte farbe zum Leuchten", zise=text_size)
+    Button_hervorheben_class = Class_gen.Swich_generator(Graphig_bildschirm, "Button hervorheben", f"Button_hervorheben", Button_hervorheben, Neue_Textmanager.Load_Setting, Text_hover="Bringt die Butten in der eingestellte farbe zum Leuchten", zise=text_size)
     Neue_Textmanager.Load_Setting()
     Load_settings.Load_text_size(text_size)
 
@@ -197,16 +196,16 @@ def Settings_Textanzeiger_def():
     Settings_Textanzeiger_Top.geometry("500x800")
     Settings_Textanzeiger_Top.title("Einstellungen für Textanzeiger")
     Settings_Textanzeiger_Top.config(bg=Textmanager_Hintergrund)
-    Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_Textanzeiger_Top, "Liedtextanzeige", f"Textmanager Daten\\Textmanager Daten\\see_the_text.txt", see_the_text[0] == "True", Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
-    Textanzeiger_Textfarbe_button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Textfarbe", "Textfarbe")
+    Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_Textanzeiger_Top, "Liedtextanzeige", f"see_the_text", see_the_text[0] == "True", Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
+    Textanzeiger_Textfarbe_button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Textfarbe", "textfarbe")
     Textanzeiger_Hintergrund_Button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Hintergrund", "Hintergrund")
-    Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(Settings_Textanzeiger_Top, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten\\Textmanager Daten\\Auflösung2", "Textbildschirm", Skalierung)
+    Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(Settings_Textanzeiger_Top, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung2", "Textbildschirm", Skalierung)
     if Bildschirm_ausrichtung:
         Bildschirm_ausrichtung_button = ResponsiveWidget(Button,Settings_Textanzeiger_Top, font=Textgröße_von_alle_Texte, text="Rechts", command=Links, bd=0)
     else:
         Bildschirm_ausrichtung_button = ResponsiveWidget(Button, Settings_Textanzeiger_Top, font=Textgröße_von_alle_Texte, text="Links", command=Rechts, bd=0)
     Text_größe_ändern = Class_gen.Text_scalierung(Settings_Textanzeiger_Top, Text_size_def, from__=0, to_=100, orient_=HORIZONTAL, backgrund=Textmanager_Hintergrund, foregrund=Textmanager_Textfarbe, aktuelle_zahl=int(Text_anzeiger_textgröße), font_=Textgröße_von_alle_Texte, size=int(text_size))
-    Liedvorschau_Button = Class_gen.Swich_generator(Settings_is=Settings_Textanzeiger_Top, Textanzeige="Liedvorschau", Text_datei_save=f"Textmanager Daten\\Textmanager Daten\\Liedvorschau.txt", Text_hover="Diese Einstellung zeigt vor dem Gottesdienst die Lieder an", zise=text_size, ob_True=Liedvorschau, def_bei_offbutton=Test)
+    Liedvorschau_Button = Class_gen.Swich_generator(Settings_is=Settings_Textanzeiger_Top, Textanzeige="Liedvorschau", Text_datei_save=f"Liedvorschau", Text_hover="Diese Einstellung zeigt vor dem Gottesdienst die Lieder an", zise=text_size, ob_True=Liedvorschau, def_bei_offbutton=Test)
     Load_settings.Load_all_collor()
     Load_settings.Load_text_size(text_size)
 
@@ -217,9 +216,9 @@ def Load_SmarteSettings():
     Settings_smarte_unterstüzung.geometry("500x800")
     Settings_smarte_unterstüzung.title("Einstellungen für Smarte Unterstüzung")
     Settings_smarte_unterstüzung.config(bg=Textmanager_Hintergrund)
-    Smarte_Verse = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Smarte Verse", Text_datei_save=f"Textmanager Daten\\Textmanager Daten\\Smarte_verse.txt", Text_hover="Diese Einstellung schaltet Intiligente Verse ein, Falsche Verse werden gelöscht", zise=text_size, ob_True=Smarte_unterstüzung, def_bei_offbutton=Test)
-    RichtigeVersereihenfolge = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Kronologische Vers Reihenfolge", Text_datei_save= f"Textmanager Daten\\Textmanager Daten\\Kronologische_Verse.txt", Text_hover="Sortiert die Verse in die Richtige reihenfolge", zise=text_size, ob_True=Kronologische_Verse, def_bei_offbutton=Test)
-    Smarte_vorschlage_Button = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Smarte Vorschläge", Text_datei_save= f"Textmanager Daten\\Textmanager Daten\\Smarte_Vorschläge.txt", Text_hover="Lädt einprogrammierte ", zise=text_size, ob_True=Smarte_Vorschläge, def_bei_offbutton=Test)
+    Smarte_Verse = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Smarte Verse", Text_datei_save=f"Smarte_verse", Text_hover="Diese Einstellung schaltet Intiligente Verse ein, Falsche Verse werden gelöscht", zise=text_size, ob_True=Smarte_unterstüzung, def_bei_offbutton=Test)
+    RichtigeVersereihenfolge = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Kronologische Vers Reihenfolge", Text_datei_save= f"kronologische_verse", Text_hover="Sortiert die Verse in die Richtige reihenfolge", zise=text_size, ob_True=Kronologische_Verse, def_bei_offbutton=Test)
+    Smarte_vorschlage_Button = Class_gen.Swich_generator(Settings_is=Settings_smarte_unterstüzung, Textanzeige="Smarte Vorschläge", Text_datei_save= f"smarte_vorschläge", Text_hover="Lädt einprogrammierte ", zise=text_size, ob_True=Smarte_Vorschläge, def_bei_offbutton=Test)
     Smarte_vorschlage_Button_top = ResponsiveWidget(Button, Settings_smarte_unterstüzung, font=Textgröße_von_alle_Texte, text="Vorschläge Bearbeiten", command=Test, bd=0)
     Load_settings.Load_text_size(text_size)
     Load_settings.Load_all_collor()

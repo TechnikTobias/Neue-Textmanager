@@ -28,8 +28,8 @@ def on_key(event):
 
 
 def button_generator():
-    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",))
-    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Textfarbe",))
+    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textfarbe",))
     rueckgabe = []
     weiter_button = Button(Neue_Textmanager.Textmanager, text="weiter", command=weiter_vers)
     rueckgabe.append(weiter_button)
@@ -162,7 +162,7 @@ def gesamt_verse():
 
 def grund_farbe():
     for i in alle_inhalt:
-        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",))
+        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
         i[0].config(bg=hintergrund_farbe)
     Load_settings.Text_Anzeige_Label.config(text="")
 
@@ -172,8 +172,8 @@ def on_resize(event):
     position_button()
 
 def gegerator_lieder(input):
-    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",))
-    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Textfarbe",))
+    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textfarbe",))
     ja = input.split(";")
     name_lied = ja[1]
     aktion = ja[0]

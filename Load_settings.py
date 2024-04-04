@@ -11,15 +11,15 @@ def Load_Text_anzeiger():
         global AnzeigeText, Font1, Text_Anzeige_Label
         try: AnzeigeText.config(bg="black")
         except:
-            with open (f"Textmanager Daten\\Textmanager Daten\\Auflösungquere.txt", "r", encoding='utf8') as Hoch_auflösung:
+            with open (f"Textmanager Daten/Textmanager Daten/Auflösungquere.txt", "r", encoding='utf8') as Hoch_auflösung:
                 Quere_auflösung = Hoch_auflösung.read()
-            with open (f"Textmanager Daten\\Textmanager Daten\\Auflösung2hoch.txt", "r", encoding='utf8') as Hoch_auflösung:
+            with open (f"Textmanager Daten/Textmanager Daten/Auflösung2hoch.txt", "r", encoding='utf8') as Hoch_auflösung:
                 Hoch_auflösung1 = Hoch_auflösung.read()
-            with open (f"Textmanager Daten\\Textmanager Daten\\Auflösung2quere.txt", "r", encoding='utf8') as Hoch_auflösung:
+            with open (f"Textmanager Daten/Textmanager Daten/Auflösung2quere.txt", "r", encoding='utf8') as Hoch_auflösung:
                 Quere_auflösung1 = Hoch_auflösung.read()
-            with open (f"Textmanager Daten\\Textmanager Daten\\AuflösungSkalierung.txt", "r", encoding='utf8') as Hoch_auflösung:
+            with open (f"Textmanager Daten/Textmanager Daten/AuflösungSkalierung.txt", "r", encoding='utf8') as Hoch_auflösung:
                 Skalierung = Hoch_auflösung.read()
-            with open (f"Textmanager Daten\\Textmanager Daten\\Auflösung2Skalierung.txt", "r", encoding='utf8') as Hoch_auflösung:
+            with open (f"Textmanager Daten/Textmanager Daten/Auflösung2Skalierung.txt", "r", encoding='utf8') as Hoch_auflösung:
                 Skalierung1 = Hoch_auflösung.read()
             if Settings.Bildschirm_ausrichtung:
                 Plusor_muínus = + int(int(Quere_auflösung)/int(Skalierung)*100)
@@ -46,7 +46,7 @@ def Load_Text_anzeiger():
 def Load_all_collor():
     Settings.Check_settings()
     Hintergrund = Settings.Textmanager_Hintergrund
-    Textfarbe = Settings.Textmanager_Textfarbe
+    textfarbe = Settings.Textmanager_Textfarbe
     if Settings.Button_hervorheben:
         Aufleuchtfarbe_Hintergrund = Settings.Button_hervorheben_farbe
         Aufleuchtfarbe_Textfarbe = Settings.Button_Textfarbe
@@ -58,48 +58,48 @@ def Load_all_collor():
         AnzeigeText.config(bg=Settings.Textanzeiger_Hintergrund)
         Text_Anzeige_Label.config(bg=Settings.Textanzeiger_Hintergrund, fg=Settings.Textanzeiger_Textfarbe)
     try: 
-        Settings.Text_größe_ändern.color_farb(backgrund=Hintergrund, foregrund=Textfarbe, active_vorgrund=Aufleuchtfarbe_Hintergrund)
-        Settings.Bildschirm_opt1.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Bildschirm_ausrichtung_button.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-        Settings.Textanzeiger_Hintergrund_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Textanzeiger_Textfarbe_button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Textanzeiger_setting_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Liedvorschau.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Settings.Text_größe_ändern.color_farb(backgrund=Hintergrund, foregrund=textfarbe, active_vorgrund=Aufleuchtfarbe_Hintergrund)
+        Settings.Bildschirm_opt1.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Bildschirm_ausrichtung_button.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Settings.Textanzeiger_Hintergrund_Button.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Textanzeiger_Textfarbe_button.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Textanzeiger_setting_class.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Liedvorschau.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     except: pass
-    Neue_Textmanager.Menu_Settings.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-    Neue_Textmanager.Menu_Info.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-    Neue_Textmanager.Menu_LiedKontrolle.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-    Neue_Textmanager.Menu_Help.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-    Neue_Textmanager.Menu_Kamera.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Menu_Settings.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Menu_Info.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Menu_LiedKontrolle.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Menu_Help.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+    Neue_Textmanager.Menu_Kamera.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     Neue_Textmanager.Textmanager.config(bg=Hintergrund)
     try:
         Settings.Graphig_bildschirm.config(bg=Hintergrund)
-        Settings.Hintergrndfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Textfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Button_Textfarbe_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Button_Hintergrndfarbe_auswahl.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Text_größe_anpassen.color_farb(backgrund=Hintergrund, foregrund=Textfarbe, active_vorgrund=Aufleuchtfarbe_Hintergrund)
-        Settings.Bildschirm_opt.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Button_hervorheben_class.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Hintergrndfarbe_auswahl.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Textfarbe_auswahl.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Button_Textfarbe_Button.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Button_Hintergrndfarbe_auswahl.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Text_größe_anpassen.color_farb(backgrund=Hintergrund, foregrund=textfarbe, active_vorgrund=Aufleuchtfarbe_Hintergrund)
+        Settings.Bildschirm_opt.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Button_hervorheben_class.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
     except:
         pass
     try:
         Settings.Settings_bildschirm.config(bg=Hintergrund)
-        Settings.Setings_Textanzeiger.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-        Settings.Settings_Graphig_option.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-        Settings.Smarte_unterstüzung_button.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Settings.Setings_Textanzeiger.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Settings.Settings_Graphig_option.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Settings.Smarte_unterstüzung_button.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     except: pass
     try:
         Settings.Settings_smarte_unterstüzung.config(bg=Settings.Textmanager_Hintergrund)
-        Settings.RichtigeVersereihenfolge.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Smarte_Verse.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Smarte_vorschlage_Button.color(Hintergrund, Textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
-        Settings.Smarte_vorschlage_Button_top.config(bg=Hintergrund, fg=Textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
+        Settings.RichtigeVersereihenfolge.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Smarte_Verse.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Smarte_vorschlage_Button.color(Hintergrund, textfarbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
+        Settings.Smarte_vorschlage_Button_top.config(bg=Hintergrund, fg=textfarbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     except: pass
 
 def Load_text_size(Text_größe_übergabe):
     Settings.Textgröße_von_alle_Texte.config(size=Text_größe_übergabe)
-    with open(f"Textmanager Daten\\Textmanager Daten\\text_size.txt", "w", encoding='utf8') as text_size:
+    with open(f"Textmanager Daten/Textmanager Daten/text_size.txt", "w", encoding='utf8') as text_size:
         text_size.write(Text_größe_übergabe)
     Settings.text_size = Text_größe_übergabe
     try:

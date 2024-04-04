@@ -10,7 +10,7 @@ Speicherort = os.path.dirname(os.path.abspath(__file__))
 
 # Datenbankverbindung
 def get_db_connection():
-    conn = sqlite3.connect(f"{Speicherort}\\Textmanager Daten\\Lieder Datenbank\\Lieder Datenbank.db")
+    conn = sqlite3.connect(f"{Speicherort}/Textmanager Daten/Lieder Datenbank/Lieder Datenbank.db")
     return conn
 
 

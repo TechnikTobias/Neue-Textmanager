@@ -18,7 +18,9 @@ def Einstellung_laden(Einstellugen_name):
     return input_lieder
 
 def get_db_connection(input_db, input_db_variabel, get_output = True):
-    conn = sqlite3.connect(f"{Speicherort}\\Textmanager Daten\\Lieder Datenbank\\Lieder Datenbank.db")
+    db_filename = "Lieder_Datenbank.db"
+    db_path = os.path.join(os.path.dirname(__file__), db_filename)
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute(input_db, input_db_variabel)
     if get_output:
@@ -38,13 +40,12 @@ def get_db_connection(input_db, input_db_variabel, get_output = True):
 
 def Start():
     global Textmanager
-    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",))
+    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
     Settings.Check_settings(Tkfont=False)
     Textmanager = Tk()
     Textmanager.title("Textmanager")
     Textmanager.config(bg=hintergrund_farbe)
     Textmanager.geometry("1040x800")
-    Textmanager.iconbitmap(f"{Speicherort}\\Bild.ico")
     Menu_generator()
     Load_settings.Load_Text_anzeiger()
     start_anzeige_bildschirm()
@@ -66,13 +67,15 @@ def on_resize(event):
 
 def Menu_generator():
     global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help
-    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",))
-    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Textfarbe",))
-    Menu_Settings = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textfarbe",))
+    print(text_farbe)
+    print(hintergrund_farbe)
     Menu_Info = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
     Menu_Kamera = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
     Menu_LiedKontrolle = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
     Menu_Help = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+    Menu_Settings = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
     Menu_Settings.add_cascade(label="Info", menu=Menu_Info)
     Menu_Settings.add_cascade(label="Kamera", menu=Menu_Kamera)
     Menu_Settings.add_cascade(label="Lied Kontrolle", menu=Menu_LiedKontrolle)
@@ -93,8 +96,8 @@ def Load_Setting():
 
 
 def button_generator():
-    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Hintergrundfarbe",))
-    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Textfarbe",))
+    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textfarbe",))
     rueckgabe = []
     rueckgabe.append("Button")
     Bestätigen = Button(Textmanager, text="Bestätigen", command=bestätigen)
