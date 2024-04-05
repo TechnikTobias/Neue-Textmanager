@@ -28,11 +28,13 @@ def ResponsiveWidget(widget, *args, **kwargs):
 class Test_info:
 
     def __init__(self):
-        self.Info_manager = Toplevel(Settings.Neue_Textmanager.Textmanager)
+        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
+        self.Info_manager = Toplevel(Neue_Textmanager.Textmanager)
         self.Info_manager.geometry("800x600")
-        self.Info_manager.config(bg=Settings.Textmanager_Hintergrund)
+        self.Info_manager.config(bg=hintergrund_farbe)
         self.Text_für_Info = "Entwickler/ Uhrheber: Tobias Giebelhaus\nIn gedenken an meinen Geliebten Opa der bis zum Schluss Geistig fit war und sorgen kurz vor dem Tod im Internet war. Er war ein sehr lieber Opa"
-        self.Info_zum_programm = Label(self.Info_manager, font=("Halvetica", 15), bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text=self.Text_für_Info, wraplength=800)
+        self.Info_zum_programm = Label(self.Info_manager, font=("Halvetica", 15), bg=hintergrund_farbe, fg=text_farbe, text=self.Text_für_Info, wraplength=800)
         self.Info_zum_programm["justify"] = "left"
         self.Info_zum_programm.place(x=0,y=0)
         self.Bild_für_opa1 = Image.open(f"Textmanager Daten/Textmanager Daten/Sterbe Anzeige Opa.jpg")
@@ -121,6 +123,7 @@ class Text_scalierung():
         self.Text_größe_Textanzeiger = Scale(Anzeige_ort, from_=from__, to=to_, orient= orient_, background=backgrund, foreground=foregrund, bd=0,font=font_, length=size*15, width=size*2, command=command_, tickinterval=tickinterval)
         self.Text_größe_Textanzeiger.set(aktuelle_zahl)
         Load_settings.Load_all_collor()
+    
     def color_farb(self,  active_vorgrund, backgrund, foregrund = "green"):
         self.Text_größe_Textanzeiger.config(activebackground=active_vorgrund, bg=backgrund, fg=foregrund)
 

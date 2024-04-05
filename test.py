@@ -4,6 +4,7 @@ import os
 
 print(os.environ.get("PASS_CAM"))
 
+test = Tk()
 
 
 
@@ -54,7 +55,6 @@ ko = [
     "lhjksdfvkl",
     "oöifwqalhfa"
 ]
-test = Tk()
 test.geometry("600x400")
 hi = Menu(test)
 hi.add_command(label="Hi", command=nothing)
