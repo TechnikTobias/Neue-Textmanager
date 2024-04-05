@@ -129,6 +129,8 @@ class Text_scalierung():
 
 class Swich_generator:
     def __init__(self, Settings_is, Textanzeige, Text_datei_save, ob_True, def_bei_offbutton, Text_hover = "", zise = 10):
+        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
         self.Text_datei_save = Text_datei_save
         self.def_bei_offbutton = def_bei_offbutton
         self.zise = int(Settings.text_size)

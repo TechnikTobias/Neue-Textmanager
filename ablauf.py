@@ -29,7 +29,7 @@ def on_key(event):
 
 def button_generator():
     hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textfarbe",))
+    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     rueckgabe = []
     weiter_button = Button(Neue_Textmanager.Textmanager, text="weiter", command=weiter_vers)
     rueckgabe.append(weiter_button)
@@ -173,7 +173,7 @@ def on_resize(event):
 
 def gegerator_lieder(input):
     hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textfarbe",))
+    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     ja = input.split(";")
     name_lied = ja[1]
     aktion = ja[0]

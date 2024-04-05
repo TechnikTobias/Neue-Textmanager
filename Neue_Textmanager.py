@@ -68,9 +68,7 @@ def on_resize(event):
 def Menu_generator():
     global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help
     hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textfarbe",))
-    print(text_farbe)
-    print(hintergrund_farbe)
+    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     Menu_Info = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
     Menu_Kamera = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
     Menu_LiedKontrolle = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
@@ -97,7 +95,7 @@ def Load_Setting():
 
 def button_generator():
     hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textfarbe",))
+    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     rueckgabe = []
     rueckgabe.append("Button")
     Bestätigen = Button(Textmanager, text="Bestätigen", command=bestätigen)
