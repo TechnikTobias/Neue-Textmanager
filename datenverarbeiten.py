@@ -25,7 +25,6 @@ def add_or_edit_song(song_id=None):
         conn = get_db_connection()
         cursor = conn.cursor()
         if not book_name or not song_number or not Uhrheberecht or not min_vers or not song_name:
-            print("Buchname, Liednummer, mindest Anzahl der Verse und Liedname müssen ausgefüllt werden.")
             return
 
 
@@ -55,10 +54,8 @@ def add_or_edit_song(song_id=None):
                 cursor.execute("SELECT verse_id FROM verses WHERE song_number = ? AND verse_number = ? AND book_name = ?", (song_number, i + 1, book_name))
                 verse = cursor.fetchone()
                 if verse:  # Update existing verse
-                    print("true")
                     cursor.execute("UPDATE verses SET verse_text = ? WHERE verse_id = ?" , (verse_text, verse[0]))
                 else:  # Insert new verse
-                    print("hallo")
                     cursor.execute("INSERT INTO verses (song_number, verse_number, verse_text, book_name) VALUES (?, ?, ?, ?)", (song_number, i + 1, verse_text, book_name))
 
         conn.commit()
@@ -207,7 +204,6 @@ def edit_selected_song():
     selected = song_list.curselection()
     if selected:
         song_id = song_list.get(selected)
-        print(song_id)
         add_or_edit_song(song_id)
 
 

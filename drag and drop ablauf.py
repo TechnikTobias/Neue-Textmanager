@@ -62,7 +62,6 @@ def execute_command():
     if selected_index:
         selected_index = selected_index[0]
         command = commands_list.get(selected_index)
-        print("Executing command:", command)
 
 def switch_to_navigation():
     update_display()

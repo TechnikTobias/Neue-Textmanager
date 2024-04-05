@@ -9,6 +9,8 @@ def Load_Text_anzeiger():
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
     if see_the_text[0] == "True":
         global AnzeigeText, Font1, Text_Anzeige_Label
+        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
+        text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
         try: AnzeigeText.config(bg="black")
         except:
             with open (f"Textmanager Daten/Textmanager Daten/Auflösungquere.txt", "r", encoding='utf8') as Hoch_auflösung:
@@ -21,16 +23,17 @@ def Load_Text_anzeiger():
                 Skalierung = Hoch_auflösung.read()
             with open (f"Textmanager Daten/Textmanager Daten/Auflösung2Skalierung.txt", "r", encoding='utf8') as Hoch_auflösung:
                 Skalierung1 = Hoch_auflösung.read()
+            
             if Settings.Bildschirm_ausrichtung:
                 Plusor_muínus = + int(int(Quere_auflösung)/int(Skalierung)*100)
             else:
                 Plusor_muínus = - int(int(Quere_auflösung1)/int(Skalierung1)*100)
-            Font1 = tkFont.Font(family="Helvetica",size= Settings.Text_anzeiger_textgröße)
+            Font1 = tkFont.Font(family="Helvetica",size= Settings.Text_anzeiger_textgröße[0])
             AnzeigeText = Toplevel(Neue_Textmanager.Textmanager)
-            AnzeigeText.config(bg=Settings.Textmanager_Hintergrund)
+            AnzeigeText.config(bg=hintergrund_farbe)
             AnzeigeText.geometry(f"100x100+{Plusor_muínus}+0")
             AnzeigeText.overrideredirect(True)
-            Text_Anzeige_Label = Label(AnzeigeText, font=Font1, fg="white", bg="black", wraplength=int(int(Quere_auflösung1)/int(Skalierung1)*100))
+            Text_Anzeige_Label = Label(AnzeigeText, font=Font1, fg=text_farbe, bg=hintergrund_farbe, wraplength=int(int(Quere_auflösung1)/int(Skalierung1)*100))
             Text_Anzeige_Label.config(text="Hallo Welt, wie gehts euch, das ist ein test text, der text soll normal angezeigt werden")
             Text_Anzeige_Label["justify"] = "left"
             Text_Anzeige_Label.place(x=0, y=0)
@@ -66,7 +69,6 @@ def Load_all_collor():
         Settings.Textanzeiger_setting_class.color(hintergrund_farbe, text_farbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
         Settings.Liedvorschau.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     except: pass
-    print(text_farbe)
     Neue_Textmanager.Menu_Settings.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     Neue_Textmanager.Menu_Info.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     Neue_Textmanager.Menu_LiedKontrolle.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)

@@ -57,11 +57,11 @@ def Check_settings(Tkfont = True):
     Button_hervorheben = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hervorheben",)) == "True"
     Vers_kontroll = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("vers_kontroll",)) == "True"   
     Textanzeiger_Textfarbe= Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
-    Textanzeiger_Hintergrund = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_Hintergrund",))
+    Textanzeiger_Hintergrund = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
     Text_anzeiger_textgröße = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_anzeiger_textgröße",))
     Button_hervorheben_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hintergrund",))
     Button_Textfarbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_textfarbe",))
-    Bildschirm_ausrichtung = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("bildschirm_ausrichtung",)) == "Rechts"
+    Bildschirm_ausrichtung = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("bildschirm_ausrichtung",))[0] == "Rechts"
     Liedvorschau = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("liedvorschau",)) == "True"
     Smarte_unterstüzung = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("smarte_verse",)) == "True"
     Kronologische_Verse = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("kronologische_verse",)) == "True"
@@ -70,7 +70,7 @@ def Check_settings(Tkfont = True):
 
     if Tkfont:
         text_size1 = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_size",))
-        text_size = int(text_size1[0])*16
+        text_size = int(text_size1[0])
         Textgröße_von_alle_Texte = tkFont.Font(family="Helvetica", size=text_size)
 
 
@@ -79,33 +79,29 @@ def Check_settings(Tkfont = True):
 def Textfarbe_farbe_def():
     color = askcolor()  
     if not (color[1]) == None:
-        with open(f"Textmanager Daten/Textmanager Daten/text_farbe.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
-            Neue_Texmanager_Textfarbe.write(color[1])
+        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (color[1],"text_farbe"), False)
     Load_settings.Load_all_collor()
 
 def Hintergrundfarbe_farbe_def():
     color = askcolor()  
     if not (color[1]) == None:
-        with open(f"Textmanager Daten/Textmanager Daten/Hintergrund.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
-            Neue_Texmanager_Textfarbe.write(color[1])
+        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (color[1],"hintergrundfarbe"), False)
     Load_settings.Load_all_collor()
 
 
 
 
 
-def Text_size_def(var):
+def Text_size_def(text_groeße):
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
     if see_the_text[0] == "True":
-        Load_settings.Font1.config(size= var)
-        with open(f"Textmanager Daten/Textmanager Daten/Text_anzeiger_textgröße.txt", "w", encoding='utf8') as Text_anzeiger_textgröße1:
-            Text_anzeiger_textgröße1.write(var)
+        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (text_groeße,"text_anzeiger_textgröße"), False)
+        Load_settings.Font1.config(size= text_groeße)
 
 
 
 def Rechts():
-    with open(f"Textmanager Daten/Textmanager Daten/Bildschirm_ausrichtung.txt", "w", encoding='utf8') as Bildschirm_ausrichtung:
-        Bildschirm_ausrichtung.write("Rechts")
+    Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("Rechts","bildschirm_ausrichtung"), False)
     Bildschirm_ausrichtung_button.config(text="Rechts", command=Links)
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
     if see_the_text[0] == "True":
@@ -113,8 +109,7 @@ def Rechts():
         Textanzeiger_setting_class.switch_setting_on()
 
 def Links():
-    with open(f"Textmanager Daten/Textmanager Daten/Bildschirm_ausrichtung.txt", "w", encoding='utf8') as Bildschirm_ausrichtung:
-        Bildschirm_ausrichtung.write("Links")
+    Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("Links","bildschirm_ausrichtung"), False)
     Bildschirm_ausrichtung_button.config(text="Links", command=Rechts)
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
     if see_the_text[0] == "True":
@@ -132,7 +127,7 @@ def Auto_auflösung_def():
     Load_anzeige()
 
 def Test(event=None):
-    print("hi")
+    pass
 
 def Load_anzeige():
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",))
@@ -187,14 +182,14 @@ def Settings_Textanzeiger_def():
     text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     Settings_Textanzeiger_Top.config(bg=hintergrund_farbe)
     Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_Textanzeiger_Top, "Liedtextanzeige", f"see_the_text", see_the_text[0] == "True", Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
-    Textanzeiger_Textfarbe_button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Textfarbe", "text_farbe")
-    Textanzeiger_Hintergrund_Button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "Textanzeiger_Hintergrund", "Hintergrund")
+    Textanzeiger_Textfarbe_button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "textanzeiger_textfarbe", "text_farbe")
+    Textanzeiger_Hintergrund_Button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "textanzeiger_hintergrund", "Hintergrund")
     Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(Settings_Textanzeiger_Top, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung2", "Textbildschirm", Skalierung)
     if Bildschirm_ausrichtung:
         Bildschirm_ausrichtung_button = ResponsiveWidget(Button,Settings_Textanzeiger_Top, font=Textgröße_von_alle_Texte, text="Rechts", command=Links, bd=0)
     else:
         Bildschirm_ausrichtung_button = ResponsiveWidget(Button, Settings_Textanzeiger_Top, font=Textgröße_von_alle_Texte, text="Links", command=Rechts, bd=0)
-    Text_größe_ändern = Class_gen.Text_scalierung(Settings_Textanzeiger_Top, Text_size_def, from__=0, to_=100, orient_=HORIZONTAL, backgrund=hintergrund_farbe, foregrund=text_farbe, aktuelle_zahl=int(Text_anzeiger_textgröße), font_=Textgröße_von_alle_Texte, size=int(text_size))
+    Text_größe_ändern = Class_gen.Text_scalierung(Settings_Textanzeiger_Top, Text_size_def, from__=0, to_=100, orient_=HORIZONTAL, backgrund=hintergrund_farbe, foregrund=text_farbe, aktuelle_zahl=int(Text_anzeiger_textgröße[0]), font_=Textgröße_von_alle_Texte, size=int(text_size))
     Liedvorschau_Button = Class_gen.Swich_generator(Settings_is=Settings_Textanzeiger_Top, Textanzeige="Liedvorschau", Text_datei_save=f"Liedvorschau", Text_hover="Diese Einstellung zeigt vor dem Gottesdienst die Lieder an", zise=text_size, ob_True=Liedvorschau, def_bei_offbutton=Test)
     Load_settings.Load_all_collor()
     Load_settings.Load_text_size(text_size)

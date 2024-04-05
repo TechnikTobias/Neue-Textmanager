@@ -46,8 +46,10 @@ class Test_info:
 class Bild_schirm_größe_class:
 
     def __init__(self, Seite, bildschirm_große_quere, bilschirm_größe_hoch,  speicherort, Bildschirm, skalierung_list, Text_hover = ""):
+        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
         self.speicherort = speicherort
-        self.Hauptbildschirm = Label(Seite, font=Settings.Textgröße_von_alle_Texte, text=Bildschirm, bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe)
+        self.Hauptbildschirm = Label(Seite, font=Settings.Textgröße_von_alle_Texte, text=Bildschirm, bg=hintergrund_farbe, fg=text_farbe)
         with open(f"{speicherort}quere.txt", "r", encoding="utf8") as speicherort1:
             self.bildschirm_pos = speicherort1.read()
         self.Bild_größe_stringvar_quere = StringVar()
@@ -60,8 +62,8 @@ class Bild_schirm_größe_class:
         self.Bild_größe_stringvar_hoch.set(self.bildschirm_pos1)
         self.Bildschirm_größe_hoch_menü = OptionMenu(Seite, self.Bild_größe_stringvar_hoch, *bilschirm_größe_hoch)
         self.Bildschirm_größe_hoch_menü.config(font=Settings.Textgröße_von_alle_Texte)
-        self.Bildschirm_bestätigen = ResponsiveWidget(Button, Seite, activebackground=Settings.Button_hervorheben_farbe, font=Settings.Textgröße_von_alle_Texte, fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, bd=0, text="Bestätigen", command=self.Bildgröße_bestatigen, activeforeground=Settings.Button_hervorheben_farbe)
-        self.X_bildschirm = Label(Seite, font=Settings.Textgröße_von_alle_Texte,bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text="X")
+        self.Bildschirm_bestätigen = ResponsiveWidget(Button, Seite, activebackground=Settings.Button_hervorheben_farbe, font=Settings.Textgröße_von_alle_Texte, fg=text_farbe, bg=hintergrund_farbe, bd=0, text="Bestätigen", command=self.Bildgröße_bestatigen, activeforeground=Settings.Button_hervorheben_farbe)
+        self.X_bildschirm = Label(Seite, font=Settings.Textgröße_von_alle_Texte,bg=hintergrund_farbe, fg=text_farbe, text="X")
         with open(f"{speicherort}Skalierung.txt", "r", encoding="utf8") as Skalierung:
             self.Skalierung = Skalierung.read()
         self.Bildschirm_Skalierung_stringvar_quere = StringVar()
@@ -134,24 +136,25 @@ class Swich_generator:
         self.Text_datei_save = Text_datei_save
         self.def_bei_offbutton = def_bei_offbutton
         self.zise = int(Settings.text_size)
-        self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground=Settings.Textmanager_Hintergrund)
-        self.switch_text = Label(Settings_is, font=("Helvetica", zise), bg=Settings.Textmanager_Hintergrund, fg=Settings.Textmanager_Textfarbe, text=Textanzeige)
+        self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground=hintergrund_farbe)
+        self.switch_text = Label(Settings_is, font=("Helvetica", zise), bg=hintergrund_farbe, fg=text_farbe, text=Textanzeige)
         self.Text_anzeiger2 = ToolTip(self.switch_text, msg=Text_hover, delay=2, follow=True)
         if not ob_True:
             self.Photo1 = Image.open("off-button.png")
             self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
-            self.is_switch.config(image=self.Photo, bg=Settings.Textmanager_Hintergrund, border=0, command=self.switch_setting_on)
+            self.is_switch.config(image=self.Photo, bg=hintergrund_farbe, border=0, command=self.switch_setting_on)
         else:
             self.Photo1 = Image.open("on-button.png")
             self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
-            self.is_switch.config(image=self.Photo, bg=Settings.Textmanager_Hintergrund, border=0, command=self.switch_setting_off)
+            self.is_switch.config(image=self.Photo, bg=hintergrund_farbe, border=0, command=self.switch_setting_off)
         if len(Text_hover) > 0:
             self.Text_anzeiger = ToolTip(self.is_switch, msg=Text_hover, delay=2, follow=True)
 
 
     def color(self, bg_color, fg_color, activ_bg, activ_fg):
         self.switch_text.config(bg=bg_color,fg=fg_color)
-        self.is_switch.config(bg=bg_color, activebackground=Settings.Textmanager_Hintergrund)
+        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        self.is_switch.config(bg=bg_color, activebackground=hintergrund_farbe)
 
     def switch_setting_off(self):
         Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("False",f"{self.Text_datei_save}"), False)
@@ -182,7 +185,9 @@ class Farben_class:
 
     def __init__(self, Anzeigefenster, Farbe_ort, Name, Text_hover = ""):
         self.Farbe_ort = Farbe_ort
-        self.Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Anzeigefenster, font=Settings.Textgröße_von_alle_Texte, fg=Settings.Textmanager_Textfarbe, bg=Settings.Textmanager_Hintergrund, text=Name, command=self.Farbe_def, border=0)
+        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
+        self.Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Anzeigefenster, font=Settings.Textgröße_von_alle_Texte, fg=text_farbe, bg=hintergrund_farbe, text=Name, command=self.Farbe_def, border=0)
         if len(Text_hover) > 0:
             self.Text_anzeiger = ToolTip(self.Hintergrndfarbe_auswahl, msg=Text_hover, delay=2, follow=True)
 
@@ -190,8 +195,7 @@ class Farben_class:
     def Farbe_def(self):
         color = askcolor()  
         if not (color[1]) == None:
-            with open(f"Textmanager Daten/Textmanager Daten/{self.Farbe_ort}.txt", "w", encoding='utf8') as Neue_Texmanager_Textfarbe:
-                Neue_Texmanager_Textfarbe.write(color[1])
+            Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (f"{color[1]}",f"{self.Farbe_ort}"), False)
         Load_settings.Load_all_collor()
 
     def color(self, bg_color, fg_color, activ_bg, activ_fg):
