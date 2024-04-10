@@ -43,7 +43,7 @@ def Load_Text_anzeiger():
             AnzeigeText.destroy()
         except: pass
 
-
+#alles darunter unötig 
 
 
 def Load_all_collor():

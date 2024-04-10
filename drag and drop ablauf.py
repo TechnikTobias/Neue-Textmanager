@@ -2,6 +2,8 @@ import tkinter as tk
 import sqlite3
 import os
 
+#neu überarbeiten und verschönern
+
 Speicherort = os.path.dirname(os.path.abspath(__file__))
 
 def add_command():

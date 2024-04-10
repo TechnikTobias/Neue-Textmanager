@@ -10,6 +10,9 @@ from tktooltip import *
 from tkinter.colorchooser import askcolor
 Programm_ort = os.getlogin()
 
+#alles noch mal anschauen 
+
+
 Skalierung = [
     "100",
     "125",
@@ -52,8 +55,7 @@ def ResponsiveWidget(widget, *args, **kwargs):
     return w
 
 def Check_settings(Tkfont = True):
-    global see_the_text, Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size, Liedvorschau,Smarte_unterstüzung, Kronologische_Verse, Smarte_Vorschläge
-    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",)) == "True"
+    global Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size, Liedvorschau,Smarte_unterstüzung, Kronologische_Verse, Smarte_Vorschläge
     Button_hervorheben = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hervorheben",)) == "True"
     Vers_kontroll = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("vers_kontroll",)) == "True"   
     Textanzeiger_Textfarbe= Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))

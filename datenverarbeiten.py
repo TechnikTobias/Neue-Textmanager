@@ -7,6 +7,7 @@ import Neue_Textmanager
 
 Speicherort = os.path.dirname(os.path.abspath(__file__))
 
+#neu überarbeiten und verschönern
 
 # Datenbankverbindung
 def get_db_connection():
