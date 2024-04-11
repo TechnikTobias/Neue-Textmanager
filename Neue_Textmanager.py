@@ -63,29 +63,38 @@ def start_anzeige_bildschirm():
 
 def on_resize(event):
     posistion(factor)
+    Load_settings.grafig()
 
 
 def Menu_generator():
-    global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help
+    global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help, menu_info_main
+    Load_settings.grafig()
     hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
     text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
-    Menu_Info = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
-    Menu_Kamera = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
-    Menu_LiedKontrolle = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
-    Menu_Help = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
-    Menu_Settings = Menu(Textmanager, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
-    Menu_Settings.add_cascade(label="Info", menu=Menu_Info)
-    Menu_Settings.add_cascade(label="Kamera", menu=Menu_Kamera)
-    Menu_Settings.add_cascade(label="Lied Kontrolle", menu=Menu_LiedKontrolle)
-    Menu_Settings.add_cascade(label="Hilfe", menu=Menu_Help)
-    Menu_Info.add_command(label="Einstellungen", command=Settings.make_settings)
-    Menu_Info.add_command(label= "Info", command=Settings.Info)
-    Menu_Kamera.add_command(label="Einstellungen", command=Kamera.Settings)
-    Menu_Kamera.add_command(label="Position", command=Kamera.Position)
-    Menu_LiedKontrolle.add_command(label="Einstellungen")
-    Menu_LiedKontrolle.add_command(label="Lied Kontrolieren", command=datenverarbeiten.setup_ui)
-    Menu_Help.add_command(label="Hilfe")
-    Textmanager.config(menu=Menu_Settings)
+    menu_info_main = ttk.Menubutton(Textmanager, text='Info', style='custom.TMenubutton')
+    menu_info = Menu(menu_info_main, bg=hintergrund_farbe, fg= text_farbe, border=0, borderwidth=0, tearoff=False, )
+    menu_kamera_main = ttk.Menubutton(Textmanager, text = "Kamera", style='custom.TMenubutton')
+    menu_kamera = Menu(menu_kamera_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+    menu_liedkontrolle_main = ttk.Menubutton(Textmanager, text = "Liedkontrolle", style='custom.TMenubutton')
+    menu_liedkontrolle = Menu(menu_liedkontrolle_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+    menu_help_main = ttk.Menubutton(Textmanager, text = "Hilfe", style='custom.TMenubutton')
+    menu_help = Menu(menu_help_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+    menu_info.add_radiobutton(label="Einstellungen", command=Settings.make_settings)
+    menu_info.add_radiobutton(label= "Info", command=Settings.Info)
+    menu_kamera.add_command(label="Einstellungen", command=Kamera.Settings)
+    menu_kamera.add_command(label="Position", command=Kamera.Position)
+    menu_liedkontrolle.add_command(label="Einstellungen")
+    menu_liedkontrolle.add_command(label="Lied Kontrolieren", command=datenverarbeiten.setup_ui)
+    menu_help.add_command(label="Hilfe")
+    menu_info_main['menu'] = menu_info
+    menu_kamera_main['menu'] = menu_kamera
+    menu_help_main["menu"] = menu_help
+    menu_liedkontrolle_main["menu"] = menu_liedkontrolle
+    menu_info_main.pack(side=LEFT, anchor=NW)
+    menu_kamera_main.pack(side=LEFT, anchor=NW)
+    menu_liedkontrolle_main.pack(side=LEFT, anchor=NW)
+    menu_help_main.pack(side=LEFT, anchor=NW)
+
 
 def Load_Setting():
     Settings.Check_settings()
@@ -156,15 +165,11 @@ def gegerator_lieder(input):
         clicked.set(befehle[0])
         inhalt.append(clicked)
         opt = ttk.OptionMenu(Textmanager, clicked, *befehle)
-        opt.config()
-        change_style(opt)
+        opt.config(style='custom.TMenubutton')
         inhalt.append(opt)
     return inhalt
 
-def change_style(widget):
-    style = ttk.Style()
-    style.configure('TMenubutton', relief='flat', borderwidth=0, font=('Helvetica', 12))
-    widget.config(style='TMenubutton')
+
 
 def delete():
     for i in alle_inhalt:
@@ -222,34 +227,34 @@ def posistion(factor = factor):
         text_size = min( int(i[1].winfo_height()/3*factor), int(i[1].winfo_width()/10*factor))
         i[1].config(font=('Helvetica', text_size))
         if i[0][0] == " Textwort":
-            i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
-            i[2].place(x= (i[1].winfo_width()+1), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.3*factor, relheight=0.1*factor)
+            i[1].place(x= 0, y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[2].place(x= (i[1].winfo_width()+1), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.3*factor, relheight=0.1*factor)
             i[2].config(font=('Helvetica', text_size))
         elif i[0][0] == " Lied":
-            i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
-            i[2].place(x= 0, y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
+            i[1].place(x= 0, y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[2].place(x= 0, y= menu_info_main.winfo_height()+1+pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].config(font=('Helvetica', text_size))
-            i[4].place(x= (i[1].winfo_width()+1), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
+            i[4].place(x= (i[1].winfo_width()+1), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
             i[4].config(font=('Helvetica', text_size))
-            i[5].place(x= (i[1].winfo_width()+2+i[4].winfo_width()), y= pos*i[1].winfo_height()*2+pos*2-1,relwidth=0.1*factor, relheight=0.05*factor)
+            i[5].place(x= (i[1].winfo_width()+2+i[4].winfo_width()), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2-1,relwidth=0.1*factor, relheight=0.05*factor)
             i[5].config(font=('Helvetica', text_size))
-            i[6].place(x= (i[1].winfo_width()+2+i[4].winfo_width()), y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height(),relwidth=0.1*factor, relheight=0.05*factor)
+            i[6].place(x= (i[1].winfo_width()+2+i[4].winfo_width()), y= menu_info_main.winfo_height()+1+pos*(i[1].winfo_height()+1)*2+i[1].winfo_height(),relwidth=0.1*factor, relheight=0.05*factor)
             i[6].config(font=('Helvetica', text_size))
-            i[8].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width(), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[8].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width(), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[8].config(font=('Helvetica', text_size))
-            i[9].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width()+2+i[8].winfo_width(), y= pos*(i[1].winfo_height()+1)*2,relwidth=0.3*factor, relheight=0.1*factor)
+            i[9].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width()+2+i[8].winfo_width(), y= menu_info_main.winfo_height()+1+pos*(i[1].winfo_height()+1)*2,relwidth=0.3*factor, relheight=0.1*factor)
             i[9].config(font=('Helvetica', text_size))
         elif i[0][0] == " Kamera":
-            i[1].place(x= 0, y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
-            i[2].place(x= 0, y= pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
+            i[1].place(x= 0, y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
+            i[2].place(x= 0, y= menu_info_main.winfo_height()+1+pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].config(font=('Helvetica', text_size))
-            i[4].place(x= (i[1].winfo_width()+1), y= pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
+            i[4].place(x= (i[1].winfo_width()+1), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
         elif i[0] == "Button":
             fenster_width= Textmanager.winfo_width()
-            i[1].place(x=fenster_width-i[1].winfo_width()-15, y=10, relwidth=0.12*factor, relheight=0.07*factor)
-            i[2].place(x=fenster_width-i[2].winfo_width()-15, y=i[1].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
+            i[1].place(x=fenster_width-i[1].winfo_width()-15, y=menu_info_main.winfo_height()+1+10, relwidth=0.12*factor, relheight=0.07*factor)
+            i[2].place(x=fenster_width-i[2].winfo_width()-15, y=menu_info_main.winfo_height()+1+i[1].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
             i[2].config(font=('Helvetica', text_size))
-            i[3].place(x=fenster_width-i[1].winfo_width()-15, y=i[1].winfo_height()+i[2].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
+            i[3].place(x=fenster_width-i[1].winfo_width()-15, y=menu_info_main.winfo_height()+1+i[1].winfo_height()+i[2].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
             i[3].config(font=('Helvetica', text_size))
-            i[4].place(x=fenster_width-i[1].winfo_width()-15, y=i[1].winfo_height()+i[2].winfo_height()+i[3].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
+            i[4].place(x=fenster_width-i[1].winfo_width()-15, y=menu_info_main.winfo_height()+1+i[1].winfo_height()+i[2].winfo_height()+i[3].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
             i[4].config(font=('Helvetica', text_size))

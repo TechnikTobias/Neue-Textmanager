@@ -4,6 +4,17 @@ import Class_gen
 
 from tkinter import *
 import tkinter.font as tkFont
+from tkinter import ttk as tk
+
+
+def grafig():
+    style = tk.Style()
+    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
+    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
+    text_size = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_size",))
+    style.configure('custom.TMenubutton', background=hintergrund_farbe, foreground=text_farbe, font=('Helvetica', text_size))
+    style.configure('TMenubutton', relief='flat', borderwidth=0, font=('Helvetica', text_size))
+    
 
 def Load_Text_anzeiger():
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
@@ -69,12 +80,6 @@ def Load_all_collor():
         Settings.Textanzeiger_setting_class.color(hintergrund_farbe, text_farbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
         Settings.Liedvorschau.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
     except: pass
-    Neue_Textmanager.Menu_Settings.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-    Neue_Textmanager.Menu_Info.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-    Neue_Textmanager.Menu_LiedKontrolle.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-    Neue_Textmanager.Menu_Help.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-    Neue_Textmanager.Menu_Kamera.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
-    Neue_Textmanager.Textmanager.config(bg=hintergrund_farbe)
     try:
         Settings.Graphig_bildschirm.config(bg=hintergrund_farbe)
         Settings.Hintergrndfarbe_auswahl.color(hintergrund_farbe, text_farbe, Aufleuchtfarbe_Hintergrund, Aufleuchtfarbe_Textfarbe)
