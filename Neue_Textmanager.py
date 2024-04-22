@@ -67,7 +67,7 @@ def on_resize(event):
 
 
 def Menu_generator():
-    global Menu_Settings, Menu_Info, Menu_Kamera, Menu_LiedKontrolle, Menu_Help, menu_info_main
+    global menu_info_main
     Load_settings.grafig()
     hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
     text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
@@ -107,17 +107,14 @@ def button_generator():
     text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     rueckgabe = []
     rueckgabe.append("Button")
-    Bestätigen = Button(Textmanager, text="Bestätigen", command=bestätigen)
+    Bestätigen = ttk.Button(Textmanager, text="Bestätigen", command=bestätigen, style='TButton')
     rueckgabe.append(Bestätigen)
-    Wiederherstellen = Button(Textmanager, text="Wiederherstellen")
+    Wiederherstellen = ttk.Button(Textmanager, text="Wiederherstellen", style='TButton')
     rueckgabe.append(Wiederherstellen)
-    Löschen = Button(Textmanager, text="Löschen", command=delete)
+    Löschen = ttk.Button(Textmanager, text="Löschen", command=delete, style='TButton')
     rueckgabe.append(Löschen)
-    Präsentation = Button(Textmanager, text="Präsentation", command=ablauf.Präsentation_starten)
+    Präsentation = ttk.Button(Textmanager, text="Präsentation", command=ablauf.Präsentation_starten, style='TButton')
     rueckgabe.append(Präsentation)
-    for i in rueckgabe:
-        if isinstance(i, Widget):
-            i.config(bg=hintergrund_farbe, fg=text_farbe)
     return rueckgabe
 
 
@@ -127,38 +124,36 @@ def gegerator_lieder(input):
     aktion = ja[1].split(":")
     inhalt = []
     inhalt.append([aktion[1], name_lied[1]])
-    Lied_start = Label(Textmanager, text=name_lied[1])
+    Lied_start = ttk.Label(Textmanager, text=name_lied[1], style='TLabel')
     inhalt.append(Lied_start)
     if aktion[1] == " Textwort":
-        Button_Textwrt = Button(Textmanager, text="Textwort")
+        Button_Textwrt = ttk.Button(Textmanager, text="Textwort", style='TButton')
         inhalt.append(Button_Textwrt)
     elif aktion[1] == " Lied":
-        Lable_Kamera = Button(Textmanager, text="Kamera", border=0)
+        Lable_Kamera = ttk.Button(Textmanager, text="Kamera", style='TButton')
         inhalt.append(Lable_Kamera)
         befehle = ["Kamera", "Textwort", "Lied"]
         clicked = StringVar()
         clicked.set(befehle[0])
-        opt = OptionMenu(Textmanager, clicked, *befehle)
-        opt.config(font=('Helvetica', 15), fg="black", bg="white")
+        opt = ttk.OptionMenu(Textmanager, clicked, *befehle, style='custom.TMenubutton')
         inhalt.append(clicked)
         inhalt.append(opt)
-        eingabe_Lied = Entry(Textmanager)
+        eingabe_Lied = ttk.Entry(Textmanager, style='TEntry')
         eingabe_Lied.bind("<KeyRelease>", eingabe_änderung)
         inhalt.append(eingabe_Lied)
-        eingabe_Vers = Entry(Textmanager)
+        eingabe_Vers = ttk.Entry(Textmanager, style='TEntry')
         eingabe_Vers.bind("<KeyRelease>", eingabe_änderung)
         inhalt.append(eingabe_Vers)
         befehle_buch = ["Gesangbuch", "Chorbuch", "Jugendliederbuch"]
         clicked_buch = StringVar()
         clicked_buch.set(befehle_buch[0])
-        opt_buch = OptionMenu(Textmanager, clicked_buch, *befehle_buch, command=eingabe_änderung)
-        opt_buch.config(font=('Helvetica', 15), fg="black", bg="white", )
+        opt_buch = ttk.OptionMenu(Textmanager, clicked_buch, *befehle_buch, command=eingabe_änderung)
         inhalt.append(clicked_buch)
         inhalt.append(opt_buch)
-        Tex_lied_lable = Label(Textmanager)
+        Tex_lied_lable = ttk.Label(Textmanager)
         inhalt.append(Tex_lied_lable)
     elif aktion[1] == " Kamera":
-        lied_weiter = Button(Textmanager, text= "servus", border=0)
+        lied_weiter = ttk.Button(Textmanager, text= "servus", style='TButton')
         inhalt.append(lied_weiter)
         befehle = ["Kamera", "Textwort", "Lied"]
         clicked = StringVar()
@@ -225,36 +220,24 @@ def eingabe_änderung(event):
 def posistion(factor = factor):
     for pos, i in enumerate (alle_inhalt):
         text_size = min( int(i[1].winfo_height()/3*factor), int(i[1].winfo_width()/10*factor))
-        i[1].config(font=('Helvetica', text_size))
         if i[0][0] == " Textwort":
             i[1].place(x= 0, y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].place(x= (i[1].winfo_width()+1), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.3*factor, relheight=0.1*factor)
-            i[2].config(font=('Helvetica', text_size))
         elif i[0][0] == " Lied":
             i[1].place(x= 0, y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].place(x= 0, y= menu_info_main.winfo_height()+1+pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
-            i[2].config(font=('Helvetica', text_size))
             i[4].place(x= (i[1].winfo_width()+1), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
-            i[4].config(font=('Helvetica', text_size))
             i[5].place(x= (i[1].winfo_width()+2+i[4].winfo_width()), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2-1,relwidth=0.1*factor, relheight=0.05*factor)
-            i[5].config(font=('Helvetica', text_size))
             i[6].place(x= (i[1].winfo_width()+2+i[4].winfo_width()), y= menu_info_main.winfo_height()+1+pos*(i[1].winfo_height()+1)*2+i[1].winfo_height(),relwidth=0.1*factor, relheight=0.05*factor)
-            i[6].config(font=('Helvetica', text_size))
             i[8].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width(), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
-            i[8].config(font=('Helvetica', text_size))
             i[9].place(x= i[1].winfo_width()+2+i[4].winfo_width()+2+i[5].winfo_width()+2+i[8].winfo_width(), y= menu_info_main.winfo_height()+1+pos*(i[1].winfo_height()+1)*2,relwidth=0.3*factor, relheight=0.1*factor)
-            i[9].config(font=('Helvetica', text_size))
         elif i[0][0] == " Kamera":
             i[1].place(x= 0, y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].place(x= 0, y= menu_info_main.winfo_height()+1+pos*(i[1].winfo_height()+1)*2+i[1].winfo_height()+1,relwidth=0.15*factor, relheight=0.05*factor)
-            i[2].config(font=('Helvetica', text_size))
             i[4].place(x= (i[1].winfo_width()+1), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.1*factor, relheight=0.05*factor)
         elif i[0] == "Button":
             fenster_width= Textmanager.winfo_width()
             i[1].place(x=fenster_width-i[1].winfo_width()-15, y=menu_info_main.winfo_height()+1+10, relwidth=0.12*factor, relheight=0.07*factor)
             i[2].place(x=fenster_width-i[2].winfo_width()-15, y=menu_info_main.winfo_height()+1+i[1].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
-            i[2].config(font=('Helvetica', text_size))
             i[3].place(x=fenster_width-i[1].winfo_width()-15, y=menu_info_main.winfo_height()+1+i[1].winfo_height()+i[2].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
-            i[3].config(font=('Helvetica', text_size))
             i[4].place(x=fenster_width-i[1].winfo_width()-15, y=menu_info_main.winfo_height()+1+i[1].winfo_height()+i[2].winfo_height()+i[3].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
-            i[4].config(font=('Helvetica', text_size))

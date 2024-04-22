@@ -11,10 +11,15 @@ def grafig():
     style = tk.Style()
     hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
     text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
-    text_size = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_size",))
-    style.configure('custom.TMenubutton', background=hintergrund_farbe, foreground=text_farbe, font=('Helvetica', text_size))
-    style.configure('TMenubutton', relief='flat', borderwidth=0, font=('Helvetica', text_size))
-    
+    factor = int(Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_size",))[0])
+    text_size = min( int(Neue_Textmanager.Textmanager.winfo_height()/50*factor), int(Neue_Textmanager.Textmanager.winfo_width()/80*factor))
+    style.theme_use("clam")
+    style.configure('custom.TMenubutton', background=hintergrund_farbe, foreground=text_farbe, font=('Helvetica', text_size),)
+    style.configure('TMenubutton', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
+    style.configure('TLabel', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
+    style.configure('TEntry', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
+    style.configure('TButton',  borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
+
 
 def Load_Text_anzeiger():
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)

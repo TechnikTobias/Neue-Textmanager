@@ -2,6 +2,7 @@ import Neue_Textmanager
 import Load_settings
 
 from tkinter import *
+from tkinter.ttk import *
 def Präsentation_starten():
     global alle_inhalt, button_liste
     alle_inhalt = []
@@ -28,21 +29,16 @@ def on_key(event):
 
 
 def button_generator():
-    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     rueckgabe = []
-    weiter_button = Button(Neue_Textmanager.Textmanager, text="weiter", command=weiter_vers)
+    weiter_button = Button(Neue_Textmanager.Textmanager, text="weiter", command=weiter_vers, style='TButton')
     rueckgabe.append(weiter_button)
     rueckgabe.append("Button")
-    zrueck_button = Button(Neue_Textmanager.Textmanager, text="zurück", command=zurueck_vers)
+    zrueck_button = Button(Neue_Textmanager.Textmanager, text="zurück", command=zurueck_vers, style='TButton')
     rueckgabe.append(zrueck_button)
-    zrueck_button = Button(Neue_Textmanager.Textmanager, text="Text Eingaben", command=clear_window)
+    zrueck_button = Button(Neue_Textmanager.Textmanager, text="Text Eingaben", command=clear_window, style='TButton')
     rueckgabe.append(zrueck_button)
-    zrueck_button = Button(Neue_Textmanager.Textmanager, text="zurück", command=zurueck_vers)
+    zrueck_button = Button(Neue_Textmanager.Textmanager, text="zurück", command=zurueck_vers, style='TButton')
     rueckgabe.append(zrueck_button)
-    for i in rueckgabe:
-        if isinstance(i, Widget):
-            i.config(bg=hintergrund_farbe, fg=text_farbe)
     return rueckgabe
 
 def weiter_vers():
@@ -76,7 +72,7 @@ def anfang_ablauf():
     ablauf_varables.append(False) 
 
 def clear_window():
-    global ablauf_varables, alle_inhalt
+    global ablauf_varables, alle_inhalt, button_liste
     del ablauf_varables
     Neue_Textmanager.Textmanager.unbind("<Key>")
     Neue_Textmanager.Textmanager.unbind("<Configure>")
@@ -85,6 +81,11 @@ def clear_window():
             if isinstance(i, Widget):
                 i.destroy()
     del alle_inhalt
+    for i in button_liste:
+        for i in i:
+            if isinstance(i, Widget):
+                i.destroy()
+    del button_liste
     Neue_Textmanager.start_anzeige_bildschirm()
     Neue_Textmanager.posistion()
 
@@ -172,8 +173,6 @@ def on_resize(event):
     position_button()
 
 def gegerator_lieder(input):
-    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     ja = input.split(";")
     name_lied = ja[1]
     aktion = ja[0]
@@ -182,36 +181,28 @@ def gegerator_lieder(input):
     Buch = ja[5]
     Vers_nummer = ja[4]
     inhalt = []
-    Lied_start = Label(Neue_Textmanager.Textmanager, text=name_lied)
-    Lied_start.config(bg=hintergrund_farbe, fg=text_farbe)
+    Lied_start = Label(Neue_Textmanager.Textmanager, text=name_lied, style='TLabel')
     inhalt.append(Lied_start)
     inhalt.append([aktion, name_lied, Liednummer, Vers_nummer, Buch, Kamera])
     if aktion == " Textwort":
         pass
     elif aktion == " Lied":
-        lable_Kamera = Button(Neue_Textmanager.Textmanager, text="Kamera", border=0)
-        lable_Kamera.config(bg=hintergrund_farbe, fg=text_farbe)
+        lable_Kamera = Button(Neue_Textmanager.Textmanager, text="Kamera", style='TButton')
         inhalt.append(lable_Kamera)
-        text_lied_lable = Label(Neue_Textmanager.Textmanager)
-        text_lied_lable.config(bg=hintergrund_farbe, fg=text_farbe)
+        text_lied_lable = Label(Neue_Textmanager.Textmanager, style='TLabel')
         inhalt.append(text_lied_lable)
     elif aktion == " Kamera":
-        lied_weiter = Button(Neue_Textmanager.Textmanager, text= "servus", border=0)
-        lied_weiter.config(bg=hintergrund_farbe, fg=text_farbe)
+        lied_weiter = Button(Neue_Textmanager.Textmanager, text= "servus", style='TButton')
         inhalt.append(lied_weiter)
     return inhalt
 
 
 def position_präsi(factor= 1):
     for pos,i in enumerate(alle_inhalt):
-        text_size = min( int(i[0].winfo_height()/3*factor), int(i[0].winfo_width()/8*factor))
-        i[0].config(font=('Helvetica', text_size))
         if i[1][0] == " Lied":
-            i[0].place(x= 0, y= pos*i[0].winfo_height()*2+pos*2,relwidth=0.3*factor, relheight=0.05*factor)
-            i[2].place(x= 0, y= pos*(i[0].winfo_height()+1)*2+i[0].winfo_height()+1,relwidth=0.3*factor, relheight=0.05*factor)
-            i[2].config(font=('Helvetica', text_size))
-            i[3].place(x= (i[0].winfo_width()+1), y= pos*i[0].winfo_height()*2+pos*2,relwidth=0.5*factor, relheight=0.1*factor)
-            i[3].config(font=('Helvetica', text_size))
+            i[0].place(x= 0, y= pos*i[0].winfo_height()*2+pos*2+Neue_Textmanager.menu_info_main.winfo_height()+1,relwidth=0.3*factor, relheight=0.05*factor)
+            i[2].place(x= 0, y= pos*(i[0].winfo_height()+1)*2+i[0].winfo_height()+1+Neue_Textmanager.menu_info_main.winfo_height()+1,relwidth=0.3*factor, relheight=0.05*factor)
+            i[3].place(x= (i[0].winfo_width()+1), y= pos*i[0].winfo_height()*2+pos*2+Neue_Textmanager.menu_info_main.winfo_height()+1,relwidth=0.5*factor, relheight=0.1*factor)
             song = Neue_Textmanager.get_db_connection("SELECT song_name FROM songs WHERE song_number = ? AND book_name = ?", (str(i[1][2]),str(i[1][4])))
             if not i[1][3]:
                 text_einfügen = ""
@@ -225,22 +216,16 @@ def position_präsi(factor= 1):
             else:
                 i[3].config(text = "Bitte geben sie eine Nummer ein\n")
         elif i[1][0] == " Kamera":
-            i[0].place(x= 0, y= pos*i[0].winfo_height()*2+pos*2,relwidth=0.3*factor, relheight=0.05*factor)
-            i[2].place(x= 0, y= pos*(i[0].winfo_height()+1)*2+i[0].winfo_height()+1,relwidth=0.3*factor, relheight=0.05*factor)
-            i[2].config(font=('Helvetica', text_size))
+            i[0].place(x= 0, y= pos*i[0].winfo_height()*2+pos*2+Neue_Textmanager.menu_info_main.winfo_height()+1,relwidth=0.3*factor, relheight=0.05*factor)
+            i[2].place(x= 0, y= pos*(i[0].winfo_height()+1)*2+i[0].winfo_height()+1+Neue_Textmanager.menu_info_main.winfo_height()+1,relwidth=0.3*factor, relheight=0.05*factor)
         elif i[1][0] == " Textwort":
-            i[0].place(x= 0, y= pos*i[0].winfo_height()+pos*2,relwidth=0.4*factor, relheight=0.1*factor)
+            i[0].place(x= 0, y= pos*i[0].winfo_height()+pos*2+Neue_Textmanager.menu_info_main.winfo_height()+1,relwidth=0.4*factor, relheight=0.1*factor)
 
 
 
 def position_button(factor = 1):
-    fenster_width= Neue_Textmanager.Textmanager.winfo_width()
-    text_size = min( int(button_liste[0][0].winfo_height()/3*factor), int(button_liste[0][0].winfo_width()/8*factor))
-    button_liste[0][0].config(font=('Helvetica', text_size))
+    fenster_width= Neue_Textmanager.Textmanager.winfo_width()+Neue_Textmanager.menu_info_main.winfo_height()
     button_liste[0][0].place(x=fenster_width-button_liste[0][0].winfo_width()-15, y=10, relwidth=0.12*factor, relheight=0.07*factor)
     button_liste[0][2].place(x=fenster_width-button_liste[0][2].winfo_width()-15, y=button_liste[0][0].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
-    button_liste[0][2].config(font=('Helvetica', text_size))
     button_liste[0][3].place(x=fenster_width-button_liste[0][0].winfo_width()-15, y=button_liste[0][0].winfo_height()+button_liste[0][2].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
-    button_liste[0][3].config(font=('Helvetica', text_size))
     button_liste[0][4].place(x=fenster_width-button_liste[0][0].winfo_width()-15, y=button_liste[0][0].winfo_height()+button_liste[0][2].winfo_height()+button_liste[0][3].winfo_height()+10, relwidth=0.12*factor, relheight=0.07*factor)
-    button_liste[0][4].config(font=('Helvetica', text_size))
