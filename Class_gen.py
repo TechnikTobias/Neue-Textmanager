@@ -119,8 +119,8 @@ class Bild_schirm_größe_class:
 
 
 class Text_scalierung():
-    def __init__(self, Anzeige_ort, command_, from__ = 0, to_= 100, orient_ = HORIZONTAL, backgrund= "Black", foregrund = "blue", font_ = 24, lengt = 300, with_ = 300, aktuelle_zahl = 10, size= 10,tickinterval = 25):
-        self.Text_größe_Textanzeiger = Scale(Anzeige_ort, from_=from__, to=to_, orient= orient_, background=backgrund, foreground=foregrund, bd=0,font=font_, length=size*15, width=size*2, command=command_, tickinterval=tickinterval)
+    def __init__(self, Anzeige_ort, command_, from__ = 10, to_= 200, orient_ = HORIZONTAL, backgrund= "Black", foregrund = "blue", font_ = 24, lengt = 300, with_ = 300, aktuelle_zahl = 10, size= 10,tickinterval = 25):
+        self.Text_größe_Textanzeiger = Scale(Anzeige_ort, from_=from__, to=to_, orient= orient_, background=backgrund, foreground=foregrund, bd=0,font=font_,  command=command_, tickinterval=tickinterval)
         self.Text_größe_Textanzeiger.set(aktuelle_zahl)
         Load_settings.Load_all_collor()
     
@@ -129,7 +129,7 @@ class Text_scalierung():
 
     def Text_size(self, font_ = 10, size= 10, Y_ground = 10, Y_factor = 5):
         self.Text_größe_Textanzeiger.config(font=font_, length=size*15, width=size*2)
-        self.Text_größe_Textanzeiger.place(y=Y_ground+Y_factor*size)
+        self.Text_größe_Textanzeiger.place(y=Y_ground+Y_factor*size, relheight=0.1, relwidth=0.8)
 
 
 class Swich_generator:
