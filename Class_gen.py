@@ -128,8 +128,9 @@ class Text_scalierung():
         self.Text_größe_Textanzeiger.config(activebackground=active_vorgrund, bg=backgrund, fg=foregrund)
 
     def Text_size(self, font_ = 10, size= 10, Y_ground = 10, Y_factor = 5):
+        factor = int(Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("factor",))[0])/100
         self.Text_größe_Textanzeiger.config(font=font_, length=size*15, width=size*2)
-        self.Text_größe_Textanzeiger.place(y=Y_ground+Y_factor*size, relheight=0.1, relwidth=0.8)
+        self.Text_größe_Textanzeiger.place(y=Y_ground+Y_factor*size, relheight=0.15*factor, relwidth=0.8*factor)
 
 
 class Swich_generator:

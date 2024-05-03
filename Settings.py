@@ -1,6 +1,8 @@
 import Neue_Textmanager
 import Load_settings
 import Class_gen
+import tkinter.ttk as ttk
+
 
 import os
 from tkinter import *
@@ -54,6 +56,7 @@ def ResponsiveWidget(widget, *args, **kwargs):
         w.bind(k, lambda e, kwarg=v: e.widget.config(**kwarg))
     return w
 
+#checksetting kann weg aber ert wenn alles verbessert wurde
 def Check_settings(Tkfont = True):
     global Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size, Liedvorschau,Smarte_unterstüzung, Kronologische_Verse, Smarte_Vorschläge
     Button_hervorheben = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hervorheben",)) == "True"
@@ -78,22 +81,8 @@ def Check_settings(Tkfont = True):
 
 
 
-def Textfarbe_farbe_def():
-    color = askcolor()  
-    if not (color[1]) == None:
-        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (color[1],"text_farbe"), False)
-    Load_settings.Load_all_collor()
 
-def Hintergrundfarbe_farbe_def():
-    color = askcolor()  
-    if not (color[1]) == None:
-        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (color[1],"hintergrundfarbe"), False)
-    Load_settings.Load_all_collor()
-
-
-
-
-
+#kontrolieren
 def Text_size_def(text_groeße):
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
     if see_the_text[0] == "True":
@@ -101,7 +90,7 @@ def Text_size_def(text_groeße):
         Load_settings.Font1.config(size= text_groeße)
 
 
-
+#rechts links bildschirmausrichtung verbessern
 def Rechts():
     Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("Rechts","bildschirm_ausrichtung"), False)
     Bildschirm_ausrichtung_button.config(text="Rechts", command=Links)
@@ -166,7 +155,10 @@ def Load_graphig_settings():
     Textfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "text_farbe", "text_farbe\nauswählen", "Mit dem Button kann die text_farbe geändert werden")
     Button_Textfarbe_Button = Class_gen.Farben_class(Graphig_bildschirm, "Button_Textfarbe", "Button text_farbe", "Mit dem Button kann die text_farbe der button geändert werden die angezeigt wird, wenn der Mauszeiger uber einen Button geht")
     Button_Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Button_Hintergrund", "Button Hintergrund\nfarbe", "Mit dem Button kann die Hintergrund geändert der Button werden, die angezeigt wird wenn der Mauszeiger uber einen Button geht")
-    Text_größe_anpassen = Class_gen.Text_scalierung(command_=Load_settings.Load_text_size, Anzeige_ort=Graphig_bildschirm, from__=5, to_=45, aktuelle_zahl=int(text_size), font_=Textgröße_von_alle_Texte, size=int(text_size), tickinterval=15)
+    Text_größe_anpassen = ttk.Scale(Graphig_bildschirm, from_=0, to=200, length=100, style="TScale", variable=10)
+    Text_größe_anpassen.set(10)
+    Text_größe_anpassen.place(x=50, y=100, relheight=0.1, relwidth=0.8)
+    Class_gen.Text_scalierung(command_=Load_settings.Load_text_size, Anzeige_ort=Graphig_bildschirm, from__=5, to_=45, aktuelle_zahl=int(text_size), font_=Textgröße_von_alle_Texte, size=int(text_size), tickinterval=15)
     Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Graphig_bildschirm, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung", "Hauptbildschirm", Skalierung, "Bestätigt die eingegebene Bildschirmgröße und Bildschirm Skalierung von Hauptbildschirm von Windows")
     Auto_auflösung = ResponsiveWidget(Button,Graphig_bildschirm, font=Textgröße_von_alle_Texte, text="Auto Auflösung", command=Auto_auflösung_def, bd=0)
     Button_hervorheben_class = Class_gen.Swich_generator(Graphig_bildschirm, "Button hervorheben", f"Button_hervorheben", Button_hervorheben, Neue_Textmanager.Load_Setting, Text_hover="Bringt die Butten in der eingestellte farbe zum Leuchten", zise=text_size)

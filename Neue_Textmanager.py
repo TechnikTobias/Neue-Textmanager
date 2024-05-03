@@ -10,7 +10,6 @@ import datenverarbeiten
 import Load_settings
 
 Speicherort = os.path.dirname(os.path.abspath(__file__))
-factor = 1
 
 def Einstellung_laden(Einstellugen_name):
     verses = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", (Einstellugen_name,), True)
@@ -62,7 +61,7 @@ def start_anzeige_bildschirm():
 
 
 def on_resize(event):
-    posistion(factor)
+    posistion()
     Load_settings.grafig()
 
 
@@ -103,8 +102,6 @@ def Load_Setting():
 
 
 def button_generator():
-    hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-    text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     rueckgabe = []
     rueckgabe.append("Button")
     Bestätigen = ttk.Button(Textmanager, text="Bestätigen", command=bestätigen, style='TButton')
@@ -217,9 +214,9 @@ def eingabe_änderung(event):
 
 
 
-def posistion(factor = factor):
+def posistion():
     for pos, i in enumerate (alle_inhalt):
-        text_size = min( int(i[1].winfo_height()/3*factor), int(i[1].winfo_width()/10*factor))
+        factor = int(get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("factor",))[0])/100
         if i[0][0] == " Textwort":
             i[1].place(x= 0, y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].place(x= (i[1].winfo_width()+1), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.3*factor, relheight=0.1*factor)
