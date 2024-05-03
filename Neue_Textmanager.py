@@ -31,6 +31,11 @@ def get_db_connection(input_db, input_db_variabel, get_output = True):
                 cleaned_verses.append(element[0].translate({ord(zeichen): None for zeichen in zeichen_zum_entfernen}))
             else:
                 cleaned_verses.append(element[0])
+        if cleaned_verses == ['True']:
+            cleaned_verses = True
+        elif cleaned_verses == ['False']:
+            cleaned_verses = False
+        print (cleaned_verses)
         return cleaned_verses
     else:
         conn.commit()
@@ -216,7 +221,7 @@ def eingabe_änderung(event):
 
 def posistion():
     for pos, i in enumerate (alle_inhalt):
-        factor = int(get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("factor",))[0])/100
+        factor = int(get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",))[0])/100
         if i[0][0] == " Textwort":
             i[1].place(x= 0, y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.15*factor, relheight=0.05*factor)
             i[2].place(x= (i[1].winfo_width()+1), y= menu_info_main.winfo_height()+1+pos*i[1].winfo_height()*2+pos*2,relwidth=0.3*factor, relheight=0.1*factor)

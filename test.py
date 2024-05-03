@@ -6,6 +6,37 @@ print(os.environ.get("PASS_CAM"))
 
 test = Tk()
 
+import tkinter as tk
+from tkinter import ttk
+
+def update_scale_label(value):
+    scale_label.config(text=f"{value}%")
+
+def update_button_size(value):
+    update_scale_label(value)
+    button.config(width=int(base_width * round(float(value)) / 100), )
+
+
+# Basisgröße des Buttons
+base_width = 100
+base_height = 50
+
+# ttk Scale für den prozentualen Faktor
+scale = ttk.Scale(test, from_=10, to=200, orient=tk.HORIZONTAL, command=update_button_size)
+scale.set(100)  # Startwert
+scale.pack()
+
+# Label zur Anzeige des aktuellen Wertes des Scales
+scale_label = ttk.Label(test, text="100%")
+scale_label.pack()
+
+# Button, dessen Größe dynamisch angepasst wird
+button = ttk.Button(test, text="Klick mich!", width=base_width, )
+button.pack(pady=20)
+
+# Funktion zum Aktualisieren des Labels
+update_scale_label(100)
+
 
 
 def ResponsiveWidget(widget, *args, **kwargs):

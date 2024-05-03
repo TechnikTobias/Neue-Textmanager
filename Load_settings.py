@@ -11,7 +11,7 @@ def grafig():
     style = tk.Style()
     hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
     text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
-    factor = int(Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("factor",))[0])/100
+    factor = int(Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",))[0])/100
     text_size = min( int(Neue_Textmanager.Textmanager.winfo_height()/50*factor), int(Neue_Textmanager.Textmanager.winfo_width()/80*factor))
     style.theme_use("clam")
     style.configure('custom.TMenubutton', background=hintergrund_farbe, foreground=text_farbe, font=('Helvetica', text_size),)
@@ -21,13 +21,13 @@ def grafig():
     style.configure('TButton',  borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
     try:
         text_size = min( int(Settings.Graphig_bildschirm.winfo_height()/50*factor), int(Settings.Graphig_bildschirm.winfo_width()/80*factor))
-        style.configure('TScale', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
+        style.configure('TScale', borderwidth=0, font=('Helvetica',50), background=hintergrund_farbe, foreground=text_farbe)
     except: pass
 
 
 def Load_Text_anzeiger():
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
-    if see_the_text[0] == "True":
+    if see_the_text:
         global AnzeigeText, Font1, Text_Anzeige_Label
         hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
         text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
@@ -70,14 +70,14 @@ def Load_all_collor():
     Settings.Check_settings()
     hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
     text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
-    if Settings.Button_hervorheben:
+    if Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hervorheben",)):
         Aufleuchtfarbe_Hintergrund = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hintergrund",))
         Aufleuchtfarbe_Textfarbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_textfarbe",))
     else:
         Aufleuchtfarbe_Hintergrund = hintergrund_farbe
         Aufleuchtfarbe_Textfarbe = text_farbe
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
-    if see_the_text[0] == "True":
+    if see_the_text:
         AnzeigeText.config(bg=Settings.Textanzeiger_Hintergrund)
         Text_Anzeige_Label.config(bg=Settings.Textanzeiger_Hintergrund, fg=Settings.Textanzeiger_Textfarbe)
     try: 
@@ -133,7 +133,6 @@ def Load_text_size(Text_größe_übergabe):
         Settings.Textfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte,Factor_x=13, Factor_y=19, Y_Start=70)
         Settings.Button_Textfarbe_Button.Text_size(Settings.Textgröße_von_alle_Texte,Factor_x=0, Factor_y=22,Y_Start=100)
         Settings.Button_Hintergrndfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte,Factor_x=13, Factor_y=22,Y_Start=100)
-        Settings.Text_größe_anpassen.Text_size(font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size), Y_factor= 3, Y_ground=25)
         Settings.Bildschirm_opt.Text_size(Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size), x_pos=10, y_pos=50+11*int(Settings.text_size))
         Settings.Button_hervorheben_class.Text_size(Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size))
     except: pass

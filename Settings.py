@@ -59,20 +59,20 @@ def ResponsiveWidget(widget, *args, **kwargs):
 #checksetting kann weg aber ert wenn alles verbessert wurde
 def Check_settings(Tkfont = True):
     global Button_hervorheben, Vers_kontroll, Text_anzeiger_textgröße, Button_hervorheben_farbe, Button_Textfarbe, Bildschirm_ausrichtung, Textanzeiger_Hintergrund, Textanzeiger_Textfarbe, Textgröße_von_alle_Texte, text_size, Liedvorschau,Smarte_unterstüzung, Kronologische_Verse, Smarte_Vorschläge
-    Button_hervorheben = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hervorheben",)) == "True"
-    Vers_kontroll = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("vers_kontroll",)) == "True"   
+    Button_hervorheben = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hervorheben",))
+    Vers_kontroll = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("vers_kontroll",))
     Textanzeiger_Textfarbe= Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
     Textanzeiger_Hintergrund = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
     Text_anzeiger_textgröße = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_anzeiger_textgröße",))
     Button_hervorheben_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_hintergrund",))
     Button_Textfarbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("button_textfarbe",))
     Bildschirm_ausrichtung = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("bildschirm_ausrichtung",))[0] == "Rechts"
-    Liedvorschau = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("liedvorschau",)) == "True"
-    Smarte_unterstüzung = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("smarte_verse",)) == "True"
-    Kronologische_Verse = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("kronologische_verse",)) == "True"
-    Smarte_Vorschläge = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("smarte_vorschläge",)) == "True"
+    Liedvorschau = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("liedvorschau",))
+    Smarte_unterstüzung = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("smarte_verse",))
+    Kronologische_Verse = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("kronologische_verse",))
+    Smarte_Vorschläge = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("smarte_vorschläge",))
     text_size1 = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_size",))
-
+    text_size = text_size1
     if Tkfont:
         text_size1 = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_size",))
         text_size = int(text_size1[0])
@@ -85,7 +85,7 @@ def Check_settings(Tkfont = True):
 #kontrolieren
 def Text_size_def(text_groeße):
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
-    if see_the_text[0] == "True":
+    if see_the_text:
         Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (text_groeße,"text_anzeiger_textgröße"), False)
         Load_settings.Font1.config(size= text_groeße)
 
@@ -95,7 +95,7 @@ def Rechts():
     Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("Rechts","bildschirm_ausrichtung"), False)
     Bildschirm_ausrichtung_button.config(text="Rechts", command=Links)
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
-    if see_the_text[0] == "True":
+    if see_the_text:
         Textanzeiger_setting_class.switch_setting_off()
         Textanzeiger_setting_class.switch_setting_on()
 
@@ -103,7 +103,7 @@ def Links():
     Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("Links","bildschirm_ausrichtung"), False)
     Bildschirm_ausrichtung_button.config(text="Links", command=Rechts)
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
-    if see_the_text[0] == "True":
+    if see_the_text:
         Textanzeiger_setting_class.switch_setting_off()
         Textanzeiger_setting_class.switch_setting_on()
 
@@ -122,7 +122,7 @@ def Test(event=None):
 
 def Load_anzeige():
     see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",))
-    if see_the_text[0] == "True":
+    if see_the_text:
         Textanzeiger_setting_class.switch_setting_off()
         Textanzeiger_setting_class.switch_setting_on()
 
@@ -151,20 +151,26 @@ def Load_graphig_settings():
     Graphig_bildschirm = Toplevel(Neue_Textmanager.Textmanager)
     Graphig_bildschirm.geometry("600x800")
     Graphig_bildschirm.config(bg=hintergrund_farbe)
+    scale_label = ttk.Label(Graphig_bildschirm, text="100%")
+    def text_fator(value):
+        guter_value = int(round(float(value)))
+        scale_label.config(text=f"{guter_value}%")
+        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (guter_value,"scalierung"), False)
+        Load_settings.grafig()
     Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Hintergrund", "Hintergrund Farbe\n auswählen", "Mit dem Button kann die Farbe des Hintergrund geändert werden")
     Textfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "text_farbe", "text_farbe\nauswählen", "Mit dem Button kann die text_farbe geändert werden")
-    Button_Textfarbe_Button = Class_gen.Farben_class(Graphig_bildschirm, "Button_Textfarbe", "Button text_farbe", "Mit dem Button kann die text_farbe der button geändert werden die angezeigt wird, wenn der Mauszeiger uber einen Button geht")
-    Button_Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Button_Hintergrund", "Button Hintergrund\nfarbe", "Mit dem Button kann die Hintergrund geändert der Button werden, die angezeigt wird wenn der Mauszeiger uber einen Button geht")
-    Text_größe_anpassen = ttk.Scale(Graphig_bildschirm, from_=0, to=200, length=100, style="TScale", variable=10)
-    Text_größe_anpassen.set(10)
-    Text_größe_anpassen.place(x=50, y=100, relheight=0.1, relwidth=0.8)
-    Class_gen.Text_scalierung(command_=Load_settings.Load_text_size, Anzeige_ort=Graphig_bildschirm, from__=5, to_=45, aktuelle_zahl=int(text_size), font_=Textgröße_von_alle_Texte, size=int(text_size), tickinterval=15)
+    Button_Textfarbe_Button = Class_gen.Farben_class(Graphig_bildschirm, "button_Textfarbe", "Button text_farbe", "Mit dem Button kann die text_farbe der button geändert werden die angezeigt wird, wenn der Mauszeiger uber einen Button geht")
+    Button_Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "button_Hintergrund", "Button Hintergrund\nfarbe", "Mit dem Button kann die Hintergrund geändert der Button werden, die angezeigt wird wenn der Mauszeiger uber einen Button geht")
+    Text_größe_anpassen = ttk.Scale(Graphig_bildschirm, from_=0, to=200, length=100, style="TScale", command=text_fator,)
+    Text_größe_anpassen.set(Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))
+    Text_größe_anpassen.place(x=50, y=100, relwidth=0.8, height=20, relheight=0.01)
+    scale_label.place(relheight=0.12, relwidth=0.2)
+    #Class_gen.Text_scalierung(command_=Load_settings.Load_text_size, Anzeige_ort=Graphig_bildschirm, from__=5, to_=45, aktuelle_zahl=int(text_size), font_=Textgröße_von_alle_Texte, size=int(text_size), tickinterval=15)
     Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Graphig_bildschirm, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung", "Hauptbildschirm", Skalierung, "Bestätigt die eingegebene Bildschirmgröße und Bildschirm Skalierung von Hauptbildschirm von Windows")
     Auto_auflösung = ResponsiveWidget(Button,Graphig_bildschirm, font=Textgröße_von_alle_Texte, text="Auto Auflösung", command=Auto_auflösung_def, bd=0)
-    Button_hervorheben_class = Class_gen.Swich_generator(Graphig_bildschirm, "Button hervorheben", f"Button_hervorheben", Button_hervorheben, Neue_Textmanager.Load_Setting, Text_hover="Bringt die Butten in der eingestellte farbe zum Leuchten", zise=text_size)
+    Button_hervorheben_class = Class_gen.Swich_generator(Graphig_bildschirm, "Button hervorheben", f"button_hervorheben", Button_hervorheben, Neue_Textmanager.Load_Setting, Text_hover="Bringt die Butten in der eingestellte farbe zum Leuchten", zise=10)
     Neue_Textmanager.Load_Setting()
     Load_settings.Load_text_size(text_size)
-
 
 def Settings_Textanzeiger_def():
     global Settings_Textanzeiger_Top, Textanzeiger_Textfarbe_button, Textanzeiger_Hintergrund_Button, Bildschirm_opt1, Bildschirm_ausrichtung_button, Text_größe_ändern, Textanzeiger_setting_class, Liedvorschau_Button
@@ -175,7 +181,7 @@ def Settings_Textanzeiger_def():
     hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
     text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     Settings_Textanzeiger_Top.config(bg=hintergrund_farbe)
-    Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_Textanzeiger_Top, "Liedtextanzeige", f"see_the_text", see_the_text[0] == "True", Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
+    Textanzeiger_setting_class = Class_gen.Swich_generator(Settings_Textanzeiger_Top, "Liedtextanzeige", f"see_the_text", see_the_text, Neue_Textmanager.Load_Setting, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
     Textanzeiger_Textfarbe_button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "textanzeiger_textfarbe", "text_farbe")
     Textanzeiger_Hintergrund_Button = Class_gen.Farben_class(Settings_Textanzeiger_Top, "textanzeiger_hintergrund", "Hintergrund")
     Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(Settings_Textanzeiger_Top, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung2", "Textbildschirm", Skalierung)
