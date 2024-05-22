@@ -7,7 +7,7 @@ import tkinter.font as tkFont
 from tkinter import ttk as tk
 
 
-def grafig():
+def Textmanager_größen():
     style = tk.Style()
     hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
     text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))

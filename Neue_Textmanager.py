@@ -67,12 +67,12 @@ def start_anzeige_bildschirm():
 
 def on_resize(event):
     posistion()
-    Load_settings.grafig()
+    Load_settings.Textmanager_größen()
 
 
 def Menu_generator():
     global menu_info_main
-    Load_settings.grafig()
+    Load_settings.Textmanager_größen()
     hintergrund_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
     text_farbe = get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     menu_info_main = ttk.Menubutton(Textmanager, text='Info', style='custom.TMenubutton')
