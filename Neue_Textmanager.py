@@ -9,6 +9,138 @@ import Kamera
 import datenverarbeiten
 import Load_settings
 
+
+class TextmanagerAPP:
+    def __init__(self) -> None:
+        self.Textmanager = Tk()
+        self.Textmanager.title("Textmanager")
+        self.Textmanager.geometry("1040x800")
+        self.widget_info = {}
+        self.Menu_generator()
+
+        self.Textmanager.mainloop()
+
+
+    def get_window_size(self):
+        return self.Textmanager.winfo_width(), self.Textmanager.winfo_height()
+
+    def festgröße_bestimmen(self):
+        Load_settings.Textmanager_größen(self)
+
+    def register_widget(self,
+            name: str, 
+            widget_place, 
+            widget: Widget = None, 
+            relheight: int = 0.1, 
+            relwidth : int = .11,
+            relx: int = None, 
+            rely: int = None):
+        """Registriert ein Widget und speichert seine Informationen
+        Hier werden die Info für die Widget übergeben damit sie an einer zentrallen stelle placiert werden und deren größe angepasst wird."""
+        self.widget_info[name] = {
+            "widget_place" : widget_place,
+            "widget": widget,
+            "relheight": relheight,
+            "relwidth": relwidth,
+            "relx": relx,
+            "rely": rely
+        }
+
+    def get_db_connection(self):
+        self.db_filename = "Lieder_Datenbank.db"
+        self.db_path = os.path.join(os.path.dirname(__file__), self.db_filename)
+        self.conn = sqlite3.connect(self.db_path)
+        return self.conn
+
+    def db_connection_info_write(self, input_db, input_db_variabel):
+        self.conn = self.get_db_connection()
+        self.cursor = self.conn.cursor()
+        self.cursor.execute(input_db, input_db_variabel)
+        self.conn.commit()
+        self.conn.close()
+
+
+    def db_connection_info_get(self, input_db, input_db_variabel):
+        self.conn = self.get_db_connection()
+        self.cursor = self.conn.cursor()
+        self.cursor.execute(input_db, input_db_variabel)
+        self.Ausgabe = self.cursor.fetchall()
+        self.conn.close()
+        return self.Ausgabe[0][0]
+    
+
+    def Menu_generator(self):
+        hintergrund_farbe = self.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        text_farbe = self.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
+        menu_info_main = ttk.Menubutton(self.Textmanager, text='Info', style='custom.TMenubutton')
+        menu_info = Menu(menu_info_main, bg=hintergrund_farbe, fg= text_farbe, border=0, borderwidth=0, tearoff=False, )
+        menu_kamera_main = ttk.Menubutton(self.Textmanager, text = "Kamera", style='custom.TMenubutton')
+        menu_kamera = Menu(menu_kamera_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+        menu_liedkontrolle_main = ttk.Menubutton(self.Textmanager, text = "Liedkontrolle", style='custom.TMenubutton')
+        menu_liedkontrolle = Menu(menu_liedkontrolle_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+        menu_help_main = ttk.Menubutton(self.Textmanager, text = "Hilfe", style='custom.TMenubutton')
+        menu_help = Menu(menu_help_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
+        menu_info.add_radiobutton(label="Einstellungen", command=self.festgröße_bestimmen)
+        menu_info.add_radiobutton(label= "Info", command=Settings.Info)
+        menu_kamera.add_command(label="Einstellungen", command=Kamera.Settings)
+        menu_kamera.add_command(label="Position", command=Kamera.Position)
+        menu_liedkontrolle.add_command(label="Einstellungen")
+        menu_liedkontrolle.add_command(label="Lied Kontrolieren", command=datenverarbeiten.setup_ui)
+        menu_help.add_command(label="Hilfe")
+        menu_info_main['menu'] = menu_info
+        menu_kamera_main['menu'] = menu_kamera
+        menu_help_main["menu"] = menu_help
+        menu_liedkontrolle_main["menu"] = menu_liedkontrolle
+        menu_info_main.pack(side=LEFT, anchor=NW)
+        menu_kamera_main.pack(side=LEFT, anchor=NW)
+        menu_liedkontrolle_main.pack(side=LEFT, anchor=NW)
+        menu_help_main.pack(side=LEFT, anchor=NW)
+
+    def update_widget_positions(self):
+        """Aktualisiert die Positionen und Größen aller Widgets basierend auf dem Skalierungsfaktor"""
+        factor = int(self.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",))[0])/100
+        widgets_to_remove = []
+        print(self.widget_info)
+        for name, info in self.widget_info.items():
+            try:
+                print("erledigt")
+                widget_place = info["widget_place"]
+                widget = info["widget"]
+                relheight = info["relheight"] * factor
+                relwidth = info["relwidth"] * factor
+                relx = info["relx"] * factor
+                rely = info["rely"] * factor
+                widget.place( relwidth=relwidth, relheight=relheight, relx=relx, rely=rely)
+            except:
+                widgets_to_remove.append(name)
+                print("fehler")
+
+        # Entferne die fehlerhaften Widgets aus widget_info
+        for name in widgets_to_remove:
+            del self.widget_info[name]
+            print(f"Widget {name} aus widget_info entfernt")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Speicherort = os.path.dirname(os.path.abspath(__file__))
 
 def Einstellung_laden(Einstellugen_name):
@@ -16,30 +148,39 @@ def Einstellung_laden(Einstellugen_name):
     input_lieder = (str(verses[0]).split("!"))
     return input_lieder
 
+
+
 def get_db_connection(input_db, input_db_variabel, get_output = True):
     db_filename = "Lieder_Datenbank.db"
     db_path = os.path.join(os.path.dirname(__file__), db_filename)
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute(input_db, input_db_variabel)
-    if get_output:
-        verses = cursor.fetchall()
-        zeichen_zum_entfernen = "'()"
-        cleaned_verses = []
-        for element in verses:
-            if not isinstance(element[0], int):
-                cleaned_verses.append(element[0].translate({ord(zeichen): None for zeichen in zeichen_zum_entfernen}))
-            else:
-                cleaned_verses.append(element[0])
-        if cleaned_verses == ['True']:
-            cleaned_verses = True
-        elif cleaned_verses == ['False']:
-            cleaned_verses = False
-        print (cleaned_verses)
-        return cleaned_verses
-    else:
-        conn.commit()
+    conn.commit()
     conn.close()
+
+
+
+def andere_info_db_conection():    
+    db_filename = "Lieder_Datenbank.db"
+    db_path = os.path.join(os.path.dirname(__file__), db_filename)
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    Ausgabe = cursor.fetchall()
+    zeichen_zum_entfernen = "'()"
+    cleaned_verses = []
+    conn.commit()
+    conn.close()
+    for element in Ausgabe:
+        if not isinstance(element[0], int):
+            cleaned_verses.append(element[0].translate({ord(zeichen): None for zeichen in zeichen_zum_entfernen}))
+        else:
+            cleaned_verses.append(element[0])
+    if cleaned_verses == ['True']:
+        cleaned_verses = True
+    elif cleaned_verses == ['False']:
+        cleaned_verses = False
+    return cleaned_verses
 
 
 def Start():

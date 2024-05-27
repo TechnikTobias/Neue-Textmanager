@@ -1,4 +1,3 @@
 import Neue_Textmanager
 
-Neue_Textmanager.Start()
-Neue_Textmanager.mainloop()
+App_textmanager_main =Neue_Textmanager.TextmanagerAPP()
