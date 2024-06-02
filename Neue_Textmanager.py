@@ -12,23 +12,25 @@ import Load_settings
 
 class TextmanagerAPP:
     def __init__(self) -> None:
+        self.hintergrund_farbe = self.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
         self.Textmanager = Tk()
         self.Textmanager.title("Textmanager")
         self.Textmanager.geometry("1040x800")
+        self.Textmanager.config(bg=self.hintergrund_farbe)
         self.widget_info = {}
+        self.widget_info_liedauswahl = {}
         self.Menu_generator()
         verses = self.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("Ablauf",))
         input_lieder = (str(verses).split("!"))
         for pos, i in enumerate (input_lieder):
             self.gegerator_lieder(i, power_range=pos+1)
         self.Textmanager.bind("<Configure>", self.one_resize)
+        self.update_widget_positions()
         self.Textmanager.mainloop()
 
 
     def one_resize(self,event):
         Load_settings.Textmanager_größen(self)
-        self.update_widget_positions()
-        self.Textmanager.unbind("<Configure>")
 
 
     def get_window_size(self):
@@ -54,6 +56,21 @@ class TextmanagerAPP:
             "rely": rely
         }
 
+    def register_widegets_liedaktualisieren(self,
+                             name,
+                             liednummer,
+                             versnummer,
+                             liedanzeige,
+                             buchauswahl):
+        """Regestiert die Liedauwahl und lasst das richtige lied erscheinen"""
+        self.widget_info_liedauswahl[name] = {
+            "liednummer": liednummer,
+            "versnummer": versnummer,
+            "liedanzeige": liedanzeige,
+            "buchauswahl": buchauswahl
+        }
+
+
 
     def get_db_connection(self):
         self.db_filename = "Lieder_Datenbank.db"
@@ -75,7 +92,7 @@ class TextmanagerAPP:
         self.cursor.execute(input_db, input_db_variabel)
         self.Ausgabe = self.cursor.fetchall()
         self.conn.close()
-        return self.Ausgabe[0][0]
+        if self.Ausgabe: return self.Ausgabe[0][0]
         
     
 
@@ -120,28 +137,28 @@ class TextmanagerAPP:
             self.Button_Textwort = ttk.Button(self.Textmanager, text="Textwort", style='TButton')
             self.register_widget(f"Button_textwort{power_range}", self.Button_Textwort, relheight=0.1, relwidth=0.15, rely=0.1*power_range-0.05, relx=0.15)
         elif aktion[1] == " Lied":
-            self.Lable_Kamera = ttk.Button(self.Textmanager, text="Kamera", style='TButton')
-            self.register_widget(f"Lable_Kamera{power_range}", self.Lable_Kamera, relheight=0.1, relwidth=0.15, rely=0.1*power_range-0.05, relx=0.15)
+            self.Button_Kamera = ttk.Button(self.Textmanager, text="Kamera", style='TButton')
+            self.register_widget(f"Button_Kamera{power_range}", self.Button_Kamera, relheight=0.05, relwidth=0.15, rely=0.1*power_range, relx=0)
             befehle = ["Kamera", "Textwort", "Lied"]
             clicked = StringVar()
             clicked.set(befehle[0])
             opt = ttk.OptionMenu(self.Textmanager, clicked, *befehle, style='custom.TMenubutton')
             inhalt.append(clicked)
             inhalt.append(opt)
-            eingabe_Lied = ttk.Entry(self.Textmanager, style='TEntry')
-            eingabe_Lied.bind("<KeyRelease>", eingabe_änderung)
-            inhalt.append(eingabe_Lied)
-            eingabe_Vers = ttk.Entry(self.Textmanager, style='TEntry')
-            eingabe_Vers.bind("<KeyRelease>", eingabe_änderung)
-            inhalt.append(eingabe_Vers)
-            befehle_buch = ["Gesangbuch", "Chorbuch", "Jugendliederbuch"]
-            clicked_buch = StringVar()
-            clicked_buch.set(befehle_buch[0])
-            opt_buch = ttk.OptionMenu(self.Textmanager, clicked_buch, *befehle_buch, command=eingabe_änderung)
-            inhalt.append(clicked_buch)
-            inhalt.append(opt_buch)
-            Tex_lied_lable = ttk.Label(self.Textmanager)
-            inhalt.append(Tex_lied_lable)
+            self.eingabe_lied = ttk.Entry(self.Textmanager, style='TEntry')
+            self.eingabe_lied.bind("<KeyRelease>", self.liedanzeige_aktualisieren)
+            self.register_widget(name=f"eingabe_lieder{power_range}",widget=self.eingabe_lied, relheight=0.05, relwidth=0.05, relx=0.35, rely=0.1*power_range-0.05)
+            self.eingabe_vers = ttk.Entry(self.Textmanager, style='TEntry')
+            self.eingabe_vers.bind("<KeyRelease>", self.liedanzeige_aktualisieren)
+            self.register_widget(name=f"eingabe_verse{power_range}", widget=self.eingabe_vers, relheight=0.05, relwidth=0.05, relx=0.35, rely=0.1*power_range)
+            self.befehle_buch = ["Gesangbuch", "Chorbuch", "Jugendliederbuch"]
+            self.clicked_buch = StringVar()
+            self.clicked_buch.set(self.befehle_buch[0])
+            self.opt_buch = ttk.OptionMenu(self.Textmanager, self.clicked_buch, *self.befehle_buch, command=self.liedanzeige_aktualisieren)
+            self.register_widget(name=f"opt_buch{power_range}", widget=self.opt_buch, relheight=0.05, relwidth=0.2, relx=0.15, rely=0.1*power_range-0.05)
+            self.text_lied_lable = ttk.Label(self.Textmanager)
+            self.register_widget(name=f"text_lied_lable{power_range}", widget=self.text_lied_lable, relheight=0.1, relwidth=0.2, relx=0.405, rely=0.1*power_range-0.05)
+            self.register_widegets_liedaktualisieren(name=f"liedanzeiger{power_range}",liednummer=self.eingabe_lied, versnummer=self.eingabe_vers, liedanzeige=self.text_lied_lable, buchauswahl=self.clicked_buch)
         elif aktion[1] == " Kamera":
             lied_weiter = ttk.Button(self.Textmanager, text= "servus", style='TButton')
             inhalt.append(lied_weiter)
@@ -156,7 +173,34 @@ class TextmanagerAPP:
 
 
 
+    def liedanzeige_aktualisieren(self, event):
+        self.widgets_to_remove = []
+        for self.name, self.info in self.widget_info_liedauswahl.items():
+                self.liednummer = self.info["liednummer"]
+                self.versnummer = self.info["versnummer"]
+                self.liedanzeige = self.info["liedanzeige"]
+                self.buchauswahl = self.info["buchauswahl"]
+                print(self.liednummer)
+                print(self.liednummer.get())
+                song = self.db_connection_info_get("SELECT song_name FROM songs WHERE song_number = ? AND book_name = ?", (self.liednummer.get(),self.buchauswahl.get()))
+                self.vers_info = self.versnummer.get()
+                if not self.vers_info:
+                    text_einfügen = ""
+                elif len(self.vers_info) == 1:
+                    text_einfügen = f"Vers {self.vers_info}"
+                elif len(self.vers_info) > 1:
+                    text_einfügen = f"Verse {self.vers_info}"
+                if song:
+                    Text_speicher = f"{self.buchauswahl.get()} {self.liednummer.get()} {text_einfügen}\n{song}"
+                    self.liedanzeige.config(text=Text_speicher)
+                else:
+                    self.liedanzeige.config(text = "Bitte geben sie eine Nummer ein\n")
 
+
+        # Entferne die fehlerhaften Widgets aus widget_info
+        for self.name in self.widgets_to_remove:
+            del self.widget_info_liedauswahl[self.name]
+            print(f"Widget {self.name} aus widget_info entfernt")
 
     def update_widget_positions(self):
         """Aktualisiert die Positionen und Größen aller Widgets basierend auf dem Skalierungsfaktor"""
