@@ -7,12 +7,12 @@ import tkinter.font as tkFont
 from tkinter import ttk as tk
 
 
-def Textmanager_größen():
+def Textmanager_größen(self):
     style = tk.Style()
-    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
-    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
-    factor = int(Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",))[0])/100
-    text_size = min( int(Neue_Textmanager.Textmanager.winfo_height()/50*factor), int(Neue_Textmanager.Textmanager.winfo_width()/80*factor))
+    hintergrund_farbe = Neue_Textmanager.TextmanagerAPP.db_connection_info_get(self,"SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
+    text_farbe = Neue_Textmanager.TextmanagerAPP.db_connection_info_get(self,"SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
+    factor = int(Neue_Textmanager.TextmanagerAPP.db_connection_info_get(self,"SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
+    text_size = min( int(Neue_Textmanager.TextmanagerAPP.get_window_size(self)[0]/40*factor), int(Neue_Textmanager.TextmanagerAPP.get_window_size(self)[1]/60*factor))
     style.theme_use("clam")
     style.configure('custom.TMenubutton', background=hintergrund_farbe, foreground=text_farbe, font=('Helvetica', text_size),)
     style.configure('TMenubutton', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
@@ -129,10 +129,6 @@ def Load_text_size(Text_größe_übergabe):
         Settings.Liedvorschau_Button.Text_size(Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size), y_factor=21, y_ground=70)
     except: pass
     try:
-        Settings.Hintergrndfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte,Factor_y=19, Y_Start=70,Factor_x=0)
-        Settings.Textfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte,Factor_x=13, Factor_y=19, Y_Start=70)
-        Settings.Button_Textfarbe_Button.Text_size(Settings.Textgröße_von_alle_Texte,Factor_x=0, Factor_y=22,Y_Start=100)
-        Settings.Button_Hintergrndfarbe_auswahl.Text_size(Settings.Textgröße_von_alle_Texte,Factor_x=13, Factor_y=22,Y_Start=100)
         Settings.Bildschirm_opt.Text_size(Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size), x_pos=10, y_pos=50+11*int(Settings.text_size))
         Settings.Button_hervorheben_class.Text_size(Font_=Settings.Textgröße_von_alle_Texte, size=int(Settings.text_size))
     except: pass

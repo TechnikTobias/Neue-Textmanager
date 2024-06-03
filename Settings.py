@@ -17,7 +17,6 @@ widget_info = {}
 def register_widget(
         name: str, 
         widget_place, 
-        einstellungs_leiste: Optional[Widget] = None, 
         widget: Widget = None, 
         relheight: int = 0.1, 
         relwidth : int = .11,
@@ -27,7 +26,6 @@ def register_widget(
     Hier werden die Info für die Widget übergeben damit sie an einer zentrallen stelle placiert werden und deren größe angepasst wird."""
     widget_info[name] = {
         "widget_place" : widget_place,
-        "Einstellugs_leiste" : einstellungs_leiste,
         "widget": widget,
         "relheight": relheight,
         "relwidth": relwidth,
@@ -190,16 +188,19 @@ def Load_graphig_settings():
     Graphig_bildschirm.config(bg=hintergrund_farbe)
     scale_label = ttk.Label(Graphig_bildschirm, text=skalierung)
     scale_label.config(text=skalierung)
-    scale_label.place(relheight=0.12, relwidth=0.2)
+    register_widget("Prozentanzeige der Skalierung", widget_place=Graphig_bildschirm,widget=scale_label,relheight=0.05, relwidth=0.1, relx=0.1, rely=0.1)
     scale_button_plus = ttk.Button(Graphig_bildschirm, style='TButton', text="+10%", command=groese_plus)
-    register_widget(name="Scale_button_plus", widget=scale_button_plus, einstellungs_leiste=scale_label, widget_place= Graphig_bildschirm, relheight=0.05, relwidth=0.1*factor, relx=0.1*factor, rely=0.1*factor)
+    register_widget(name="Scale_button_plus", widget=scale_button_plus, widget_place= Graphig_bildschirm, relheight=0.05, relwidth=0.1, relx=0.1, rely=0.15)
     scale_button_minus = ttk.Button(Graphig_bildschirm, style='TButton', text="-10%", command=groese_minus)
-    register_widget(name="scale_button_minus", widget=scale_button_minus, einstellungs_leiste=scale_label, widget_place= Graphig_bildschirm,  relheight=0.05, relwidth=0.1*factor, relx=0.2*factor, rely=0.1*factor)
-    Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "Hintergrund", "Hintergrund Farbe\n auswählen", "Mit dem Button kann die Farbe des Hintergrund geändert werden")
-    Textfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "text_farbe", "text_farbe\nauswählen", "Mit dem Button kann die text_farbe geändert werden")
-    Button_Textfarbe_Button = Class_gen.Farben_class(Graphig_bildschirm, "button_Textfarbe", "Button text_farbe", "Mit dem Button kann die text_farbe der button geändert werden die angezeigt wird, wenn der Mauszeiger uber einen Button geht")
-    Button_Hintergrndfarbe_auswahl = Class_gen.Farben_class(Graphig_bildschirm, "button_Hintergrund", "Button Hintergrund\nfarbe", "Mit dem Button kann die Hintergrund geändert der Button werden, die angezeigt wird wenn der Mauszeiger uber einen Button geht")
-    #Class_gen.Text_scalierung(command_=Load_settings.Load_text_size, Anzeige_ort=Graphig_bildschirm, from__=5, to_=45, aktuelle_zahl=int(text_size), font_=Textgröße_von_alle_Texte, size=int(text_size), tickinterval=15)
+    register_widget(name="scale_button_minus", widget=scale_button_minus, widget_place= Graphig_bildschirm,  relheight=0.05, relwidth=0.1, relx=0.2, rely=0.15)
+    Hintergrndfarbe_auswahl = ttk.Button(Graphig_bildschirm, text="Hintergrund",style='TButton')
+    register_widget(name="Hintergrund Farben Button", widget_place=Graphig_bildschirm, widget=Hintergrndfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.1,rely=0.25)
+    Button_Textfarbe_Button = ttk.Button(Graphig_bildschirm, text="Button Text Farbe",style='TButton')
+    register_widget(name="Text Farben Button", widget_place=Graphig_bildschirm, widget=Button_Textfarbe_Button,relheight=0.05, relwidth=0.3, relx=0.3,rely=0.25)
+    Textfarbe_auswahl = ttk.Button(Graphig_bildschirm, text="Hintergrund",style='TButton')
+    register_widget(name="Text Farben ", widget_place=Graphig_bildschirm, widget=Textfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.1,rely=0.35)
+    Button_Hintergrndfarbe_auswahl = ttk.Button(Graphig_bildschirm, text="Hintergrund",style='TButton')
+    register_widget(name="Hintergrund Farben", widget_place=Graphig_bildschirm, widget=Button_Hintergrndfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.3,rely=0.35)
     Bildschirm_opt = Class_gen.Bild_schirm_größe_class(Graphig_bildschirm, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung", "Hauptbildschirm", Skalierung, "Bestätigt die eingegebene Bildschirmgröße und Bildschirm Skalierung von Hauptbildschirm von Windows")
     Auto_auflösung = ResponsiveWidget(Button,Graphig_bildschirm, font=Textgröße_von_alle_Texte, text="Auto Auflösung", command=Auto_auflösung_def, bd=0)
     Button_hervorheben_class = Class_gen.Swich_generator(Graphig_bildschirm, "Button hervorheben", f"button_hervorheben", Button_hervorheben, Neue_Textmanager.Load_Setting, Text_hover="Bringt die Butten in der eingestellte farbe zum Leuchten", zise=10)
@@ -260,16 +261,25 @@ def Info():
 def update_widget_positions():
     """Aktualisiert die Positionen und Größen aller Widgets basierend auf dem Skalierungsfaktor"""
     factor = int(Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",))[0])/100
-    for info in widget_info.values():
-        widget_place = info["widget_place"]
-        print(f"{widget_place}info von toplevel")
-        einstellungs_leiste = info["Einstellugs_leiste"]
-        widget = info["widget"]
-        relheight = max(info["relheight"] * widget_place.winfo_height(), einstellungs_leiste.winfo_height()) * factor
-        relwidth = info["relwidth"] * factor
-        relx = info["relx"] * factor
-        rely = info["rely"] * factor
-        widget.place( relwidth=relwidth, relx=relx, rely=rely)
+    widgets_to_remove = []
+    print(widget_info)
+    for name, info in widget_info.items():
+        try:
+            print("erledigt")
+            widget_place = info["widget_place"]
+            widget = info["widget"]
+            relheight = info["relheight"] * factor
+            relwidth = info["relwidth"] * factor
+            relx = info["relx"] * factor
+            rely = info["rely"] * factor
+            widget.place( relwidth=relwidth, relheight=relheight, relx=relx, rely=rely)
+        except:
+            widgets_to_remove.append(name)
+            print("fehler")
 
+    # Entferne die fehlerhaften Widgets aus widget_info
+    for name in widgets_to_remove:
+        del widget_info[name]
+        print(f"Widget {name} aus widget_info entfernt")
 
 
