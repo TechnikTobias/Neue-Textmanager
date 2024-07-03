@@ -51,11 +51,19 @@ def on_key(event):
             delete_command()
 
 def bestätigen():
-    conn = sqlite3.connect(f"{Speicherort}/Textmanager Daten/Lieder Datenbank/Lieder Datenbank.db")
-    cursor = conn.cursor()
-    commands_text = "!".join(commands_list.get(0, tk.END))
-    cursor.execute("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (commands_text, "Ablauf"))
-    conn.commit()
+    db_filename = "Lieder_Datenbank.db"
+    db_path = os.path.join(os.path.dirname(__file__), db_filename)
+    conn = sqlite3.connect(db_path)            
+    c = conn.cursor()
+    c.execute('DELETE FROM Ablaufaufbau')
+    for pos,comnd in enumerate(commands_list.get(0, tk.END)):
+        final =[]
+        halbe_daten = comnd.split(",")
+        for daten in halbe_daten:
+            final.append( daten.split(":")[1])
+
+        c.execute('''INSERT INTO Ablaufaufbau (Reihenfolge, Name, Comand) VALUES (?, ?, ?)''', (pos, final[0], final[1]))
+        conn.commit()
     conn.close()
 
 

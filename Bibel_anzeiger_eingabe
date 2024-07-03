@@ -1,0 +1,87 @@
+import sqlite3
+import tkinter as tk
+from tkinter import ttk
+
+def search_verse():
+    selected_book = book_combobox.get()
+    selected_chapter = chapter_entry.get()
+    selected_verse = verse_entry.get()
+    numbers = []
+    parts = selected_verse.split(',')  # Teile die Eingabe anhand des Kommas
+    for part in parts:
+        if '-' in part:  # Überprüfe, ob ein Bereich (z.B. 3-6) vorhanden ist
+            start, end = map(int, part.split('-'))  # Teile den Bereich anhand des Bindestrichs
+            numbers.extend(range(start, end + 1))  # Füge die Zahlen im Bereich zur Liste hinzu
+        else:
+            numbers.append(int(part))  # Füge einzelne Zahlen zur Liste hinzu
+    result = search_verse_in_database(selected_book, selected_chapter, numbers)
+    if result:
+        if len (result) > 1:
+            text = " ".join([str(item) for item in result])
+        else:
+            text = result[0]
+        verse_text.insert(tk.END,text)
+    else:
+        verse_text.insert(tk.END,"Vers nicht gefunden.")
+
+def search_verse_in_database(book, chapter, verse):
+    conn = sqlite3.connect('bible_lutherbibel.db')
+    cursor = conn.cursor()
+    gesamtresultat = []
+    for vers in verse:
+        print(vers)
+        cursor.execute('''
+            SELECT text
+            FROM bible
+            WHERE book = ? AND chapter_number = ? AND verse_number = ?
+        ''', (book, chapter, vers))
+        
+        result = cursor.fetchone()
+        gesamtresultat.append(result[0])
+    conn.close()
+    
+    if gesamtresultat:
+        return gesamtresultat
+    else:
+        return None
+
+# GUI erstellen
+root = tk.Tk()
+root.title("Bible Search")
+
+# Label und Dropdown-Menü für die Auswahl des Buches
+book_label = ttk.Label(root, text="Buch:")
+book_label.grid(row=0, column=0, padx=5, pady=5)
+
+# Bücher aus der Datenbank auslesen
+conn = sqlite3.connect('bible_lutherbibel.db')
+cursor = conn.cursor()
+cursor.execute('SELECT DISTINCT book FROM bible')
+books_from_db = [book[0] for book in cursor.fetchall()]
+conn.close()
+
+book_combobox = ttk.Combobox(root, values=books_from_db)
+book_combobox.grid(row=0, column=1, padx=5, pady=5)
+book_combobox.current(0)
+
+# Eingabefelder für Kapitel und Vers
+chapter_label = ttk.Label(root, text="Kapitel:")
+chapter_label.grid(row=1, column=0, padx=5, pady=5)
+chapter_entry = ttk.Entry(root)
+chapter_entry.grid(row=1, column=1, padx=5, pady=5)
+
+verse_label = ttk.Label(root, text="Vers:")
+verse_label.grid(row=2, column=0, padx=5, pady=5)
+verse_entry = ttk.Entry(root)
+verse_entry.grid(row=2, column=1, padx=5, pady=5)
+
+# Suchen-Button
+search_button = ttk.Button(root, text="Suchen", command=search_verse)
+search_button.grid(row=3, column=0, columnspan=2, padx=5, pady=5)
+
+# Anzeige des Verses
+verse_text = tk.Text(root, )
+verse_text.grid(row=4, column=0, columnspan=2, padx=5, pady=5)
+
+root.mainloop()
+

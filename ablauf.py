@@ -181,18 +181,18 @@ def gegerator_lieder(input):
     Buch = ja[5]
     Vers_nummer = ja[4]
     inhalt = []
-    Lied_start = Label(Neue_Textmanager.Textmanager, text=name_lied, style='TLabel')
+    Lied_start = Label(self, text=name_lied, style='TLabel')
     inhalt.append(Lied_start)
     inhalt.append([aktion, name_lied, Liednummer, Vers_nummer, Buch, Kamera])
     if aktion == " Textwort":
         pass
     elif aktion == " Lied":
-        lable_Kamera = Button(Neue_Textmanager.Textmanager, text="Kamera", style='TButton')
+        lable_Kamera = Button(self, text="Kamera", style='TButton')
         inhalt.append(lable_Kamera)
-        text_lied_lable = Label(Neue_Textmanager.Textmanager, style='TLabel')
+        text_lied_lable = Label(self, style='TLabel')
         inhalt.append(text_lied_lable)
     elif aktion == " Kamera":
-        lied_weiter = Button(Neue_Textmanager.Textmanager, text= "servus", style='TButton')
+        lied_weiter = Button(self, text= "servus", style='TButton')
         inhalt.append(lied_weiter)
     return inhalt
 
@@ -203,7 +203,7 @@ def position_präsi(factor= 1):
             i[0].place(x= 0, y= pos*i[0].winfo_height()*2+pos*2+Neue_Textmanager.menu_info_main.winfo_height()+1,relwidth=0.3*factor, relheight=0.05*factor)
             i[2].place(x= 0, y= pos*(i[0].winfo_height()+1)*2+i[0].winfo_height()+1+Neue_Textmanager.menu_info_main.winfo_height()+1,relwidth=0.3*factor, relheight=0.05*factor)
             i[3].place(x= (i[0].winfo_width()+1), y= pos*i[0].winfo_height()*2+pos*2+Neue_Textmanager.menu_info_main.winfo_height()+1,relwidth=0.5*factor, relheight=0.1*factor)
-            song = Neue_Textmanager.get_db_connection("SELECT song_name FROM songs WHERE song_number = ? AND book_name = ?", (str(i[1][2]),str(i[1][4])))
+            song = Neue_Textmanager.db_connection_info_get("SELECT song_name FROM songs WHERE song_number = ? AND book_name = ?", (str(i[1][2]),str(i[1][4])))
             if not i[1][3]:
                 text_einfügen = ""
             elif len(i[1][3]) == 1:

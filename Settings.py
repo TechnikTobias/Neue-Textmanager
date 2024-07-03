@@ -13,25 +13,7 @@ from tkinter.colorchooser import askcolor
 Programm_ort = os.getlogin()
 
 #alles noch mal anschauen 
-widget_info = {}
-def register_widget(
-        name: str, 
-        widget_place, 
-        widget: Widget = None, 
-        relheight: int = 0.1, 
-        relwidth : int = .11,
-        relx: int = 0, 
-        rely: int = 0):
-    """Registriert ein Widget und speichert seine Informationen
-    Hier werden die Info für die Widget übergeben damit sie an einer zentrallen stelle placiert werden und deren größe angepasst wird."""
-    widget_info[name] = {
-        "widget_place" : widget_place,
-        "widget": widget,
-        "relheight": relheight,
-        "relwidth": relwidth,
-        "relx": relx,
-        "rely": rely
-    }
+
 
 
 
@@ -147,23 +129,64 @@ def Load_anzeige():
         Textanzeiger_setting_class.switch_setting_off()
         Textanzeiger_setting_class.switch_setting_on()
 
-def make_settings():
-    Check_settings()
-    global Settings_bildschirm, Setings_Textanzeiger, Settings_Graphig_option, Smarte_unterstüzung_button
-    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-    text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
-    try: 
-        Settings_bildschirm.config(bg=hintergrund_farbe)
-    except:
-        Settings_bildschirm = Toplevel(Neue_Textmanager.Textmanager)
-        Settings_bildschirm.geometry("600x800")
-        Settings_bildschirm.config(bg=hintergrund_farbe)
-        Settings_Graphig_option = ResponsiveWidget(Button, Settings_bildschirm, font=Textgröße_von_alle_Texte, fg=text_farbe, bg=hintergrund_farbe, command=Load_graphig_settings, text= "Einstellung für\nGraphig", bd=0)
-        Setings_Textanzeiger = ResponsiveWidget(Button, Settings_bildschirm, font=Textgröße_von_alle_Texte, fg=text_farbe, bg=hintergrund_farbe, text="Einstellungen für\nTextanzeiger", bd=0, command=Settings_Textanzeiger_def)
-        Smarte_unterstüzung_button = ResponsiveWidget(Button, Settings_bildschirm, font= Textgröße_von_alle_Texte, fg= text_farbe, bg= hintergrund_farbe, command= Load_SmarteSettings, bd= 0, text= "Intelligente Unterstützung")
-        ToolTip(Setings_Textanzeiger, msg="Lädt alle Einstellungen für den Textanzeiger", delay=2, follow=True)
-        Neue_Textmanager.Load_Setting()
-        Load_settings.Load_text_size(text_size)
+
+class Settings_window(Toplevel):
+    def __init__(self, parent, *args, **kwargs):
+        hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        self.widget_info = {}
+        try: 
+            self.config(bg=hintergrund_farbe)
+        except:
+            super().__init__(parent, *args, **kwargs)
+            self.title("Einstellungen")
+            self.geometry("600x800")
+            self.config(bg=hintergrund_farbe)
+            Settings_Graphig_option = ttk.Button(self, command=Load_graphig_settings, text= "Einstellung für\nGraphig", style="TButton")
+            self.register_widget("Settings_Graphig_option", Settings_Graphig_option, relheight=0.05, relwidth=0.15, rely=0.05, relx=0)
+            Setings_Textanzeiger = ttk.Button(self, text="Einstellungen für\nTextanzeiger",command=Settings_Textanzeiger_def, style="TButton")
+            self.register_widget("Setings_Textanzeiger", Setings_Textanzeiger, relheight=0.05, relwidth=0.15, rely=0.15, relx=0)
+            Smarte_unterstüzung_button = ttk.Button(self, command= Load_SmarteSettings, text= "Intelligente Unterstützung", style="TButton")
+            self.register_widget("Smarte_unterstüzung_button", Smarte_unterstüzung_button, relheight=0.05, relwidth=0.15, rely=0.25, relx=0)
+            ToolTip(Setings_Textanzeiger, msg="Lädt alle Einstellungen für den Textanzeiger", delay=2, follow=True)
+            self.update_widget_positions()
+    def register_widget(self,
+        name: str, 
+        widget: Widget = None, 
+        relheight: int = 0.1, 
+        relwidth : int = .11,
+        relx: int = 0, 
+        rely: int = 0):
+        """Registriert ein Widget und speichert seine Informationen
+        Hier werden die Info für die Widget übergeben damit sie an einer zentrallen stelle placiert werden und deren größe angepasst wird."""
+        self.widget_info[name] = {
+            "widget": widget,
+            "relheight": relheight,
+            "relwidth": relwidth,
+            "relx": relx,
+            "rely": rely
+        }
+
+    def update_widget_positions(self):
+        """Aktualisiert die Positionen und Größen aller Widgets basierend auf dem Skalierungsfaktor"""
+        self.factor = int(Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
+        self.widgets_to_remove = []
+        for self.name, self.info in self.widget_info.items():
+            try:
+                self.widget = self.info["widget"]
+                self.relheight = self.info["relheight"] * self.factor
+                self.relwidth = self.info["relwidth"] * self.factor
+                self.relx = self.info["relx"] * self.factor
+                self.rely = self.info["rely"] * self.factor
+                self.widget.place(relwidth=self.relwidth, relheight=self.relheight, relx=self.relx, rely=self.rely)
+            except:
+                self.widgets_to_remove.append(self.name)
+
+        # Entferne die fehlerhaften Widgets aus widget_info
+        for self.name in self.widgets_to_remove:
+            del self.widget_info[self.name]
+            print(self.widget_info)
+            print(f"Widget {self.name} aus widget_info entfernt")
+
 
 
 def Load_graphig_settings():

@@ -7,11 +7,11 @@ import tkinter.font as tkFont
 from tkinter import ttk as tk
 
 
-def Textmanager_größen(self):
+def Textmanager_größen(self, Textsize):
     style = tk.Style()
-    hintergrund_farbe = Neue_Textmanager.TextmanagerAPP.db_connection_info_get(self,"SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
-    text_farbe = Neue_Textmanager.TextmanagerAPP.db_connection_info_get(self,"SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
-    factor = int(Neue_Textmanager.TextmanagerAPP.db_connection_info_get(self,"SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
+    hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
+    text_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
+    factor = int(Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
     text_size = min( int(Neue_Textmanager.TextmanagerAPP.get_window_size(self)[0]/40*factor), int(Neue_Textmanager.TextmanagerAPP.get_window_size(self)[1]/60*factor))
     style.theme_use("clam")
     style.configure('custom.TMenubutton', background=hintergrund_farbe, foreground=text_farbe, font=('Helvetica', text_size),)
@@ -101,7 +101,7 @@ def Load_all_collor():
     except:
         pass
     try:
-        Settings.Settings_bildschirm.config(bg=hintergrund_farbe)
+        Settings.self.config(bg=hintergrund_farbe)
         Settings.Setings_Textanzeiger.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
         Settings.Settings_Graphig_option.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
         Settings.Smarte_unterstüzung_button.config(bg=hintergrund_farbe, fg=text_farbe, activebackground=Aufleuchtfarbe_Hintergrund, activeforeground=Aufleuchtfarbe_Textfarbe)
