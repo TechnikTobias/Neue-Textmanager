@@ -6,11 +6,10 @@ from typing import Optional
 
 import os
 from tkinter import *
-from PIL import Image, ImageTk
+from PIL import Image
 import tkinter.font as tkFont
 from tktooltip import *
 from tkinter.colorchooser import askcolor
-Programm_ort = os.getlogin()
 
 #alles noch mal anschauen 
 
