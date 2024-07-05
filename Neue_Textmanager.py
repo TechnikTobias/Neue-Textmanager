@@ -28,19 +28,23 @@ def db_connection_info_write(input_db, input_db_variabel):
     conn.close()
 
 
-def db_connection_info_get( input_db, input_db_variabel):
+def db_connection_info_get( input_db, input_db_variabel, singel_or_multi = FALSE):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(input_db, input_db_variabel)
     Ausgabe = cursor.fetchall()
     conn.close()
-    if Ausgabe: return Ausgabe[0][0]
+    if Ausgabe: 
+        if singel_or_multi:
+            return Ausgabe
+        else:
+            return Ausgabe[0][0]
 
 
-def fetch_all_program_info(input_db, input):
+def fetch_all_program_info(input_db, input, auswahl= "*"):
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute(f'SELECT * FROM {input_db} ORDER BY {input}')
+    c.execute(f'SELECT {auswahl} FROM {input_db} ORDER BY {input}')
     all_entries = c.fetchall()
     conn.close()
     return all_entries
@@ -250,13 +254,15 @@ class TextmanagerAPP(Tk):
                         self.liedanzeige.config(text=Text_speicher)
                     else:
                         self.liedanzeige.config(text = "Bitte geben sie eine Nummer ein\n")
-                    informationen_json = json.dumps([self.buchauswahl.get(), self.liednummer.get(), self.versnummer.get()])
-                else:
-                    informationen_json = None
-                db_connection_info_write(
-                'INSERT INTO Ablaufverwaltung (Position, Comand, Informationen, Name) VALUES (?, ?, ?, ?)', 
-                (self.position, self.befehl, informationen_json, self.name_datenbank)
+                    db_connection_info_write(
+                'INSERT INTO Ablaufverwaltung (Position, Comand, Liednummer, Name, Versnummer, Buch) VALUES (?, ?, ?, ?, ?, ?)', 
+                (self.position, self.befehl, self.liednummer.get(), self.name_datenbank, self.versnummer.get(), self.buchauswahl.get())
                 )
+                else:
+                    db_connection_info_write(
+                    'INSERT INTO Ablaufverwaltung (Position, Comand, Liednummer, Name, Versnummer, Buch) VALUES (?, ?, ?, ?, ?, ?)', 
+                    (self.position, self.befehl, "", self.name_datenbank, "", "")
+                    )
 
 
         # Entferne die fehlerhaften Widgets aus widget_info
@@ -305,10 +311,10 @@ class TextmanagerAPP(Tk):
         self.widget_info_liedauswahl_aublauf = {}
         entries = fetch_all_program_info("Ablaufverwaltung", "Position")
         for entry in entries:
-            self.gegerator_lieder_ablauf(entry[0]+1,entry[3], entry[1], informationen=entry[2])
+            self.gegerator_lieder_ablauf(entry[0]+1,entry[3], entry[1], liednummer=entry[2], versnummer=entry[4], buch=entry[5])
         self.button_generator()
         self.update_widget_positions()
-        self.vers_postion = 0
+        self.vers_postion = -1
         self.Liedposition = 0
         self.bind("<Configure>", self.one_resize)
         self.bind("<Left>", self.trigger_command_with_param)
@@ -317,7 +323,7 @@ class TextmanagerAPP(Tk):
         self.bind("<Down>", self.trigger_command_with_param)
 
 
-    def gegerator_lieder_ablauf(self, position, name_lied, aktion, informationen):
+    def gegerator_lieder_ablauf(self, position, name_lied, aktion, liednummer, versnummer, buch):
         self.frame = ttk.Frame(self, style='TLabel')
         self.register_widget(name=f"frame{position}", widget=self.frame, relheight=0.1, relwidth=0.7, relx=0, rely=0.1*position-0.05)
         self.Lied_start = ttk.Label(self.frame, text=name_lied, style='TLabel')
@@ -329,15 +335,18 @@ class TextmanagerAPP(Tk):
             self.register_widget(name=f"lablekamera{position}", widget=self.lable_Kamera, relheight=0.5, relwidth=0.15, relx=0.15, rely=0)
             self.text_lied_lable = ttk.Label(self.frame, style='TLabel', text="Lied")
             self.register_widget(name=f"text_lied_lable{position}", widget=self.text_lied_lable, relheight=0.5, relwidth=0.15, relx=0.405, rely=0)
-            self.register_widegets_liedaktualisieren_ablauf(name=f"{name_lied}{position}", liednummer=informationen[1], versnummer=informationen[2], buchauswahl=informationen[0], liedanzeige=self.frame, befehl=aktion, pos=position)
-            print(informationen[0])
-            print(informationen[1])
-            print(informationen[2])
+            self.register_widegets_liedaktualisieren_ablauf(name=f"{name_lied}{position}", liednummer=liednummer, versnummer=versnummer, buchauswahl=buch, liedanzeige=self.frame, befehl=aktion, pos=position)
         elif aktion == " Kamera":
             self.lied_weiter = ttk.Button(self.frame, text= "servus", style='TButton')
             self.register_widget(name=f"text_lied_lable{position}", widget=self.lied_weiter, relheight=0.5, relwidth=0.15, relx=0.205, rely=0)
 
     def ablauf_sterung(self, übergabe_postion_lied, übergabe_postion_vers):
+        self.vers_postion += übergabe_postion_vers
+        self.Liedposition += übergabe_postion_lied
+        if self.vers_postion < -1:
+            self.Liedposition -= 1
+        if self.Liedposition < -1:
+            self.Liedposition = -1
         for self.name, self.info in self.widget_info_liedauswahl_aublauf.items():
             self.liednummer = self.info["liednummer"]
             self.versnummer = self.info["versnummer"]
@@ -345,12 +354,25 @@ class TextmanagerAPP(Tk):
             self.buchauswahl = self.info["buchauswahl"]
             self.befehl = self.info["befehl"]
             self.position = self.info["pos"]
-            self.vers_postion += übergabe_postion_vers
-            self.Liedposition += übergabe_postion_lied
-
-            vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (self.liednummer,))
-            print(f"{self.versnummer}liednumer")
-            print(vers_number[0])
+            if self.Liedposition == self.position:
+                numbers = []
+                if self.versnummer:
+                    parts = str(self.versnummer).split(',')  # Teile die Eingabe anhand des Kommas
+                    for part in parts:
+                        if '-' in part:  # Überprüfe, ob ein Bereich (z.B. 3-6) vorhanden ist
+                            start, end = map(int, part.split('-'))  # Teile den Bereich anhand des Bindestrichs
+                            numbers.extend(range(start, end + 1))  # Füge die Zahlen im Bereich zur Liste hinzu
+                        else:
+                            numbers.append(int(part))  # Füge einzelne Zahlen zur Liste hinzu
+                else:
+                    vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (self.liednummer,),singel_or_multi=True)
+                    for vers in vers_number:
+                        numbers += vers
+                if self.vers_postion > len(numbers):
+                    self.vers_postion = -1
+                    self.Liedposition += 1
+                song_name = db_connection_info_get("SELECT song_name FROM songs WHERE song_id = ?", (self.liednummer,))
+                print(song_name)
 
 
 
@@ -364,7 +386,9 @@ class TextmanagerAPP(Tk):
             self.command_param = 0
             self.command_param1 = 1
         elif key_pressed == 'Up':
-            self.command_param = "Command for Up arrow"
+            self.command_param = -1
+            self.command_param1 = 0
         elif key_pressed == 'Down':
-            self.command_param = "Command for Down arrow"
+            self.command_param = 1
+            self.command_param1 = 0
         self.ablauf_sterung(self.command_param, self.command_param1)
