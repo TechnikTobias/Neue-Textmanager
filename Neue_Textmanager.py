@@ -292,13 +292,12 @@ class TextmanagerAPP(Tk):
             for name in widget_keys:
                 widget = self.widget_info[name]["widget"]
                 widget.destroy()
-                del self.widget_info[name]
+                self.widget_info.clear()
             widget_keys = list(self.widget_info_liedauswahl.keys())
             for name in widget_keys:
-                del self.widget_info[name]
+                self.widget_info.clear()
         except Exception as e:
-            print(f"Fehler beim Löschen der Widgets: {e}")
-
+            print(e)
 
 
     def Ablaufsteuerung(self):
@@ -309,7 +308,15 @@ class TextmanagerAPP(Tk):
             self.gegerator_lieder_ablauf(entry[0]+1,entry[3], entry[1], informationen=entry[2])
         self.button_generator()
         self.update_widget_positions()
-        
+        self.vers_postion = 0
+        self.Liedposition = 0
+        self.bind("<Configure>", self.one_resize)
+        self.bind("<Left>", self.trigger_command_with_param)
+        self.bind("<Right>", self.trigger_command_with_param)
+        self.bind("<Up>", self.trigger_command_with_param)
+        self.bind("<Down>", self.trigger_command_with_param)
+
+
     def gegerator_lieder_ablauf(self, position, name_lied, aktion, informationen):
         self.frame = ttk.Frame(self, style='TLabel')
         self.register_widget(name=f"frame{position}", widget=self.frame, relheight=0.1, relwidth=0.7, relx=0, rely=0.1*position-0.05)
@@ -322,7 +329,10 @@ class TextmanagerAPP(Tk):
             self.register_widget(name=f"lablekamera{position}", widget=self.lable_Kamera, relheight=0.5, relwidth=0.15, relx=0.15, rely=0)
             self.text_lied_lable = ttk.Label(self.frame, style='TLabel', text="Lied")
             self.register_widget(name=f"text_lied_lable{position}", widget=self.text_lied_lable, relheight=0.5, relwidth=0.15, relx=0.405, rely=0)
-            self.register_widegets_liedaktualisieren_ablauf(name=name_lied+position, liednummer=informationen[1], versnummer=informationen[2], buchauswahl=informationen[0], liedanzeige=self.frame, befehl=aktion, pos=position)
+            self.register_widegets_liedaktualisieren_ablauf(name=f"{name_lied}{position}", liednummer=informationen[1], versnummer=informationen[2], buchauswahl=informationen[0], liedanzeige=self.frame, befehl=aktion, pos=position)
+            print(informationen[0])
+            print(informationen[1])
+            print(informationen[2])
         elif aktion == " Kamera":
             self.lied_weiter = ttk.Button(self.frame, text= "servus", style='TButton')
             self.register_widget(name=f"text_lied_lable{position}", widget=self.lied_weiter, relheight=0.5, relwidth=0.15, relx=0.205, rely=0)
@@ -335,6 +345,26 @@ class TextmanagerAPP(Tk):
             self.buchauswahl = self.info["buchauswahl"]
             self.befehl = self.info["befehl"]
             self.position = self.info["pos"]
-            if übergabe_postion_vers == 0:
-                if übergabe_postion_lied > 0:
-                    übergabe_postion_lied -= 1
+            self.vers_postion += übergabe_postion_vers
+            self.Liedposition += übergabe_postion_lied
+
+            vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (self.liednummer,))
+            print(f"{self.versnummer}liednumer")
+            print(vers_number[0])
+
+
+
+
+    def trigger_command_with_param(self, event):
+        key_pressed = event.keysym
+        if key_pressed == 'Left':
+            self.command_param = 0
+            self.command_param1 = -1
+        elif key_pressed == 'Right':
+            self.command_param = 0
+            self.command_param1 = 1
+        elif key_pressed == 'Up':
+            self.command_param = "Command for Up arrow"
+        elif key_pressed == 'Down':
+            self.command_param = "Command for Down arrow"
+        self.ablauf_sterung(self.command_param, self.command_param1)
