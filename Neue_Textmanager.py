@@ -116,6 +116,23 @@ class TextmanagerAPP(Tk):
         }
 
 
+    def register_widegets_liedaktualisieren_ablauf(self,
+                             name: str = None,
+                             liednummer: int = None,
+                             versnummer: int = None,
+                             liedanzeige: Widget = None,
+                             buchauswahl: str = None,
+                             befehl: str = None,
+                             pos: int = 0):
+        """Regestiert die Liedauwahl und lasst das richtige lied erscheinen"""
+        self.widget_info_liedauswahl_aublauf[name] = {
+            "liednummer": liednummer,
+            "versnummer": versnummer,
+            "liedanzeige": liedanzeige,
+            "buchauswahl": buchauswahl,
+            "befehl": befehl,
+            "pos": pos
+        }
 
 
         
@@ -197,14 +214,13 @@ class TextmanagerAPP(Tk):
             #inhalt.append(opt)
 
     def button_generator(self):
-        bestaetigen = ttk.Button(self, text="Bestätigen", command=bestätigen, style='TButton')
-        self.register_widget("rueckgabe_button", widget=bestaetigen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0)
         wiederherstellen = ttk.Button(self, text="Wiederherstellen", style='TButton')
         self.register_widget("widerherstell_button", widget=wiederherstellen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.1)
         loeschen = ttk.Button(self, text="Löschen", command=self.Ablaufsteuerung, style='TButton')
         self.register_widget("löeschen_button", widget=loeschen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.2)
         preasentation = ttk.Button(self, text="Präsentation", command=ablauf.Präsentation_starten, style='TButton')
         self.register_widget("presentation_button", widget=preasentation, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.3)
+
 
 
 
@@ -287,63 +303,38 @@ class TextmanagerAPP(Tk):
 
     def Ablaufsteuerung(self):
         self.widget_delite()
+        self.widget_info_liedauswahl_aublauf = {}
         entries = fetch_all_program_info("Ablaufverwaltung", "Position")
-        print(entries)
         for entry in entries:
-            print(f"ID: {entry[0]}, Befehl: {entry[1]}, Name: {entry[2]}")        
             self.gegerator_lieder_ablauf(entry[0]+1,entry[3], entry[1], informationen=entry[2])
         self.button_generator()
         self.update_widget_positions()
         
     def gegerator_lieder_ablauf(self, position, name_lied, aktion, informationen):
-        print(position)
-        self.Lied_start = ttk.Label(self, text=name_lied, style='TLabel')
-        self.register_widget(name=f"Liedstart{position}", widget=self.Lied_start, relheight=0.05, relwidth=0.3, relx=0, rely=0.1*position-0.05)
+        self.frame = ttk.Frame(self, style='TLabel')
+        self.register_widget(name=f"frame{position}", widget=self.frame, relheight=0.1, relwidth=0.7, relx=0, rely=0.1*position-0.05)
+        self.Lied_start = ttk.Label(self.frame, text=name_lied, style='TLabel')
+        self.register_widget(name=f"Liedstart{position}", widget=self.Lied_start, relheight=0.5, relwidth=0.2, relx=0, rely=0)
         if aktion == " Textwort":
             pass
         elif aktion == " Lied":
-            self.lable_Kamera = ttk.Button(self, text="Kamera", style='TButton')
-            self.register_widget(name=f"lablekamera{position}", widget=self.lable_Kamera, relheight=0.05, relwidth=0.15, relx=0.15, rely=0.1*position-0.05)
-            self.text_lied_lable = ttk.Label(self, style='TLabel', text="Lied")
-            self.register_widget(name=f"text_lied_lable{position}", widget=self.text_lied_lable, relheight=0.05, relwidth=0.15, relx=0.405, rely=0.1*position-0.05)
+            self.lable_Kamera = ttk.Button(self.frame, text="Kamera", style='TButton')
+            self.register_widget(name=f"lablekamera{position}", widget=self.lable_Kamera, relheight=0.5, relwidth=0.15, relx=0.15, rely=0)
+            self.text_lied_lable = ttk.Label(self.frame, style='TLabel', text="Lied")
+            self.register_widget(name=f"text_lied_lable{position}", widget=self.text_lied_lable, relheight=0.5, relwidth=0.15, relx=0.405, rely=0)
+            self.register_widegets_liedaktualisieren_ablauf(name=name_lied+position, liednummer=informationen[1], versnummer=informationen[2], buchauswahl=informationen[0], liedanzeige=self.frame, befehl=aktion, pos=position)
         elif aktion == " Kamera":
-            self.lied_weiter = ttk.Button(self, text= "servus", style='TButton')
-            self.register_widget(name=f"text_lied_lable{position}", widget=self.lied_weiter, relheight=0.05, relwidth=0.15, relx=0.205, rely=0.1*position-0.05)
+            self.lied_weiter = ttk.Button(self.frame, text= "servus", style='TButton')
+            self.register_widget(name=f"text_lied_lable{position}", widget=self.lied_weiter, relheight=0.5, relwidth=0.15, relx=0.205, rely=0)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def delete():
-    for i in alle_inhalt:
-        if i[0][0] == " Lied":
-            i[5].delete(0, "end")
-            i[6].delete(0, "end")
-    eingabe_änderung("")
-
-
-
-
-def bestätigen():
-    data = []
-    for i in alle_inhalt:
-        if i[0][0] == " Lied":
-            data.append(f"{i[0][0]};{i[0][1]};{i[3].get()};{i[5].get()};{i[6].get()};{i[7].get()}")
-        elif i[0][0] == " Kamera":
-            data.append(f"{i[0][0]};{i[0][1]};{i[3].get()};0;1;0")
-        elif i[0][0] == " Textwort":
-            data.append(f"{i[0][0]};{i[0][1]};0;0;1;0")
-    data_ready = "!".join(data,)
-    get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (data_ready, "speichern"), False)
-
-
+    def ablauf_sterung(self, übergabe_postion_lied, übergabe_postion_vers):
+        for self.name, self.info in self.widget_info_liedauswahl_aublauf.items():
+            self.liednummer = self.info["liednummer"]
+            self.versnummer = self.info["versnummer"]
+            self.liedanzeige = self.info["liedanzeige"]
+            self.buchauswahl = self.info["buchauswahl"]
+            self.befehl = self.info["befehl"]
+            self.position = self.info["pos"]
+            if übergabe_postion_vers == 0:
+                if übergabe_postion_lied > 0:
+                    übergabe_postion_lied -= 1
