@@ -11,7 +11,7 @@ Speicherort = os.path.dirname(os.path.abspath(__file__))
 
 # Datenbankverbindung
 def get_db_connection():
-    conn = sqlite3.connect(f"{Speicherort}/Textmanager Daten/Lieder Datenbank/Lieder Datenbank.db")
+    conn = sqlite3.connect(f"{Speicherort}/Lieder_Datenbank.db")
     return conn
 
 
@@ -260,7 +260,7 @@ def display_verses():
 # Haupt UI Setup
 def setup_ui():
     global window, song_list
-    window = tk.Toplevel(Neue_Textmanager.Textmanager)
+    window = tk.Tk()
     window.title("Lieder Datenbank")
 
     song_list = tk.Listbox(window, width=50, height=10)
@@ -274,3 +274,4 @@ def setup_ui():
 # Hauptprogramm
 if __name__ == "__main__":
     setup_ui()
+    window.mainloop()

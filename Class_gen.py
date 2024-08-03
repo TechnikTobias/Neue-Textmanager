@@ -48,8 +48,8 @@ class Test_info:
 class Bild_schirm_größe_class:
 
     def __init__(self, Seite, bildschirm_große_quere, bilschirm_größe_hoch,  speicherort, Bildschirm, skalierung_list, Text_hover = ""):
-        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-        text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
+        hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        text_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
         self.speicherort = speicherort
         self.Hauptbildschirm = Label(Seite, font=Settings.Textgröße_von_alle_Texte, text=Bildschirm, bg=hintergrund_farbe, fg=text_farbe)
         with open(f"{speicherort}quere.txt", "r", encoding="utf8") as speicherort1:
@@ -135,13 +135,13 @@ class Text_scalierung():
 
 class Swich_generator:
     def __init__(self, Settings_is, Textanzeige, Text_datei_save, ob_True, def_bei_offbutton, Text_hover = "", zise = 10):
-        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-        text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
+        hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        text_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
         self.Text_datei_save = Text_datei_save
         self.def_bei_offbutton = def_bei_offbutton
         self.zise = int(Settings.text_size)
-        self.is_switch = ResponsiveWidget(Button, Settings_is, activebackground=hintergrund_farbe)
-        self.switch_text = Label(Settings_is, font=("Helvetica", zise), bg=hintergrund_farbe, fg=text_farbe, text=Textanzeige)
+        self.is_switch = ResponsiveWidget(Button, self, activebackground=hintergrund_farbe)
+        self.switch_text = Label(self, font=("Helvetica", zise), bg=hintergrund_farbe, fg=text_farbe, text=Textanzeige)
         self.Text_anzeiger2 = ToolTip(self.switch_text, msg=Text_hover, delay=2, follow=True)
         if not ob_True:
             self.Photo1 = Image.open("off-button.png")
@@ -157,11 +157,11 @@ class Swich_generator:
 
     def color(self, bg_color, fg_color, activ_bg, activ_fg):
         self.switch_text.config(bg=bg_color,fg=fg_color)
-        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+        hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
         self.is_switch.config(bg=bg_color, activebackground=hintergrund_farbe)
 
     def switch_setting_off(self):
-        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("False",f"{self.Text_datei_save}"), False)
+        Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("False",f"{self.Text_datei_save}"))
         self.Photo1 = Image.open("off-button.png")
         self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
         self.is_switch.configure(image=self.Photo, command= self.switch_setting_on)
@@ -170,7 +170,7 @@ class Swich_generator:
 
 
     def switch_setting_on(self):
-        Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("True",f"{self.Text_datei_save}"), False)
+        Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", ("True",f"{self.Text_datei_save}"))
         self.Photo1 = Image.open("on-button.png")
         self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
         self.is_switch.configure(image=self.Photo, command=self.switch_setting_off)

@@ -16,9 +16,12 @@ def Textmanager_größen(self, Textsize):
     style.theme_use("clam")
     style.configure('custom.TMenubutton', background=hintergrund_farbe, foreground=text_farbe, font=('Helvetica', text_size),)
     style.configure('TMenubutton', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
+    style.configure('aktive.TLabel', relief='flat', borderwidth=0, font=('Helvetica', text_size), background="red", foreground="black")
     style.configure('TLabel', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
     style.configure('TEntry', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
     style.configure('TButton',  borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
+    style.configure('vorbereitung.TFrame',  borderwidth=0, font=('Helvetica', text_size), background="orange", foreground="black")
+    style.configure('aktive.TFrame',  borderwidth=0, font=('Helvetica', text_size), background="red", foreground="black")
     try:
         text_size = min( int(Settings.Graphig_bildschirm.winfo_height()/50*factor), int(Settings.Graphig_bildschirm.winfo_width()/80*factor))
         style.configure('TScale', borderwidth=0, font=('Helvetica',50), background=hintergrund_farbe, foreground=text_farbe)

@@ -2,6 +2,7 @@ import tkinter as tk
 import sqlite3
 import os
 
+import Neue_Textmanager
 #neu überarbeiten und verschönern
 
 Speicherort = os.path.dirname(os.path.abspath(__file__))
@@ -60,7 +61,10 @@ def bestätigen():
         final =[]
         halbe_daten = comnd.split(",")
         for daten in halbe_daten:
-            final.append( daten.split(":")[1])
+            daten_to_remove_space = daten.split(":")[1]
+            daten_to_remove_space.replace(" ", "")
+            final.append(daten_to_remove_space.replace(" ", ""))
+            
 
         c.execute('''INSERT INTO Ablaufaufbau (Reihenfolge, Name, Comand) VALUES (?, ?, ?)''', (pos, final[0], final[1]))
         conn.commit()
@@ -118,13 +122,11 @@ command_label.pack(fill='x')
 commands_list = tk.Listbox(frame, selectmode=tk.SINGLE, width=40)
 commands_list.pack(fill='both', expand=True)
 
-commands_list.insert(tk.END, f"Name: Eingslied, Befehl: Lied")
-commands_list.insert(tk.END, f"Name: Textwort, Befehl: Textwort")
-commands_list.insert(tk.END, f"Name: Textwortlied, Befehl: Kamera")
-commands_list.insert(tk.END, f"Name: Amstwechsel, Befehl: Kamera")
-commands_list.insert(tk.END, f"Name: Bußlied,Befehl: Lied")
-commands_list.insert(tk.END, f"Name: Abendmahlslied, Befehl: Lied")
-commands_list.insert(tk.END, f"Name: Schlusslied, Befehl: Kamera")
+entries = Neue_Textmanager.fetch_all_program_info("Ablaufaufbau", "Reihenfolge")
+for entry in entries:
+    commands_list.insert(tk.END, f"Name: {entry[2]}, Befehl: {entry[1]}")
+    
+
 
 up_button = tk.Button(frame, text="Nach oben", command=move_up)
 up_button.pack(fill='x')
