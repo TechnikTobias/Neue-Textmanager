@@ -11,7 +11,7 @@ def create_rounded_rectangle(width, height, radius, color):
     draw.pieslice((0, 0, 2*radius, 2*radius), 180, 270, fill=color)
     draw.pieslice((width-2*radius, 0, width-1, 2*radius), 270, 360, fill=color)
     draw.pieslice((width-2*radius, height-2*radius, width-1, height), 0, 90, fill=color)
-    draw.pieslice((0, height-2-2*radius, 2*radius, height), 90, 180, fill=color)
+    draw.pieslice((0, height-2*radius, 2*radius, height), 90, 180, fill=color)
     
     # Zeichnen Sie die vier Rechtecke, die die abgerundeten Ecken verbinden
     draw.rectangle((radius, 0, width-radius, height), fill=color)
@@ -21,12 +21,14 @@ def create_rounded_rectangle(width, height, radius, color):
 
 class Switch(ttk.Frame):
     def __init__(self, parent, text="", text_on="ON", text_off="OFF", command=None, text_on_pos=(45, 12), text_off_pos=(15, 12),
-                 oval_pos_on=(37, 2, 58, 23), oval_pos_off=(2, 2, 23, 23), Skalierung = 1, state = False, speicher_db = None,
+                 oval_pos_on=(37, 2, 58, 23), oval_pos_off=(2, 2, 23, 23), Skalierung=1, state=False, speicher_db=None,
                  switch_shape="oval", style="Switch.TFrame", *args, **kwargs):
         super().__init__(parent, style=style, *args, **kwargs)
 
         self.text_on_str = text_on
         self.text_off_str = text_off
+        self.Skalierung = Skalierung
+
         self.text_on_pos = self.skalieren(text_on_pos, sklaierung=Skalierung)
         self.text_off_pos = self.skalieren(text_off_pos, sklaierung=Skalierung)
         self.oval_pos_on = self.skalieren(oval_pos_on, sklaierung=Skalierung)
@@ -49,33 +51,36 @@ class Switch(ttk.Frame):
         self.off_color = self.style.lookup(style, "offbackground")
         self.mid_color = self.style.lookup(style, "zwischen_background")
         self.text_color = self.style.lookup(style, "foreground")
+        self.background_color = self.style.lookup(style, "background")
 
+        # Initiales Erstellen des Texts mit einer festen Größe
+        self.text_on = self.canvas.create_text(*self.text_on_pos, text=self.text_on_str, anchor=tk.CENTER, state='hidden', fill=self.text_color, font=("Arial", self.skalieren(12, sklaierung=Skalierung)))
+        self.text_off = self.canvas.create_text(*self.text_off_pos, text=self.text_off_str, anchor=tk.CENTER, fill=self.text_color, font=("Arial", self.skalieren(12, sklaierung=Skalierung)))
+        
         if state:
             if self.switch_shape == "oval":
-                self.oval = self.canvas.create_oval(*self.oval_pos_off, fill=self.on_color, outline="grey")
+                self.oval = self.canvas.create_oval(*self.oval_pos_off, fill=self.on_color, outline="")
             elif self.switch_shape == "rectangle":
-                self.oval = self.canvas.create_rectangle(*self.oval_pos_off, fill=self.on_color, outline="grey")
+                self.oval = self.canvas.create_rectangle(*self.oval_pos_off, fill=self.on_color, outline="")
         else:
             if self.switch_shape == "oval":
-                self.oval = self.canvas.create_oval(*self.oval_pos_on, fill=self.off_color, outline="grey")
+                self.oval = self.canvas.create_oval(*self.oval_pos_on, fill=self.off_color, outline="")
             elif self.switch_shape == "rectangle":
-                self.oval = self.canvas.create_rectangle(*self.oval_pos_on, fill=self.off_color, outline="grey")
-        self.text_on = self.canvas.create_text(*self.text_on_pos, text=self.text_on_str, anchor=tk.CENTER, state='hidden', fill=self.text_color)
-        self.text_off = self.canvas.create_text(*self.text_off_pos, text=self.text_off_str, anchor=tk.CENTER, fill=self.text_color)
+                self.oval = self.canvas.create_rectangle(*self.oval_pos_on, fill=self.off_color, outline="")
 
         self.canvas.bind("<Button-1>", self.toggle)
         self.update_text_visibility()
 
     def skalieren(self, input, sklaierung):
-        if type(input) == list:
-            for i in input:
-                ausgabe = []
-                ausgabe.append(round(i*sklaierung))
-            return ausgabe
-        elif type(input) == tuple:
-            return tuple(round(i * sklaierung) for i in input)
+        if isinstance(input, (list, tuple)):
+            return type(input)(round(i * sklaierung) for i in input)
         else:
-            return round(input*sklaierung)
+            return round(input * sklaierung)
+
+    def update_scale(self):
+        font_size = int(12 * self.Skalierung)
+        self.canvas.itemconfig(self.text_on, font=("Arial", font_size))
+        self.canvas.itemconfig(self.text_off, font=("Arial", font_size))
 
     def toggle(self, event=None):
         if self.var.get():
@@ -94,12 +99,12 @@ class Switch(ttk.Frame):
             for i in range(steps):
                 self.after(i * 20, self.move_oval, self.oval_pos_on, self.oval_pos_off, steps, i)
                 self.after(i * 20, self.move_text, self.text_off_pos, self.text_on_pos, steps, i, True)
-            self.fade_color(self.off_color, self.mid_color, self.on_color, steps)
+            self.fade_color(self.off_color, self.mid_color, self.on_color, steps, function_übergabe=self.update_color, übergabe_item=self.oval)
         else:
             for i in range(steps):
                 self.after(i * 20, self.move_oval, self.oval_pos_off, self.oval_pos_on, steps, i)
                 self.after(i * 20, self.move_text, self.text_on_pos, self.text_off_pos, steps, i, False)
-            self.fade_color(self.on_color, self.mid_color, self.off_color, steps)
+            self.fade_color(self.on_color, self.mid_color, self.off_color, steps, function_übergabe=self.update_color, übergabe_item=self.oval)
 
     def move_oval(self, start_coords, end_coords, steps, step):
         new_coords = [
@@ -109,16 +114,28 @@ class Switch(ttk.Frame):
         self.canvas.coords(self.oval, new_coords)
 
     def move_text(self, start_coords, end_coords, steps, step, state):
-        if step == 0 or step == steps - 1:
-            self.canvas.itemconfig(self.text_on if state else self.text_off, state='normal')
+        if step == 16:
+            self.fade_color(self.background_color, self.background_color, self.text_color, 20, function_übergabe=self.update_color, übergabe_item=self.text_on if state else self.text_off)
+        if step >= 16:
             self.canvas.itemconfig(self.text_off if state else self.text_on, state='hidden')
+            self.canvas.itemconfig(self.text_on if state else self.text_off, state='normal')
+        elif step >= 15:
+            self.canvas.itemconfig(self.text_off if state else self.text_on, state='hidden')
+            self.canvas.itemconfig(self.text_on if state else self.text_off, state='hidden')
+        elif step >= 0:
+            self.canvas.itemconfig(self.text_off if state else self.text_on, state='normal')
+            self.canvas.itemconfig(self.text_on if state else self.text_off, state='hidden')
+        if step == 0:
+            self.fade_color(self.text_color, self.background_color, self.background_color, 20, function_übergabe=self.update_color, übergabe_item=self.text_on if not state else self.text_off)
+
         new_coords = [
             start_coords[i] + (end_coords[i] - start_coords[i]) * step // steps
             for i in range(2)
         ]
-        self.canvas.coords(self.text_on if state else self.text_off, new_coords)
+        self.canvas.coords(self.text_off, new_coords)
+        self.canvas.coords(self.text_on, new_coords)
 
-    def fade_color(self, start_color, mid_color, end_color, steps):
+    def fade_color(self, start_color, mid_color, end_color, steps, function_übergabe, übergabe_item):
         start_rgb = self.canvas.winfo_rgb(start_color)
         mid_rgb = self.canvas.winfo_rgb(mid_color)
         end_rgb = self.canvas.winfo_rgb(end_color)
@@ -138,11 +155,11 @@ class Switch(ttk.Frame):
                     int(mid_rgb[1] / 256 + delta2[1] / 256 * (step - steps // 2)),
                     int(mid_rgb[2] / 256 + delta2[2] / 256 * (step - steps // 2)),
                 )
-            self.after(step * 20, self.update_color, new_color)
+            self.after(step * 20, function_übergabe, new_color, übergabe_item)
 
-    def update_color(self, color):
+    def update_color(self, color, update_item):
         try:
-            self.canvas.itemconfig(self.oval, fill=color)
+            self.canvas.itemconfig(update_item, fill=color)
         except tk.TclError as e:
             print(f"Error updating color: {e}")
 
@@ -163,9 +180,9 @@ class Application(tk.Tk):
 
         # Erzeugung und Platzierung eines Switch-Widgets
         self.style = ttk.Style(self)
-        self.style.configure("Switch.TFrame", background="#009ba6", onbackground="green", offbackground="red", foreground="#000000", zwischen_background="#009ba6")
+        self.style.configure("Switch.TFrame", background="#009ba6", onbackground="#3eee21", offbackground="#e01b24", foreground="#000000", zwischen_background="#8f8523")
 
-        self.switch = Switch(self, text="Option", command=self.switch_command, style="Switch.TFrame", Skalierung=1, speicher_db="liedvorschau")
+        self.switch = Switch(self, text="Option", command=self.switch_command, style="Switch.TFrame", Skalierung=20, speicher_db="liedvorschau")
         self.switch.pack(pady=20)
 
     def switch_command(self, state):
