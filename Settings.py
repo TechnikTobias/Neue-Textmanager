@@ -1,6 +1,8 @@
 import Neue_Textmanager
 import Load_settings
 import Class_gen
+import Start
+
 import tkinter.ttk as ttk
 from typing import Optional
 
@@ -214,30 +216,43 @@ class Settings_window(Toplevel):
             nonlocal skalierung
             skalierung += 10
             Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (skalierung,"scalierung"))
-            Load_settings.Textmanager_größen()
-            update_widget_positions()
+            Load_settings.Textmanager_größen(self=self,Textsize=self.winfo_geometry())
+            self.update_widget_positions()
+            try:
+                Start.App_textmanager_main.update_widget_positions()
+            except AttributeError as e:
+                print(f"Error: {e}. 'update_widget_positions' method not found in 'TextmanagerAPP'.")
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
         def groese_minus():
             nonlocal skalierung
             skalierung -= 10
             Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (skalierung,"scalierung"))
-            Load_settings.Textmanager_größen()
-            update_widget_positions()
+            Load_settings.Textmanager_größen(self=self,Textsize=self.winfo_geometry())
+            self.update_widget_positions()
+            try:
+                Neue_Textmanager.TextmanagerAPP.update_widget_positions()
+            except AttributeError as e:
+                print(f"Error: {e}. 'update_widget_positions' method not found in 'TextmanagerAPP'.")
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+
         global Textfarbe_auswahl, Hintergrndfarbe_auswahl, Button_Hintergrndfarbe_auswahl, Button_Textfarbe_Button
         hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
         self.config(bg=hintergrund_farbe)
         self.geometry("1080x720")
         scale_label = ttk.Label(self, text=skalierung)
-        register_widget(name="Prozentanzeige der Skalierung",widget=scale_label,relheight=0.05, relwidth=0.1, relx=0.1, rely=0.1, setting=True)
+        register_widget(name="Prozentanzeige der Skalierung",widget=scale_label,relheight=0.05, relwidth=0.1, relx=0.2, rely=0.1, setting=True)
         scale_button_plus = ttk.Button(self, style='TButton', text="+10%", command=groese_plus)
-        register_widget(name="Scale_button_plus", widget=scale_button_plus, relheight=0.05, relwidth=0.1, relx=0.1, rely=0.15, setting=True)
+        register_widget(name="Scale_button_plus", widget=scale_button_plus, relheight=0.05, relwidth=0.1, relx=0.2, rely=0.15, setting=True)
         scale_button_minus = ttk.Button(self, style='TButton', text="-10%", command=groese_minus)
-        register_widget(name="scale_button_minus", widget=scale_button_minus,  relheight=0.05, relwidth=0.1, relx=0.2, rely=0.15, setting=True)
+        register_widget(name="scale_button_minus", widget=scale_button_minus,  relheight=0.05, relwidth=0.1, relx=0.3, rely=0.15, setting=True)
         Hintergrndfarbe_auswahl = ttk.Button(self, text="Hintergrund",style='TButton')
-        register_widget(name="Hintergrund Farben Button", widget=Hintergrndfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.1,rely=0.25, setting=True)
+        register_widget(name="Hintergrund Farben Button", widget=Hintergrndfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.2,rely=0.25, setting=True)
         Button_Textfarbe_Button = ttk.Button(self, text="Button Text Farbe",style='TButton')
-        register_widget(name="Text Farben Button", widget=Button_Textfarbe_Button,relheight=0.05, relwidth=0.3, relx=0.3,rely=0.25, setting=True)
+        register_widget(name="Text Farben Button", widget=Button_Textfarbe_Button,relheight=0.05, relwidth=0.3, relx=0.4,rely=0.25, setting=True)
         Textfarbe_auswahl = ttk.Button(self, text="Hintergrund",style='TButton')
-        register_widget(name="Text Farben ", widget=Textfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.1,rely=0.35, setting=True)
+        register_widget(name="Text Farben ", widget=Textfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.1,rely=0.45, setting=True)
         Button_Hintergrndfarbe_auswahl = ttk.Button(self, text="Hintergrund",style='TButton')
         register_widget(name="Hintergrund Farben", widget=Button_Hintergrndfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.3,rely=0.35, setting=True)
         #Bildschirm_opt = Class_gen.Bild_schirm_größe_class(self, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung", "Hauptbildschirm", Skalierung, "Bestätigt die eingegebene Bildschirmgröße und Bildschirm Skalierung von Hauptbildschirm von Windows")
