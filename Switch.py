@@ -99,7 +99,7 @@ class Switch(ttk.Frame):
         Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (str(self.var.get()), self.speicher_ort))
 
     def animate(self, state):
-        steps = 500
+        steps = 50
         mid_step = steps // 2
         if state:
             for i in range(steps):
