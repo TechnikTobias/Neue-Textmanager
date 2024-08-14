@@ -1,7 +1,6 @@
 import Neue_Textmanager
 import Load_settings
 import Class_gen
-import Start
 
 import tkinter.ttk as ttk
 from typing import Optional
@@ -219,11 +218,10 @@ class Settings_window(Toplevel):
             Load_settings.Textmanager_größen(self=self,Textsize=self.winfo_geometry())
             self.update_widget_positions()
             try:
-                Start.App_textmanager_main.update_widget_positions()
+                Neue_Textmanager.update_widget_positions()
             except AttributeError as e:
                 print(f"Error: {e}. 'update_widget_positions' method not found in 'TextmanagerAPP'.")
-            except Exception as e:
-                print(f"An unexpected error occurred: {e}")
+
         def groese_minus():
             nonlocal skalierung
             skalierung -= 10
@@ -231,11 +229,10 @@ class Settings_window(Toplevel):
             Load_settings.Textmanager_größen(self=self,Textsize=self.winfo_geometry())
             self.update_widget_positions()
             try:
-                Neue_Textmanager.TextmanagerAPP.update_widget_positions()
+                Neue_Textmanager.update_widget_positions()
             except AttributeError as e:
                 print(f"Error: {e}. 'update_widget_positions' method not found in 'TextmanagerAPP'.")
-            except Exception as e:
-                print(f"An unexpected error occurred: {e}")
+
 
         global Textfarbe_auswahl, Hintergrndfarbe_auswahl, Button_Hintergrndfarbe_auswahl, Button_Textfarbe_Button
         hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))

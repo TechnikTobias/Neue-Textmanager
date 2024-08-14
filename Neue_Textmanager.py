@@ -11,6 +11,9 @@ import datenverarbeiten
 import Load_settings
 
 
+widget_info = {}
+
+
 def get_db_connection():
     db_filename = "Lieder_Datenbank.db"
     db_path = os.path.join(os.path.dirname(__file__), db_filename)
@@ -50,6 +53,44 @@ def fetch_all_program_info(input_db, input, auswahl= "*"):
     return all_entries
 
 
+def register_widget(
+        name: str, 
+        widget: Widget = None, 
+        relheight: int = 0.1, 
+        relwidth : int = 0.11,
+        relx: int = None, 
+        rely: int = None):
+    """Registriert ein Widget und speichert seine Informationen
+    Hier werden die Info für die Widget übergeben damit sie an einer zentrallen stelle placiert werden und deren größe angepasst wird."""
+    widget_info[name] = {
+        "widget": widget,
+        "relheight": relheight,
+        "relwidth": relwidth,
+        "relx": relx,
+        "rely": rely
+    }
+
+def update_widget_positions():
+    """Aktualisiert die Positionen und Größen aller Widgets basierend auf dem Skalierungsfaktor"""
+    factor = int(db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
+    widgets_to_remove = []
+    
+    for name, info in widget_info.items():
+        try:
+            widget = info["widget"]
+            relheight = info["relheight"] * factor
+            relwidth = info["relwidth"] * factor
+            relx = info["relx"] * factor
+            rely = info["rely"]
+            widget.place(relwidth=relwidth, relheight=relheight, relx=relx, rely=rely)
+        except Exception as e:
+            widgets_to_remove.append(name)
+            print(f"Error updating widget {name}: {e}")
+    
+    # Entferne die fehlerhaften Widgets aus widget_info
+    for name in widgets_to_remove:
+        del widget_info[name]
+
 
 class TextmanagerAPP(Tk):
     def __init__(self, *args, **kwargs) -> None:
@@ -57,13 +98,46 @@ class TextmanagerAPP(Tk):
         self.hintergrund_farbe = db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
         self.geometry("1040x800")
         self.config(bg=self.hintergrund_farbe)
-        self.widget_info = {}
         self.widget_info_liedauswahl = {}
+        self.position_anzahl = 0
+
+        # Erstellen des Canvas-Objekts
+        self.canvas = Canvas(self, bg=self.hintergrund_farbe)
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        # Hinzufügen der vertikalen Scrollbar
+        self.v_scrollbar = Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.v_scrollbar.pack(side="right", fill="y")
+
+        # Hinzufügen der horizontalen Scrollbar
+
+        # Verknüpfen der Scrollbars mit dem Canvas
+        self.canvas.configure(yscrollcommand=self.v_scrollbar.set)
+
+        # Erstellen eines Frames im Canvas
+        self.frame = Frame(self.canvas, bg="red")
+        self.frame_id = self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
+
+        # Konfigurieren des Canvas, um seine Größe anzupassen
+        self.frame.bind("<Configure>", self.on_frame_configure)
+
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+
+
+
+        # Frame-Konfiguration
         self.Menu_generator()
         self.start_programm_laden()
         self.bind("<Configure>", self.one_resize)
-        self.update_widget_positions()
+        update_widget_positions()
         self.mainloop()
+
+
+    def _on_mousewheel(self, event):
+        self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+
+    def on_frame_configure(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def start_programm_laden(self):
         self.unbind("<Left>")
@@ -72,14 +146,22 @@ class TextmanagerAPP(Tk):
         self.unbind("<Down>")
         self.widget_delite()
         entries = fetch_all_program_info("Ablaufaufbau", "Reihenfolge")
-        for entry in entries:
-            self.gegerator_lieder(entry[0]+1,entry[2], entry[1])
+        all_sum = 0
+        for position_amzahl, entry in enumerate(entries):
+            all_sum += 1
+        for position_amzahl, entry in enumerate(entries):
+            self.position_anzahl = position_amzahl
+            self.gegerator_lieder(entry[0]+1,entry[2], entry[1], all_sum)
         self.button_generator()
-        self.update_widget_positions()
+        update_widget_positions()
+
 
 
     def one_resize(self,event):
         Load_settings.Textmanager_größen(self, self.get_window_size())
+        factor = int(db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
+        self.canvas.itemconfig(self.frame_id, height= 120*self.position_anzahl*factor, width= self.get_window_size()[0]-20)
+
 
 
     def get_window_size(self):
@@ -88,22 +170,7 @@ class TextmanagerAPP(Tk):
     def festgröße_bestimmen(self):
         Load_settings.Textmanager_größen(self.get_window_size())
 
-    def register_widget(self,
-            name: str, 
-            widget: Widget = None, 
-            relheight: int = 0.1, 
-            relwidth : int = 0.11,
-            relx: int = None, 
-            rely: int = None):
-        """Registriert ein Widget und speichert seine Informationen
-        Hier werden die Info für die Widget übergeben damit sie an einer zentrallen stelle placiert werden und deren größe angepasst wird."""
-        self.widget_info[name] = {
-            "widget": widget,
-            "relheight": relheight,
-            "relwidth": relwidth,
-            "relx": relx,
-            "rely": rely
-        }
+
 
     def register_widegets_liedaktualisieren(self,
                              name: str = None,
@@ -159,13 +226,13 @@ class TextmanagerAPP(Tk):
     def Menu_generator(self):
         hintergrund_farbe = db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
         text_farbe = db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
-        self.menu_info_main = ttk.Menubutton(self, text='Info', style='custom.TMenubutton')
+        self.menu_info_main = ttk.Menubutton(self.frame, text='Info', style='custom.TMenubutton')
         menu_info = Menu(self.menu_info_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
-        self.menu_kamera_main = ttk.Menubutton(self, text="Kamera", style='custom.TMenubutton')
+        self.menu_kamera_main = ttk.Menubutton(self.frame, text="Kamera", style='custom.TMenubutton')
         menu_kamera = Menu(self.menu_kamera_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
-        self.menu_liedkontrolle_main = ttk.Menubutton(self, text="Liedkontrolle", style='custom.TMenubutton')
+        self.menu_liedkontrolle_main = ttk.Menubutton(self.frame, text="Liedkontrolle", style='custom.TMenubutton')
         menu_liedkontrolle = Menu(self.menu_liedkontrolle_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
-        self.menu_help_main = ttk.Menubutton(self, text="Hilfe", style='custom.TMenubutton')
+        self.menu_help_main = ttk.Menubutton(self.frame, text="Hilfe", style='custom.TMenubutton')
         menu_help = Menu(self.menu_help_main, bg=hintergrund_farbe, fg=text_farbe, border=0, borderwidth=0, tearoff=False)
         menu_info.add_radiobutton(label="Einstellungen", command=self.settings_window)
         menu_info.add_radiobutton(label="Info", command=Settings.Info)
@@ -186,40 +253,41 @@ class TextmanagerAPP(Tk):
     def settings_window(self):
         Settings.Settings_window(self)
 
-    def gegerator_lieder(self, widget_position, name_lied, aktion):
-        self.Lied_start = ttk.Label(self, text=name_lied, style='TLabel')
-        self.register_widget(f"Lied_start{widget_position}", self.Lied_start, relheight=0.05, relwidth=0.15, rely=0.1*widget_position-0.05, relx=0.0)
+    def gegerator_lieder(self, widget_position, name_lied, aktion, total_widgets):
+        self.Lied_start = ttk.Label(self.frame, text=name_lied, style='TLabel')
+        rely = (widget_position - 1) / total_widgets
+        register_widget(f"Lied_start{widget_position}", self.Lied_start, relheight=0.05, relwidth=0.15, rely=rely-0.05, relx=0.0)
         if aktion == "Textwort":
-            self.Button_Textwort = ttk.Button(self, text="Textwort", style='TButton')
-            self.register_widget(f"Button_textwort{widget_position}", self.Button_Textwort, relheight=0.1, relwidth=0.15, rely=0.1*widget_position-0.05, relx=0.15)
+            self.Button_Textwort = ttk.Button(self.frame, text="Textwort", style='TButton')
+            register_widget(f"Button_textwort{widget_position}", self.Button_Textwort, relheight=0.1, relwidth=0.15, rely=rely-0.05, relx=0.15)
             self.register_widegets_liedaktualisieren(name=f"Textwort{widget_position}", name_datenbank=name_lied, befehl=aktion, pos=widget_position-1)
         elif aktion == "Lied":
-            self.Button_Kamera = ttk.Button(self, text="Kamera", style='TButton')
-            self.register_widget(f"Button_Kamera{widget_position}", self.Button_Kamera, relheight=0.05, relwidth=0.15, rely=0.1*widget_position, relx=0)
+            self.Button_Kamera = ttk.Button(self.frame, text="Kamera", style='TButton')
+            register_widget(f"Button_Kamera{widget_position}", self.Button_Kamera, relheight=0.05, relwidth=0.15, rely=rely, relx=0)
             #befehle_kamera = ["Kamera", "Textwort", "Lied"]
             #clicked_kamera = StringVar()
             #clicked_kamera.set(befehle_kamera[0])
             #opt_kamera = ttk.OptionMenu(self, clicked_kamera, *befehle_kamera, style='custom.TMenubutton')
-            #self.register_widget(f"clicked_kamera{widget_position}",opt_kamera, relheight=0.05, relwidth=0.1, rely=0.1*widget_position, relx=0.3)
+            #register_widget(f"clicked_kamera{widget_position}",opt_kamera, relheight=0.05, relwidth=0.1, rely=rely, relx=0.3)
             #inhalt.append(clicked_kamera)
             #inhalt.append(opt_kamera)
-            self.eingabe_lied = ttk.Entry(self, style='TEntry')
+            self.eingabe_lied = ttk.Entry(self.frame, style='TEntry')
             self.eingabe_lied.bind("<KeyRelease>", self.liedanzeige_aktualisieren)
-            self.register_widget(name=f"eingabe_lieder{widget_position}",widget=self.eingabe_lied, relheight=0.05, relwidth=0.05, relx=0.35, rely=0.1*widget_position-0.05)
-            self.eingabe_vers = ttk.Entry(self, style='TEntry')
+            register_widget(name=f"eingabe_lieder{widget_position}",widget=self.eingabe_lied, relheight=0.05, relwidth=0.05, relx=0.35, rely=rely-0.05)
+            self.eingabe_vers = ttk.Entry(self.frame, style='TEntry')
             self.eingabe_vers.bind("<KeyRelease>", self.liedanzeige_aktualisieren)
-            self.register_widget(name=f"eingabe_verse{widget_position}", widget=self.eingabe_vers, relheight=0.05, relwidth=0.05, relx=0.35, rely=0.1*widget_position)
+            register_widget(name=f"eingabe_verse{widget_position}", widget=self.eingabe_vers, relheight=0.05, relwidth=0.05, relx=0.35, rely=rely)
             self.befehle_buch = ["Gesangbuch", "Chorbuch", "Jugendliederbuch"]
             self.clicked_buch = StringVar()
             self.clicked_buch.set(self.befehle_buch[0])
-            self.opt_buch = ttk.OptionMenu(self, self.clicked_buch, *self.befehle_buch, command=self.liedanzeige_aktualisieren)
-            self.register_widget(name=f"opt_buch{widget_position}", widget=self.opt_buch, relheight=0.05, relwidth=0.2, relx=0.15, rely=0.1*widget_position-0.05)
-            self.text_lied_lable = ttk.Label(self)
-            self.register_widget(name=f"text_lied_lable{widget_position}", widget=self.text_lied_lable, relheight=0.1, relwidth=0.3, relx=0.405, rely=0.1*widget_position-0.05)
+            self.opt_buch = ttk.OptionMenu(self.frame, self.clicked_buch, *self.befehle_buch, command=self.liedanzeige_aktualisieren)
+            register_widget(name=f"opt_buch{widget_position}", widget=self.opt_buch, relheight=0.05, relwidth=0.2, relx=0.15, rely=rely-0.05)
+            self.text_lied_lable = ttk.Label(self.frame)
+            register_widget(name=f"text_lied_lable{widget_position}", widget=self.text_lied_lable, relheight=0.1, relwidth=0.3, relx=0.405, rely=rely-0.05)
             self.register_widegets_liedaktualisieren(name=f"liedanzeiger{widget_position}",name_datenbank = name_lied,liednummer=self.eingabe_lied, versnummer=self.eingabe_vers, befehl=aktion, pos=widget_position-1, widget=self.text_lied_lable, buchauswahl=self.clicked_buch)
         elif aktion == "Kamera":
-            self.Button_Kamera = ttk.Button(self, text="Kamera", style='TButton')
-            self.register_widget(f"Button_Kamera{widget_position}", self.Button_Kamera, relheight=0.05, relwidth=0.15, rely=0.1*widget_position, relx=0)
+            self.Button_Kamera = ttk.Button(self.frame, text="Kamera", style='TButton')
+            register_widget(f"Button_Kamera{widget_position}", self.Button_Kamera, relheight=0.05, relwidth=0.15, rely=rely, relx=0)
             self.register_widegets_liedaktualisieren(name=f"Kamera{widget_position}", name_datenbank=name_lied, befehl=aktion, pos=widget_position-1)    
             #lied_weiter = ttk.Button(self, text= "servus", style='TButton')
             #inhalt.append(lied_weiter)
@@ -232,12 +300,12 @@ class TextmanagerAPP(Tk):
             #inhalt.append(opt)
 
     def button_generator(self):
-        wiederherstellen = ttk.Button(self, text="Wiederherstellen", style='TButton')
-        self.register_widget("widerherstell_button", widget=wiederherstellen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.1)
-        loeschen = ttk.Button(self, text="Löschen", style='TButton')
-        self.register_widget("löeschen_button", widget=loeschen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.2)
-        preasentation = ttk.Button(self, text="Präsentation", command=self.Ablaufsteuerung, style='TButton')
-        self.register_widget("presentation_button", widget=preasentation, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.3)
+        wiederherstellen = ttk.Button(self.frame, text="Wiederherstellen", style='TButton')
+        register_widget("widerherstell_button", widget=wiederherstellen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.1)
+        loeschen = ttk.Button(self.frame, text="Löschen", style='TButton')
+        register_widget("löeschen_button", widget=loeschen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.2)
+        preasentation = ttk.Button(self.frame, text="Präsentation", command=self.Ablaufsteuerung, style='TButton')
+        register_widget("presentation_button", widget=preasentation, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.3)
 
 
 
@@ -290,36 +358,17 @@ class TextmanagerAPP(Tk):
             del self.widget_info_liedauswahl[name]
 
 
-    def update_widget_positions(self):
-        """Aktualisiert die Positionen und Größen aller Widgets basierend auf dem Skalierungsfaktor"""
-        factor = int(db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
-        widgets_to_remove = []
-        
-        for name, info in self.widget_info.items():
-            try:
-                widget = info["widget"]
-                relheight = info["relheight"] * factor
-                relwidth = info["relwidth"] * factor
-                relx = info["relx"] * factor
-                rely = info["rely"] * factor
-                widget.place(relwidth=relwidth, relheight=relheight, relx=relx, rely=rely)
-            except Exception as e:
-                widgets_to_remove.append(name)
-                print(f"Error updating widget {name}: {e}")
-        
-        # Entferne die fehlerhaften Widgets aus widget_info
-        for name in widgets_to_remove:
-            del self.widget_info[name]
+
 
 
 
     def widget_delite(self):
         # Entferne und zerstöre alle Widgets aus widget_info
-        for name, info in self.widget_info.items():
+        for name, info in widget_info.items():
             widget = info.get("widget")
             if widget:
                 widget.destroy()
-        self.widget_info.clear()
+        widget_info.clear()
 
         # Entferne und zerstöre alle Widgets aus widget_info_liedauswahl
         for name, info in self.widget_info_liedauswahl.items():
@@ -337,7 +386,7 @@ class TextmanagerAPP(Tk):
         for entry in entries:
             self.gegerator_lieder_ablauf(entry[0],entry[3], entry[1], liednummer=entry[2], versnummer=entry[4], buch=entry[5])
         self.button_ablauf_steuerung()
-        self.update_widget_positions()
+        update_widget_positions()
         self.vers_postion = 0
         self.lied_position = 0
         self.verse_widgets = {}
@@ -351,24 +400,24 @@ class TextmanagerAPP(Tk):
 
     def button_ablauf_steuerung(self):
         """wiederherstellen = ttk.Button(self, text="Wiederherstellen", style='TButton')
-        self.register_widget("widerherstell_button", widget=wiederherstellen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.1)
+        register_widget("widerherstell_button", widget=wiederherstellen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.1)
         loeschen = ttk.Button(self, text="Löschen", style='TButton')
-        self.register_widget("löeschen_button", widget=loeschen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.2)"""
-        eingabe = ttk.Button(self, text="Eingabe", command=self.start_programm_laden, style='TButton')
-        self.register_widget("presentation_button", widget=eingabe, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.3)
+        register_widget("löeschen_button", widget=loeschen, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.2)"""
+        eingabe = ttk.Button(self.frame, text="Eingabe", command=self.start_programm_laden, style='TButton')
+        register_widget("presentation_button", widget=eingabe, relheight=0.1, relwidth=0.2, relx=0.8, rely=0.3)
 
 
     def gegerator_lieder_ablauf(self, widget_position, name_lied, aktion, liednummer, versnummer, buch):
-        self.frame = ttk.Frame(self, style='TLabel')
-        self.register_widget(name=f"frame{widget_position}", widget=self.frame, relheight=0.1, relwidth=0.7, relx=0, rely=0.1*(widget_position+1)-0.05)
-        self.Lied_start = ttk.Button(self.frame, text=name_lied, style='TButton', command=lambda l= widget_position: self.lied_vers_button_command(l, 0))
-        self.register_widget(name=f"Liedstart{widget_position}", widget=self.Lied_start, relheight=0.5, relwidth=0.2, relx=0, rely=0)
-        self.register_widegets_liedaktualisieren_ablauf(name=f"{name_lied}{widget_position}", liednummer=liednummer, versnummer=versnummer, buchauswahl=buch, liedanzeige=self.frame, befehl=aktion, pos=widget_position)
+        self.frame1 = ttk.Frame(self.frame, style='TLabel')
+        register_widget(name=f"frame{widget_position}", widget=self.frame1, relheight=0.1, relwidth=0.7, relx=0, rely=0.1*(widget_position+1)-0.05)
+        self.Lied_start = ttk.Button(self.frame1, text=name_lied, style='TButton', command=lambda l= widget_position: self.lied_vers_button_command(l, 0))
+        register_widget(name=f"Liedstart{widget_position}", widget=self.Lied_start, relheight=0.5, relwidth=0.2, relx=0, rely=0)
+        self.register_widegets_liedaktualisieren_ablauf(name=f"{name_lied}{widget_position}", liednummer=liednummer, versnummer=versnummer, buchauswahl=buch, liedanzeige=self.frame1, befehl=aktion, pos=widget_position)
         if aktion == "Textwort":
             pass
         elif aktion == "Lied":
-            self.lable_Kamera = ttk.Button(self.frame, text="Kamera", style='TButton')
-            self.register_widget(name=f"lablekamera{widget_position}", widget=self.lable_Kamera, relheight=0.5, relwidth=0.15, relx=0.2, rely=0)
+            self.lable_Kamera = ttk.Button(self.frame1, text="Kamera", style='TButton')
+            register_widget(name=f"lablekamera{widget_position}", widget=self.lable_Kamera, relheight=0.5, relwidth=0.15, relx=0.2, rely=0)
             song = db_connection_info_get("SELECT song_name FROM songs WHERE song_number = ? AND book_name = ?", (liednummer, buch))
             if not versnummer:
                 text_einfügen = ""
@@ -380,11 +429,11 @@ class TextmanagerAPP(Tk):
                 Text_speicher = f"{buch} {liednummer} {text_einfügen}\n{song}"
             else:
                 Text_speicher = ""
-            self.text_lied_lable = ttk.Label(self.frame, style='TLabel', text=Text_speicher)
-            self.register_widget(name=f"text_lied_lable{widget_position}", widget=self.text_lied_lable, relheight=0.5, relwidth=0.4, relx=0.405, rely=0)
+            self.text_lied_lable = ttk.Label(self.frame1, style='TLabel', text=Text_speicher)
+            register_widget(name=f"text_lied_lable{widget_position}", widget=self.text_lied_lable, relheight=0.5, relwidth=0.4, relx=0.405, rely=0)
         elif aktion == "Kamera":
-            self.lied_weiter = ttk.Button(self.frame, text= "servus", style='TButton')
-            self.register_widget(name=f"text_lied_lable{widget_position}", widget=self.lied_weiter, relheight=0.5, relwidth=0.15, relx=0.20, rely=0)
+            self.lied_weiter = ttk.Button(self.frame1, text= "servus", style='TButton')
+            register_widget(name=f"text_lied_lable{widget_position}", widget=self.lied_weiter, relheight=0.5, relwidth=0.15, relx=0.20, rely=0)
 
 
     def clear_verse_widgets(self):
@@ -395,7 +444,7 @@ class TextmanagerAPP(Tk):
                 if name in self.verse_widgets:
                     widget = self.verse_widgets[name]["widget"]
                     widget.destroy()
-                    del self.widget_info[name]
+                    del widget_info[name]
             self.verse_widgets.clear()
         except Exception as e:
             print(f"beim widegt {e} konnte nicht ordentlich gelöscht werden")
@@ -528,9 +577,9 @@ class TextmanagerAPP(Tk):
                     for number in numbers:
                         numbers_all.append(number)
                 for i, verse_num in enumerate(numbers_all):
-                    verse_widget = ttk.Button(self, text=f"Vers {verse_num}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
+                    verse_widget = ttk.Button(self.frame, text=f"Vers {verse_num}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
                     verse_rel_y = 0.1 * (self.position + 1 + i)  # Berechnet die y-Position des Widgets
-                    self.register_widget(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y)
+                    register_widget(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y)
                     self.register_vers_widegt(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, pos=i+1)
                     self.update_widget_positions()                
 

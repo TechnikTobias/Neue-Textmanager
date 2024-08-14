@@ -123,8 +123,8 @@ commands_list = tk.Listbox(frame, selectmode=tk.SINGLE, width=40)
 commands_list.pack(fill='both', expand=True)
 
 entries = Neue_Textmanager.fetch_all_program_info("Ablaufaufbau", "Reihenfolge")
-for entry in entries:
-    commands_list.insert(tk.END, f"Name: {entry[2]}, Befehl: {entry[1]}")
+for entry1 in entries:
+    commands_list.insert(tk.END, f"Name: {entry1[2]}, Befehl: {entry1[1]}")
     
 
 

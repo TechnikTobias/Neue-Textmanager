@@ -9,7 +9,6 @@ from tkinter import ttk as tk
 
 def Textmanager_größen(self, Textsize):
     style = tk.Style()
-    print(Textsize)
     hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
     text_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
     factor = int(Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
