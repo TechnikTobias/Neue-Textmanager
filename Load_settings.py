@@ -14,10 +14,10 @@ def Textmanager_größen(self, Textsize):
     factor = int(Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
     text_size = min( int(Neue_Textmanager.TextmanagerAPP.get_window_size(self)[0]/40*factor), int(Neue_Textmanager.TextmanagerAPP.get_window_size(self)[1]/60*factor))
     style.theme_use("clam")
-    style.configure('custom.TMenubutton', background=hintergrund_farbe, foreground=text_farbe, font=('Helvetica', text_size),)
+    style.configure('custom.TMenubutton', borderwidth=0, background=hintergrund_farbe, foreground=text_farbe, font=('Helvetica', text_size),)
     style.configure('TMenubutton', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
     style.configure('aktive.TLabel', relief='flat', borderwidth=0, font=('Helvetica', text_size), background="red", foreground="black")
-    style.configure('TLabel', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
+    style.configure('TLabel', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe, )
     style.configure('TEntry', relief='flat', borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
     style.configure('TButton',  borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
     style.configure('vorbereitung.TFrame',  borderwidth=0, font=('Helvetica', text_size), background="orange", foreground="black")
