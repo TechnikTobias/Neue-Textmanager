@@ -60,7 +60,9 @@ def register_widget(
         relwidth : int = 0.11,
         relx: int = None, 
         rely: int = None,
-        get_position: bool = False):
+        get_position: bool = False,
+        position : int = 0,
+        ):
     """Registriert ein Widget und speichert seine Informationen
     Hier werden die Info für die Widget übergeben damit sie an einer zentrallen stelle placiert werden und deren größe angepasst wird."""
     widget_info[name] = {
@@ -69,21 +71,58 @@ def register_widget(
         "relwidth": relwidth,
         "relx": relx,
         "rely": rely, 
-        "get_position": get_position
+        "get_position": get_position,
+        "position" : position,
     }
 
 def update_widget_positions():
-    """Aktualisiert die Positionen und Größen aller Widgets basierend auf dem Skalierungsfaktor"""
-    factor = int(db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
+    min_rely = 0.00  # Minimum Y-Position
+    max_rely = 1  # Maximum Y-Position
+    """Aktualisiert die Positionen und Größen aller Widgets basierend auf dem Skalierungsfaktor."""
+    try:
+        factor = int(db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",))) / 100
+    except Exception as e:
+        print(f"Error retrieving scaling factor: {e}")
+        return
+
     widgets_to_remove = []
+    all_positions = []
     
+    # Sammle alle Positionen, die berücksichtigt werden sollen
+    for name, info in widget_info.items():
+        if info.get("get_position", False):
+            all_positions.append(float(info["position"]))
+    
+    # Sortiere die Positionen numerisch
+    all_positions.sort()
+
+    num_widgets = len(all_positions)
+
+
+    # Berechne die Y-Positionen basierend auf der Anzahl der Widgets
+    for idx, position in enumerate(all_positions):
+        corresponding_info = next((info for info in widget_info.values() if float(info["position"]) == position), None)
+        if corresponding_info:
+            corresponding_info["rely"] = min_rely + ((max_rely - min_rely) / (len(all_positions))) * idx
+            relheight = (max_rely - min_rely) / num_widgets  # Gleichmäßige Verteilung der Höhe
+            corresponding_info["relheight"] = relheight  # Setze die berechnete Höhe
+
+
     for name, info in widget_info.items():
         try:
             widget = info["widget"]
-            relheight = info["relheight"]
             relwidth = info["relwidth"]
             relx = info["relx"]
-            rely = info["rely"]
+            
+            # Überprüfe, ob rely und relheight gesetzt werden müssen
+            if info.get("get_position", False):
+                rely = info["rely"]
+                relheight = info["relheight"]
+            else:
+                rely = info.get("rely", 0)
+                relheight = info.get("relheight", 0)
+            
+            # Platziere das Widget
             widget.place(relwidth=relwidth, relheight=relheight, relx=relx, rely=rely)
         except Exception as e:
             widgets_to_remove.append(name)
@@ -277,14 +316,14 @@ class TextmanagerAPP(tk.Tk):
 
     def gegerator_lieder(self, widget_position, name_lied, aktion, total_widgets):
         min_rely = 0.03
-        max_rely = 0.95
+        max_rely = 1
         available_space = max_rely - min_rely
 
         # Position innerhalb des verfügbaren Bereichs berechnen
         rely = min_rely + (widget_position - 1) * (available_space / (total_widgets - 1))
         relhight = 0.95 /(total_widgets) 
         self.lied_frame = ttk.Frame(self.frame.frame, style="TButton")
-        register_widget(f"frame_lied{widget_position}", self.lied_frame, relheight=relhight, relwidth=0.85, rely=rely-0.01, relx=0.0, get_position=True)
+        register_widget(f"frame_lied{widget_position}", self.lied_frame, relheight=relhight, relwidth=0.85, rely=rely-0.01, relx=0.0, get_position=True, position=widget_position)
         self.Lied_start = ttk.Label(self.lied_frame, text=name_lied, style='TLabel')
         register_widget(f"Lied_start{widget_position}", self.Lied_start, relheight=0.5, relwidth=0.25, rely=0, relx=0.0)
         if aktion == "Textwort":
@@ -443,7 +482,7 @@ class TextmanagerAPP(tk.Tk):
 
     def gegerator_lieder_ablauf(self, widget_position, name_lied, aktion, liednummer, versnummer, buch):
         self.frame1 = ttk.Frame(self.frame.frame, style='TLabel')
-        register_widget(name=f"frame{widget_position}", widget=self.frame1, relheight=0.1, relwidth=0.7, relx=0, rely=0.1*(widget_position+1)-0.05, get_position=True)
+        register_widget(name=f"frame{widget_position}", widget=self.frame1, relheight=0.1, relwidth=0.7, relx=0, rely=0.1*(widget_position+1)-0.05, get_position=True, position=widget_position)
         self.Lied_start = ttk.Button(self.frame1, text=name_lied, style='TButton', command=lambda l= widget_position: self.lied_vers_button_command(l, 0))
         register_widget(name=f"Liedstart{widget_position}", widget=self.Lied_start, relheight=0.5, relwidth=0.2, relx=0, rely=0)
         self.register_widegets_liedaktualisieren_ablauf(name=f"{name_lied}{widget_position}", liednummer=liednummer, versnummer=versnummer, buchauswahl=buch, liedanzeige=self.frame1, befehl=aktion, pos=widget_position)
@@ -613,7 +652,7 @@ class TextmanagerAPP(tk.Tk):
                 for i, verse_num in enumerate(numbers_all):
                     verse_widget = ttk.Button(self.frame.frame, text=f"Vers {verse_num}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
                     verse_rel_y = 0.1 * (self.position + 1 + i)  # Berechnet die y-Position des Widgets
-                    register_widget(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y, get_position=True)
+                    register_widget(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y, get_position=True, position=float(f"{self.position}.{verse_num}"))
                     self.register_vers_widegt(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, pos=i+1,)
                     update_widget_positions()                
 

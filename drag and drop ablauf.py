@@ -3,8 +3,8 @@ import sqlite3
 import os
 
 import Neue_Textmanager
-#neu überarbeiten und verschönern
 
+# Speicherort festlegen
 Speicherort = os.path.dirname(os.path.abspath(__file__))
 
 def add_command():
@@ -70,7 +70,6 @@ def bestätigen():
         conn.commit()
     conn.close()
 
-
 def execute_command():
     selected_index = commands_list.curselection()
     if selected_index:
@@ -92,6 +91,20 @@ def update_display():
         selected_index = selected_index[0]
         selected_command = commands_list.get(selected_index)
         display_label.config(text=selected_command)
+
+# Drag-and-Drop-Funktionalität hinzufügen
+def on_drag_start(event):
+    widget = event.widget
+    widget.start_index = widget.nearest(event.y)
+
+def on_drag_motion(event):
+    widget = event.widget
+    current_index = widget.nearest(event.y)
+    if current_index != widget.start_index:
+        command = widget.get(widget.start_index)
+        widget.delete(widget.start_index)
+        widget.insert(current_index, command)
+        widget.start_index = current_index
 
 root = tk.Tk()
 root.title("Befehlssteuerung")
@@ -122,12 +135,14 @@ command_label.pack(fill='x')
 commands_list = tk.Listbox(frame, selectmode=tk.SINGLE, width=40)
 commands_list.pack(fill='both', expand=True)
 
+# Drag-and-Drop-Bindings für die Listbox
+commands_list.bind("<Button-1>", on_drag_start)
+commands_list.bind("<B1-Motion>", on_drag_motion)
+
 entries = Neue_Textmanager.fetch_all_program_info("Ablaufaufbau", "Reihenfolge")
 for entry1 in entries:
     commands_list.insert(tk.END, f"Name: {entry1[2]}, Befehl: {entry1[1]}")
     
-
-
 up_button = tk.Button(frame, text="Nach oben", command=move_up)
 up_button.pack(fill='x')
 
