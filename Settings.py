@@ -9,7 +9,6 @@ import os
 from tkinter import *
 from PIL import Image
 import tkinter.font as tkFont
-from tktooltip import *
 from tkinter.colorchooser import askcolor
 
 
@@ -164,7 +163,6 @@ class Settings_window(Toplevel):
             register_widget(name="Setings_Textanzeiger", widget=Setings_Textanzeiger, relheight=0.1, relwidth=0.2, rely=0.15, relx=0)
             Smarte_unterstüzung_button = ttk.Button(self, command= Load_SmarteSettings, text= "Intelligente\nUnterstützung", style="TButton")
             register_widget(name="Smarte_unterstüzung_button", widget=Smarte_unterstüzung_button, relheight=0.1, relwidth=0.2, rely=0.25, relx=0)
-            ToolTip(Setings_Textanzeiger, msg="Lädt alle Einstellungen für den Textanzeiger", delay=2, follow=True)
             self.update_widget_positions()
 
 

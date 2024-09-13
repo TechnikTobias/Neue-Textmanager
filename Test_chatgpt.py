@@ -140,6 +140,7 @@ class TextmanagerAPP(tk.Tk):
         super().__init__(*args, **kwargs)
         self.hintergrund_farbe = db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
         self.geometry("1040x800")
+        self.title("Textmanager")
         self.config(bg=self.hintergrund_farbe)
         self.widget_info_liedauswahl = {}
         self.position_anzahl = 0
@@ -244,11 +245,13 @@ class TextmanagerAPP(tk.Tk):
     def register_vers_widegt(self,
                              name: str = None,
                              widget: tk.Widget = None,
-                             pos: int = 0):
+                             pos: int = 0,
+                             text : str = ""):
         """Regestiert die Liedauwahl und lasst das richtige lied erscheinen"""
         self.verse_widgets[name] = {
             "widget": widget,
-            "pos": pos
+            "pos": pos,
+            "text": text
         }
     
 
@@ -471,7 +474,7 @@ class TextmanagerAPP(tk.Tk):
         self.bind("<Up>", self.trigger_command_with_param)
         self.bind("<Down>", self.trigger_command_with_param)
         self.button_aktivitat = 0
-        self.ablauf_sterung(0,0)
+        self.ablauf_steuerung(0,0)
 
     def button_ablauf_steuerung(self):
         global textanzeiger
@@ -572,6 +575,102 @@ class TextmanagerAPP(tk.Tk):
 
 
 
+    def ablauf_steuerung(self, über_lied, über_vers):
+        self.ablauf_steuerung_daten()
+
+
+    def ablauf_steuerung_daten(self):
+        def text_fits_in_widget(widget, text):
+            monitors = get_monitors()
+            widget_font = font.Font(font=widget.cget("font"))
+            text_width = widget_font.measure(text)
+            text_height = widget_font.metrics("linespace") * (text.count("\n") + 1)  # Zeilenhöhe mal Anzahl der Zeilen
+            widget_width = monitors[0].width
+            widget_height = monitors[0].height
+            return text_width <= widget_width and text_height <= widget_height
+
+        def split_text_into_pages(widget, text, max_page_height=None):
+            widget_font = font.Font(font=widget.cget("font"))
+            line_height = widget_font.metrics("linespace")
+            monitors = get_monitors()
+            
+            # Setze die maximale Seitenhöhe auf die Höhe des Bildschirms oder auf einen spezifischen Wert
+            if max_page_height is None:
+                max_page_height = monitors[0].height
+            
+            lines = text.splitlines()  # Teilt den Text in Zeilen
+            current_page = []
+            pages = []
+            current_height = 0
+
+            for line in lines:
+                words = line.split()
+                current_line = ""
+                for word in words:
+                    # Überprüfe, ob die aktuelle Zeile + das neue Wort in den Bildschirm passt
+                    if text_fits_in_widget(widget, current_line + word + " "):
+                        current_line += word + " "
+                    else:
+                        current_page.append(current_line.strip())
+                        current_height += line_height
+                        current_line = word + " "
+                    
+                    # Falls die Höhe die maximale Seitenhöhe erreicht, speichere die aktuelle Seite und beginne eine neue
+                    if current_height + line_height > max_page_height:
+                        pages.append(current_page)
+                        current_page = []
+                        current_height = 0
+                
+                # Füge die verbleibende Zeile zur aktuellen Seite hinzu
+                current_page.append(current_line.strip())
+                current_height += line_height
+
+                # Wenn die Seite die maximale Höhe erreicht, speichere sie und beginne eine neue Seite
+                if current_height > max_page_height:
+                    pages.append(current_page)
+                    current_page = []
+                    current_height = 0
+
+            # Füge die letzte Seite hinzu, falls sie nicht leer ist
+            if current_page:
+                pages.append(current_page)
+
+            return pages
+
+        def count_pages_and_display(widget, text):
+            pages = split_text_into_pages(widget, text)
+            num_pages = len(pages)
+            return num_pages, pages
+
+        for self.name, self.info in self.widget_info_liedauswahl_aublauf.items():
+            self.liednummer = self.info["liednummer"]
+            self.versnummer = self.info["versnummer"]
+            widget_liedanzeige = self.info["liedanzeige"]
+            self.buchauswahl = self.info["buchauswahl"]
+            self.befehl = self.info["befehl"]
+            self.position = self.info["pos"]
+            vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (self.liednummer,),singel_or_multi=True)
+            self.clear_verse_widgets()
+            if not vers_number:
+                vers_number = [[1]]
+            for i, verse_num in enumerate(vers_number):
+                verse_num = verse_num[0]
+                text = db_connection_info_get("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?", (self.liednummer, verse_num))
+                page= (count_pages_and_display(textanzeiger, text=text))
+                if page[0] > 1:
+                    for i in  range(0, page[0]+1):
+                        verse_widget = ttk.Button(self.frame.frame, text=f"Vers {verse_num} teil {i}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
+                        verse_rel_y = 0.1 * (self.position + 1 + i)  # Berechnet die y-Position des Widgets
+                        register_widget(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y, get_position=True, position=float(f"{self.position}.{verse_num}"))
+                        self.register_vers_widegt(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, pos=i+1, text=text)
+                        update_widget_positions()   
+                else:
+                    verse_widget = ttk.Button(self.frame.frame, text=f"Vers {verse_num}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
+                    verse_rel_y = 0.1 * (self.position + 1 + i)  # Berechnet die y-Position des Widgets
+                    register_widget(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y, get_position=True, position=float(f"{self.position}.{verse_num}"))
+                    self.register_vers_widegt(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, pos=i+1, text=text)
+                    update_widget_positions()     
+
 
     def ablauf_sterung(self, übergabe_postion_lied, übergabe_postion_vers, button_or_normal = False):
         #Logig der Nummern
@@ -637,11 +736,7 @@ class TextmanagerAPP(tk.Tk):
             pages = split_text_into_pages(widget, text)
             num_pages = len(pages)
             
-            print(f"Anzahl der Seiten: {num_pages}")
-            for i, page in enumerate(pages):
-                print(f"Seite {i+1}:")
-                for line in page:
-                    print(line)
+
             
             return num_pages, pages
 
@@ -706,7 +801,7 @@ class TextmanagerAPP(tk.Tk):
                             widget_liedanzeige.config(style='vorbereitung.TFrame')
                             self.command_vorbereitung_lied_vers()
                             self.clear_verse_widgets()
-                            self.ablauf_sterung(übergabe_postion_vers=self.vers_postion, übergabe_postion_lied=self.lied_position, button_or_normal=True)
+                            self.ablauf_steurung(übergabe_postion_vers=self.vers_postion, übergabe_postion_lied=self.lied_position, button_or_normal=True)
                             return
                         elif ver_ausführen[2] == "down":
                             self.vers_postion = 0
@@ -727,7 +822,7 @@ class TextmanagerAPP(tk.Tk):
                 for i, verse_num in enumerate(numbers_all):
                     text = db_connection_info_get("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?", (self.liednummer, verse_num))
                     textanzeiger.config(text=text, )
-                    print(count_pages_and_display(textanzeiger, text=text))
+                    (count_pages_and_display(textanzeiger, text=text))
                     verse_widget = ttk.Button(self.frame.frame, text=f"Vers {verse_num}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
                     verse_rel_y = 0.1 * (self.position + 1 + i)  # Berechnet die y-Position des Widgets
                     register_widget(name=f"verse_{self.position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y, get_position=True, position=float(f"{self.position}.{verse_num}"))
@@ -790,7 +885,7 @@ class TextmanagerAPP(tk.Tk):
 
 
     def trigger_command_with_param_last(self, event):
-        self.ablauf_sterung(-1, 10000)
+        self.ablauf_steuerung(-1, 10000)
 
 
 
@@ -808,11 +903,11 @@ class TextmanagerAPP(tk.Tk):
         elif key_pressed == 'Down':
             self.liedübergabe = 1
             self.versübergabe = 1500
-        self.ablauf_sterung(self.liedübergabe, self.versübergabe)
+        self.ablauf_steuerung(self.liedübergabe, self.versübergabe)
 
 
     def lied_vers_button_command(self, position_lied, position_vers):
-        self.ablauf_sterung(übergabe_postion_lied=position_lied, übergabe_postion_vers=position_vers, button_or_normal=True)
+        self.ablauf_steuerung(übergabe_postion_lied=position_lied, übergabe_postion_vers=position_vers, button_or_normal=True)
 
     def command_last_lied(self):
         pass

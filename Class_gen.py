@@ -5,7 +5,6 @@ import Neue_Textmanager
 from tkinter import *
 from PIL import Image, ImageTk
 import tkinter.font as tkFont
-from tktooltip import *
 from tkinter.colorchooser import askcolor
 
 
@@ -72,8 +71,7 @@ class Bild_schirm_größe_class:
         self.Bildschirm_Skalierung_stringvar_quere.set(self.Skalierung)
         self.Bildschirm_skalierung_quere_menü = OptionMenu(Seite, self.Bildschirm_Skalierung_stringvar_quere, *skalierung_list)
         self.Bildschirm_skalierung_quere_menü.config(font=Settings.Textgröße_von_alle_Texte)
-        if len(Text_hover) > 0:
-            self.Text_anzeiger = ToolTip(self.Bildschirm_bestätigen, msg=Text_hover, delay=2, follow=True)
+
 
     def Text_size(self, Font_, size=10, x_pos = 20, y_pos= 50):
         self.Hauptbildschirm.config(font=Font_)
@@ -142,7 +140,6 @@ class Swich_generator:
         self.zise = int(Settings.text_size)
         self.is_switch = ResponsiveWidget(Button, self, activebackground=hintergrund_farbe)
         self.switch_text = Label(self, font=("Helvetica", zise), bg=hintergrund_farbe, fg=text_farbe, text=Textanzeige)
-        self.Text_anzeiger2 = ToolTip(self.switch_text, msg=Text_hover, delay=2, follow=True)
         if not ob_True:
             self.Photo1 = Image.open("off-button.png")
             self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
@@ -151,8 +148,7 @@ class Swich_generator:
             self.Photo1 = Image.open("on-button.png")
             self.Photo = ImageTk.PhotoImage(self.Photo1.resize((3*int(Settings.text_size),3*int(Settings.text_size))))
             self.is_switch.config(image=self.Photo, bg=hintergrund_farbe, border=0, command=self.switch_setting_off)
-        if len(Text_hover) > 0:
-            self.Text_anzeiger = ToolTip(self.is_switch, msg=Text_hover, delay=2, follow=True)
+
 
 
     def color(self, bg_color, fg_color, activ_bg, activ_fg):
@@ -192,8 +188,7 @@ class Farben_class:
         hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
         text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
         self.Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Anzeigefenster, font=Settings.Textgröße_von_alle_Texte, fg=text_farbe, bg=hintergrund_farbe, text=Name, command=self.Farbe_def, border=0)
-        if len(Text_hover) > 0:
-            self.Text_anzeiger = ToolTip(self.Hintergrndfarbe_auswahl, msg=Text_hover, delay=2, follow=True)
+
 
 
     def Farbe_def(self):
