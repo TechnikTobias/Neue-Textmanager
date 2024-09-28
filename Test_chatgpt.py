@@ -588,6 +588,7 @@ class TextmanagerAPP(tk.Tk):
         self.vers_position = über_vers
         self.lied_position = über_lied
         self.ablauf_steuerung_versposition()
+        self.daten_ablauf_steuerung()
 
     def command_über_vers(self, über_vers):
         self.vers_position += über_vers
@@ -611,6 +612,12 @@ class TextmanagerAPP(tk.Tk):
                     position = info["pos"]
                     if position == self.vers_position:
                         widget.config(style='aktive.TLabel')
+
+
+    def daten_ablauf_steuerung(self):
+            song = fetch_all_program_info("Ablaufverwaltung", "Position")
+            #song = db_connection_info_get("SELECT * FROM Ablaufverwaltung" ( ))
+            print(song)
 
 
     def ablauf_steuerung_versposition(self):
