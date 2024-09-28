@@ -587,7 +587,7 @@ class TextmanagerAPP(tk.Tk):
     def command_button_press(self, über_lied, über_vers):
         self.vers_position = über_vers
         self.lied_position = über_lied
-        self.ablauf_steuerung_daten()
+        self.ablauf_steuerung_versposition()
 
     def command_über_vers(self, über_vers):
         self.vers_position += über_vers
@@ -613,7 +613,7 @@ class TextmanagerAPP(tk.Tk):
                         widget.config(style='aktive.TLabel')
 
 
-    def ablauf_steuerung_daten(self):
+    def ablauf_steuerung_versposition(self):
         def text_fits_in_widget(widget, text):
             monitors = get_monitors()
             widget_font = font.Font(font=widget.cget("font"))
@@ -691,7 +691,8 @@ class TextmanagerAPP(tk.Tk):
                     text = db_connection_info_get("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?", (liednummer, verse_num))
                     if not text:
                         text = ""
-                    page = (split_text_into_pages(textanzeiger, text=text))
+                    #page = (split_text_into_pages(textanzeiger, text=text))
+                    page = [1, "hallo"]
                     if page[0] > 1:
                         for o in  range(1, page[0]+1):
                             verse_widget = ttk.Button(self.frame.frame, text=f"Vers {verse_num} teil {o}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
