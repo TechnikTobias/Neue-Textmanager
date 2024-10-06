@@ -41,7 +41,7 @@ def db_connection_info_get( input_db, input_db_variabel, singel_or_multi = False
     conn.close()
     if Ausgabe: 
         if singel_or_multi:
-            return Ausgabe
+            return [item[0] for item in Ausgabe]
         else:
             return Ausgabe[0][0]
 
@@ -253,6 +253,105 @@ class TextmanagerAPP(tk.Tk):
             "text": text
         }
     
+
+    def text_fits_in_widget(self, widget, text):
+        monitors = get_monitors()
+        widget_font = font.Font(font=widget.cget("font"))
+        text_width = widget_font.measure(text)
+        text_height = widget_font.metrics("linespace") * (text.count("\n") + 1)  # Zeilenhöhe mal Anzahl der Zeilen
+        widget_width = monitors[0].width
+        widget_height = monitors[0].height
+        return text_width <= widget_width and text_height <= widget_height
+
+    def split_text_into_pages(self, widget, text, max_page_height=None):
+        widget_font = font.Font(font=widget.cget("font"))
+        line_height = widget_font.metrics("linespace")
+        monitors = get_monitors()
+        
+        # Setze die maximale Seitenhöhe auf die Höhe des Bildschirms oder auf einen spezifischen Wert
+        if max_page_height is None:
+            max_page_height = monitors[0].height
+        
+        lines = text.splitlines()  # Teilt den Text in Zeilen
+        current_page = []
+        pages = []
+        current_height = 0
+
+        for line in lines:
+            words = line.split()
+            current_line = ""
+            for word in words:
+                # Überprüfe, ob die aktuelle Zeile + das neue Wort in den Bildschirm passt
+                if self.text_fits_in_widget(widget, current_line + word + " "):
+                    current_line += word + " "
+                else:
+                    current_page.append(current_line.strip())
+                    current_height += line_height
+                    current_line = word + " "
+                
+                # Falls die Höhe die maximale Seitenhöhe erreicht, speichere die aktuelle Seite und beginne eine neue
+                if current_height + line_height > max_page_height:
+                    pages.append(current_page)
+                    current_page = []
+                    current_height = 0
+            
+            # Füge die verbleibende Zeile zur aktuellen Seite hinzu
+            current_page.append(current_line.strip())
+            current_height += line_height
+
+            # Wenn die Seite die maximale Höhe erreicht, speichere sie und beginne eine neue Seite
+            if current_height > max_page_height:
+                pages.append(current_page)
+                current_page = []
+                current_height = 0
+
+        # Füge die letzte Seite hinzu, falls sie nicht leer ist
+        if current_page:
+            pages.append(current_page)
+        
+        num_pages = len(pages)
+
+        return num_pages, pages
+
+
+    def all_vers_exist(self):
+            song = fetch_all_program_info("Ablaufverwaltung", "Position")
+            #song = db_connection_info_get("SELECT * FROM Ablaufverwaltung" ( ))
+            for singel_song in song:
+                zusatz = 0
+                all_vers = []
+                all_vers.append(singel_song[4])
+                vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (singel_song[2],),singel_or_multi=True)
+                print(vers_number)
+                if not vers_number:
+                    vers_number = [1]
+                if singel_song[1] == "Lied":
+                    for vers_zahl, vers in enumerate(vers_number):
+                        text = db_connection_info_get("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?", (singel_song[2], vers))
+                        if not text:
+                            text = ""
+                        page = (self.split_text_into_pages(textanzeiger, text=text))
+                        if page[0] > 1:
+                            for o in  range(0, page[0]):
+                                if o > 0:
+                                    zusatz +=1
+                                vers_singel = [vers_zahl+zusatz, page[1][o], f"{vers_zahl+1} teil {o+1}"]
+                                all_vers.append(vers_singel)
+                        else:
+                            vers_singel = [vers_zahl+zusatz, page[1], f"{vers_zahl+1}"]
+                            all_vers.append(vers_singel)
+                if singel_song[1] == "Textwort":
+                    vers_singel = [1, "übergabe", f"Textwort"]
+                    all_vers.append(vers_singel)
+                if singel_song[1] == "Kamera":
+                    vers_singel = [1, "", f"Kamera"]
+                    all_vers.append(vers_singel)
+
+
+                self.all_info_vers.append(all_vers)
+            print(self.all_info_vers)
+                
+
 
     def Menu_generator(self):
         hintergrund_farbe = db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
@@ -467,13 +566,15 @@ class TextmanagerAPP(tk.Tk):
         self.vers_position = 0
         self.lied_position = 0
         self.verse_widgets = {}
+        self.all_info_vers = []
         self.bind("<Configure>", self.one_resize)
         self.bind("<Left>", self.trigger_command_with_param)
         self.bind("<Right>", self.trigger_command_with_param)
         self.bind("<Up>", self.trigger_command_with_param)
         self.bind("<Down>", self.trigger_command_with_param)
         self.button_aktivitat = 0
-        self.ablauf_steuerung(0,0)
+        self.all_vers_exist()
+        self.ablauf_steuerung(0,0, button_press=True)
 
     def button_ablauf_steuerung(self):
         global textanzeiger
@@ -588,7 +689,6 @@ class TextmanagerAPP(tk.Tk):
         self.vers_position = über_vers
         self.lied_position = über_lied
         self.ablauf_steuerung_versposition()
-        self.daten_ablauf_steuerung()
 
     def command_über_vers(self, über_vers):
         self.vers_position += über_vers
@@ -598,88 +698,29 @@ class TextmanagerAPP(tk.Tk):
             widget_liedanzeige = info["liedanzeige"]
             buchauswahl = info["buchauswahl"]
             befehl = info["befehl"]
-            position = info["pos"]
+            position_lied = info["pos"]
             if self.vers_position < 0 and self.lied_position > 0:
                 self.command_button_press(self.lied_position-1, über_vers=0)
 
             elif self.vers_position < 0 and self.lied_position == 0:
+                self.vers_position = 0
                 break
 
-            print("hallo")
-            if position == self.lied_position:
+            print(position_lied, self.lied_position)
+            if position_lied == self.lied_position:
                 for name, info in self.verse_widgets.items():
                     widget = info["widget"]
-                    position = info["pos"]
-                    if position == self.vers_position:
+                    position_vers = info["pos"]
+                    print(position_vers, self.vers_position)
+                    if position_vers == self.vers_position:
+                        print("hallo")
                         widget.config(style='aktive.TLabel')
 
 
-    def daten_ablauf_steuerung(self):
-            song = fetch_all_program_info("Ablaufverwaltung", "Position")
-            #song = db_connection_info_get("SELECT * FROM Ablaufverwaltung" ( ))
-            print(song)
+
 
 
     def ablauf_steuerung_versposition(self):
-        def text_fits_in_widget(widget, text):
-            monitors = get_monitors()
-            widget_font = font.Font(font=widget.cget("font"))
-            text_width = widget_font.measure(text)
-            text_height = widget_font.metrics("linespace") * (text.count("\n") + 1)  # Zeilenhöhe mal Anzahl der Zeilen
-            widget_width = monitors[0].width
-            widget_height = monitors[0].height
-            return text_width <= widget_width and text_height <= widget_height
-
-        def split_text_into_pages(widget, text, max_page_height=None):
-            widget_font = font.Font(font=widget.cget("font"))
-            line_height = widget_font.metrics("linespace")
-            monitors = get_monitors()
-            
-            # Setze die maximale Seitenhöhe auf die Höhe des Bildschirms oder auf einen spezifischen Wert
-            if max_page_height is None:
-                max_page_height = monitors[0].height
-            
-            lines = text.splitlines()  # Teilt den Text in Zeilen
-            current_page = []
-            pages = []
-            current_height = 0
-
-            for line in lines:
-                words = line.split()
-                current_line = ""
-                for word in words:
-                    # Überprüfe, ob die aktuelle Zeile + das neue Wort in den Bildschirm passt
-                    if text_fits_in_widget(widget, current_line + word + " "):
-                        current_line += word + " "
-                    else:
-                        current_page.append(current_line.strip())
-                        current_height += line_height
-                        current_line = word + " "
-                    
-                    # Falls die Höhe die maximale Seitenhöhe erreicht, speichere die aktuelle Seite und beginne eine neue
-                    if current_height + line_height > max_page_height:
-                        pages.append(current_page)
-                        current_page = []
-                        current_height = 0
-                
-                # Füge die verbleibende Zeile zur aktuellen Seite hinzu
-                current_page.append(current_line.strip())
-                current_height += line_height
-
-                # Wenn die Seite die maximale Höhe erreicht, speichere sie und beginne eine neue Seite
-                if current_height > max_page_height:
-                    pages.append(current_page)
-                    current_page = []
-                    current_height = 0
-
-            # Füge die letzte Seite hinzu, falls sie nicht leer ist
-            if current_page:
-                pages.append(current_page)
-            
-            num_pages = len(pages)
-
-            return num_pages, pages
-
 
         for self.name, info in self.widget_info_liedauswahl_aublauf.items():
             liednummer = info["liednummer"]
@@ -692,9 +733,8 @@ class TextmanagerAPP(tk.Tk):
                 vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (liednummer,),singel_or_multi=True)
                 self.clear_verse_widgets()
                 if not vers_number:
-                    vers_number = [[1]]
+                    vers_number = [1]
                 for i, verse_num in enumerate(vers_number):
-                    verse_num = verse_num[0]
                     text = db_connection_info_get("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?", (liednummer, verse_num))
                     if not text:
                         text = ""
