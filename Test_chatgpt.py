@@ -318,11 +318,23 @@ class TextmanagerAPP(tk.Tk):
             song = fetch_all_program_info("Ablaufverwaltung", "Position")
             #song = db_connection_info_get("SELECT * FROM Ablaufverwaltung" ( ))
             for singel_song in song:
-                zusatz = 0
+                zusatz = 1
                 all_vers = []
-                all_vers.append(singel_song[4])
+                versübergabeunfertig = (singel_song[4])
+                versübergabe_ready = []
+                versübergabe = []
+                übergabe_allvers = []
+                if versübergabeunfertig:
+                    parts = str(versübergabeunfertig).split(',')  # Teile die Eingabe anhand des Kommas
+                    for part in parts:
+                        if '-' in part:  # Überprüfe, ob ein Bereich (z.B. 3-6) vorhanden ist
+                            start, end = map(int, part.split('-'))  # Teile den Bereich anhand des Bindestrichs
+                            versübergabe.extend(range(start, end + 1))  # Füge die Zahlen im Bereich zur Liste hinzu
+                        else:
+                            versübergabe.append(int(part))  # Füge einzelne Zahlen zur Liste hinzu
+                if not versübergabe:
+                    versübergabe = [1]
                 vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (singel_song[2],),singel_or_multi=True)
-                print(vers_number)
                 if not vers_number:
                     vers_number = [1]
                 if singel_song[1] == "Lied":
@@ -335,22 +347,28 @@ class TextmanagerAPP(tk.Tk):
                             for o in  range(0, page[0]):
                                 if o > 0:
                                     zusatz +=1
+                                if vers_zahl+1 in versübergabe:
+                                    versübergabe_ready.append(vers_zahl+zusatz)
                                 vers_singel = [vers_zahl+zusatz, page[1][o], f"{vers_zahl+1} teil {o+1}"]
                                 all_vers.append(vers_singel)
+                                
                         else:
+                            if vers_zahl+1 in versübergabe:
+                                versübergabe_ready.append(vers_zahl+zusatz)
                             vers_singel = [vers_zahl+zusatz, page[1], f"{vers_zahl+1}"]
                             all_vers.append(vers_singel)
-                if singel_song[1] == "Textwort":
+                    übergabe_allvers.append(versübergabe_ready)
+                elif singel_song[1] == "Textwort":
+                    übergabe_allvers.append([1])
                     vers_singel = [1, "übergabe", f"Textwort"]
                     all_vers.append(vers_singel)
-                if singel_song[1] == "Kamera":
+                elif singel_song[1] == "Kamera":
+                    übergabe_allvers.append([1])
                     vers_singel = [1, "", f"Kamera"]
                     all_vers.append(vers_singel)
-
-
-                self.all_info_vers.append(all_vers)
-            print(self.all_info_vers)
-                
+                for i in all_vers:
+                    übergabe_allvers.append(i)
+                self.all_info_vers.append(übergabe_allvers)
 
 
     def Menu_generator(self):
@@ -635,18 +653,17 @@ class TextmanagerAPP(tk.Tk):
         
         # Funktion zur Suche der nächsten größeren Zahl in der Liste
         def next_higher(num, lst):
-            for index, x in enumerate(lst):
+            for x in (lst):
                 if x > num:
-                    return x, index
-            return None, None
+                    return x
+            return None
         
         # Funktion zur Suche der nächsten kleineren Zahl in der Liste
         def next_lower(num, lst):
-            for index, x in reversed(list(enumerate(lst))):
+            for x in reversed(list(lst)):
                 if x < num:
-                    return x, index
-            return None, None
-        
+                    return x
+            return None
         if number in comparison_list:
             # Wenn die Zahl in der Liste ist, übernehmen wir sie
             widget_position = comparison_list.index(number)
@@ -655,23 +672,23 @@ class TextmanagerAPP(tk.Tk):
             # Wenn die Zahl nicht in der Liste ist, bearbeiten wir sie
             if change > 0:
                 # Positive Änderungszahl
-                next_num, index = next_higher(number, comparison_list)
+                next_num = next_higher(number, comparison_list)
                 if next_num is not None:
-                    return next_num, index, None
+                    return next_num, None
                 else:
                     # Wenn keine nächsthöhere Zahl vorhanden ist
-                    return None, None, "up"
+                    return None, "up"
             elif change < 0:
                 # Negative Änderungszahl
-                next_num, index = next_lower(number, comparison_list)
+                next_num = next_lower(number, comparison_list)
                 if next_num is not None:
-                    return next_num, index, None
+                    return next_num, None
                 else:
                     # Wenn keine nächstkleinere Zahl vorhanden ist
-                    return None, None, "down"
+                    return None, "down"
             else:
                 print("Keine Änderung erforderlich.")
-                return number, None
+                return number
 
 
 
@@ -680,10 +697,12 @@ class TextmanagerAPP(tk.Tk):
             self.command_button_press(über_lied, über_vers)
 
         elif über_vers:
-            self.command_über_vers(über_vers)
+            if not self.lied_position +über_lied < 0 or not self.vers_position + über_vers < 0:
+                self.command_über_vers(über_vers)
     
         elif über_lied:
-            self.command_über_lied(über_lied, über_vers)
+            if not self.lied_position + über_lied < 0:
+                self.command_button_press(self.lied_position+über_lied, über_vers)
 
     def command_button_press(self, über_lied, über_vers):
         self.vers_position = über_vers
@@ -692,6 +711,24 @@ class TextmanagerAPP(tk.Tk):
 
     def command_über_vers(self, über_vers):
         self.vers_position += über_vers
+        if self.vers_position < 0 and self.lied_position > 0:
+            self.lied_position -= 1
+            self.vers_position = self.all_info_vers[self.lied_position][0][-1]
+            print(f"{self.vers_position}versposiotion")
+            self.command_button_press(über_lied=self.lied_position, über_vers=self.vers_position)
+
+        if self.vers_position < 0 and self.lied_position == 0:
+            self.vers_position = 0
+            return
+        if not self.vers_position == 0:
+            vers_über = (self.adjust_number(self.vers_position, self.all_info_vers[self.lied_position][0], über_vers))
+            self.vers_position = vers_über[0]
+            if vers_über[1] == "up":
+                print(225)
+                self.command_button_press(über_lied=self.lied_position + 1, über_vers=0)
+            
+
+        
         for name, info in self.widget_info_liedauswahl_aublauf.items():
             liednummer = info["liednummer"]
             versnummer = info["versnummer"]
@@ -699,22 +736,14 @@ class TextmanagerAPP(tk.Tk):
             buchauswahl = info["buchauswahl"]
             befehl = info["befehl"]
             position_lied = info["pos"]
-            if self.vers_position < 0 and self.lied_position > 0:
-                self.command_button_press(self.lied_position-1, über_vers=0)
-
-            elif self.vers_position < 0 and self.lied_position == 0:
-                self.vers_position = 0
-                break
-
-            print(position_lied, self.lied_position)
             if position_lied == self.lied_position:
                 for name, info in self.verse_widgets.items():
                     widget = info["widget"]
                     position_vers = info["pos"]
-                    print(position_vers, self.vers_position)
                     if position_vers == self.vers_position:
-                        print("hallo")
                         widget.config(style='aktive.TLabel')
+                    else:
+                        widget.config(style="TLabel")
 
 
 
@@ -729,28 +758,19 @@ class TextmanagerAPP(tk.Tk):
             buchauswahl = info["buchauswahl"]
             befehl = info["befehl"]
             position = info["pos"]
+            widget_liedanzeige.config(style='TLabel')
             if position == self.lied_position:
-                vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (liednummer,),singel_or_multi=True)
                 self.clear_verse_widgets()
-                if not vers_number:
-                    vers_number = [1]
-                for i, verse_num in enumerate(vers_number):
-                    text = db_connection_info_get("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?", (liednummer, verse_num))
-                    if not text:
-                        text = ""
-                    #page = (split_text_into_pages(textanzeiger, text=text))
-                    page = [1, "hallo"]
-                    if page[0] > 1:
-                        for o in  range(1, page[0]+1):
-                            verse_widget = ttk.Button(self.frame.frame, text=f"Vers {verse_num} teil {o}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
-                            verse_rel_y = 0.1 * (position + 1 + i)  # Berechnet die y-Position des Widgets
-                            register_widget(name=f"verse_{position}_{verse_num}_{o}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y, get_position=True, position=float(f"{position}.{verse_num}{o}"))
-                            self.register_vers_widegt(name=f"verse_{position}_{verse_num}_{o}", widget=verse_widget, pos=i+1, text=page[1][o-1])
-                    else:
-                        verse_widget = ttk.Button(self.frame.frame, text=f"Vers {verse_num}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
-                        verse_rel_y = 0.1 * (position + 1 + i)  # Berechnet die y-Position des Widgets
+                aktuelle_lieder = self.all_info_vers[self.lied_position]
+                for o, i in enumerate(aktuelle_lieder):
+                    if o > 0:
+                        verse_num = i[0]
+                        text = i[1]
+                        text_label = i[2]
+                        verse_widget = ttk.Button(self.frame.frame, text=f"{text_label}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
+                        verse_rel_y = 0.1 * (position + 1 + o)  # Berechnet die y-Position des Widgets
                         register_widget(name=f"verse_{position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y, get_position=True, position=float(f"{position}.{verse_num}"))
-                        self.register_vers_widegt(name=f"verse_{position}_{verse_num}", widget=verse_widget, pos=i+1, text=text)
+                        self.register_vers_widegt(name=f"verse_{position}_{verse_num}", widget=verse_widget, pos=o, text=text)
                 widget_liedanzeige.config(style='vorbereitung.TFrame')
                 update_widget_positions()     
 
@@ -982,10 +1002,10 @@ class TextmanagerAPP(tk.Tk):
             self.versübergabe = 1
         elif key_pressed == 'Up':
             self.liedübergabe = -1
-            self.versübergabe = 1500
+            self.versübergabe = 0
         elif key_pressed == 'Down':
             self.liedübergabe = 1
-            self.versübergabe = 1500
+            self.versübergabe = 0
         self.ablauf_steuerung(self.liedübergabe, self.versübergabe)
 
 
