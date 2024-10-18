@@ -332,11 +332,11 @@ class TextmanagerAPP(tk.Tk):
                             versübergabe.extend(range(start, end + 1))  # Füge die Zahlen im Bereich zur Liste hinzu
                         else:
                             versübergabe.append(int(part))  # Füge einzelne Zahlen zur Liste hinzu
-                if not versübergabe:
-                    versübergabe = [1]
                 vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (singel_song[2],),singel_or_multi=True)
                 if not vers_number:
                     vers_number = [1]
+                if not versübergabe and vers_number:
+                    versübergabe = vers_number
                 if singel_song[1] == "Lied":
                     for vers_zahl, vers in enumerate(vers_number):
                         text = db_connection_info_get("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?", (singel_song[2], vers))
@@ -701,7 +701,7 @@ class TextmanagerAPP(tk.Tk):
                 self.command_über_vers(über_vers)
     
         elif über_lied:
-            if not self.lied_position + über_lied < 0:
+            if not self.lied_position + über_lied < 0 and self.lied_position + über_lied < len(self.all_info_vers) :
                 self.command_button_press(self.lied_position+über_lied, über_vers)
 
     def command_button_press(self, über_lied, über_vers):
@@ -714,17 +714,26 @@ class TextmanagerAPP(tk.Tk):
         if self.vers_position < 0 and self.lied_position > 0:
             self.lied_position -= 1
             self.vers_position = self.all_info_vers[self.lied_position][0][-1]
-            print(f"{self.vers_position}versposiotion")
             self.command_button_press(über_lied=self.lied_position, über_vers=self.vers_position)
 
-        if self.vers_position < 0 and self.lied_position == 0:
+        elif self.vers_position < 0 and self.lied_position == 0 :
             self.vers_position = 0
             return
-        if not self.vers_position == 0:
+        elif self.lied_position == len(self.all_info_vers) -1 and len(self.all_info_vers[self.lied_position]) <= self.vers_position:
+            if len(self.all_info_vers[self.lied_position]) < self.vers_position:
+                self.vers_position -= 1
+            for name, info in self.verse_widgets.items():
+                widget = info["widget"]
+                position_vers = info["pos"]
+                if position_vers == self.vers_position-1:
+                    widget.config(style='end.TFrame')
+                else:
+                    widget.config(style="TLabel")
+            return
+        elif not self.vers_position == 0:
             vers_über = (self.adjust_number(self.vers_position, self.all_info_vers[self.lied_position][0], über_vers))
             self.vers_position = vers_über[0]
             if vers_über[1] == "up":
-                print(225)
                 self.command_button_press(über_lied=self.lied_position + 1, über_vers=0)
             
 
@@ -737,6 +746,10 @@ class TextmanagerAPP(tk.Tk):
             befehl = info["befehl"]
             position_lied = info["pos"]
             if position_lied == self.lied_position:
+                if self.vers_position > 0:
+                    widget_liedanzeige.config(style='aktive.TLabel')
+                else:
+                    widget_liedanzeige.config(style='vorbereitung.TFrame')
                 for name, info in self.verse_widgets.items():
                     widget = info["widget"]
                     position_vers = info["pos"]
@@ -771,216 +784,13 @@ class TextmanagerAPP(tk.Tk):
                         verse_rel_y = 0.1 * (position + 1 + o)  # Berechnet die y-Position des Widgets
                         register_widget(name=f"verse_{position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y, get_position=True, position=float(f"{position}.{verse_num}"))
                         self.register_vers_widegt(name=f"verse_{position}_{verse_num}", widget=verse_widget, pos=o, text=text)
-                widget_liedanzeige.config(style='vorbereitung.TFrame')
-                update_widget_positions()     
-
-
-    def ablauf_steurung(self, übergabe_postion_lied, übergabe_postion_vers, button_or_normal = False):
-        #Logig der Nummern
-        def text_fits_in_widget(widget, text):
-            monitors = get_monitors()
-            widget_font = font.Font(font=widget.cget("font"))
-            text_width = widget_font.measure(text)
-            text_height = widget_font.metrics("linespace") * (text.count("\n") + 1)  # Zeilenhöhe mal Anzahl der Zeilen
-            widget_width = monitors[0].width
-            widget_height = monitors[0].height
-            return text_width <= widget_width and text_height <= widget_height
-
-        def split_text_into_pages(widget, text, max_page_height=None):
-            widget_font = font.Font(font=widget.cget("font"))
-            line_height = widget_font.metrics("linespace")
-            print(line_height)
-            monitors = get_monitors()
-            
-            # Setze die maximale Seitenhöhe auf die Höhe des Bildschirms oder auf einen spezifischen Wert
-            if max_page_height is None:
-                max_page_height = monitors[0].height
-            
-            lines = text.splitlines()  # Teilt den Text in Zeilen
-            current_page = []
-            pages = []
-            current_height = 0
-
-            for line in lines:
-                words = line.split()
-                current_line = ""
-                for word in words:
-                    # Überprüfe, ob die aktuelle Zeile + das neue Wort in den Bildschirm passt
-                    if text_fits_in_widget(widget, current_line + word + " "):
-                        current_line += word + " "
-                    else:
-                        current_page.append(current_line.strip())
-                        current_height += line_height
-                        current_line = word + " "
-                    
-                    # Falls die Höhe die maximale Seitenhöhe erreicht, speichere die aktuelle Seite und beginne eine neue
-                    if current_height + line_height > max_page_height:
-                        pages.append(current_page)
-                        current_page = []
-                        current_height = 0
-                
-                # Füge die verbleibende Zeile zur aktuellen Seite hinzu
-                current_page.append(current_line.strip())
-                current_height += line_height
-
-                # Wenn die Seite die maximale Höhe erreicht, speichere sie und beginne eine neue Seite
-                if current_height > max_page_height:
-                    pages.append(current_page)
-                    current_page = []
-                    current_height = 0
-
-            # Füge die letzte Seite hinzu, falls sie nicht leer ist
-            if current_page:
-                pages.append(current_page)
-
-            return pages
-
-        def count_pages_and_display(widget, text):
-            pages = split_text_into_pages(widget, text)
-            num_pages = len(pages)
-            
-
-            
-            return num_pages, pages
-
-        if not button_or_normal and not self.button_aktivitat:
-            self.vers_position += übergabe_postion_vers
-            self.lied_position += übergabe_postion_lied
-            if self.vers_position < 0 and self.lied_position > 0:
-                self.lied_position -= 1
-                self.vers_position = 999
-            elif self.vers_position < 0 and self.lied_position == 0 or self.vers_position ==0 and self.lied_position < 0:
-                self.lied_position = 0
-                self.vers_position = 0
-                return
-            if self.lied_position < 0:
-                self.lied_position = 0
-        elif button_or_normal:
-            self.lied_position = übergabe_postion_lied
-            self.vers_position = übergabe_postion_vers
-
-        # Letztes lied deakteviert Lied + 1 eingabe 
-        if self.lied_position > len(self.widget_info_liedauswahl_aublauf)-2:
-            self.unbind("<Down>")
-        else:
-            self.bind("<Down>", self.trigger_command_with_param)
-
-
-        self.clear_verse_widgets()
-        for self.name, self.info in self.widget_info_liedauswahl_aublauf.items():
-            liednummer = self.info["liednummer"]
-            versnummer = self.info["versnummer"]
-            widget_liedanzeige = self.info["liedanzeige"]
-            buchauswahl = self.info["buchauswahl"]
-            befehl = self.info["befehl"]
-            position = self.info["pos"]
-            if self.lied_position == self.position:
-                numbers = []
-                if versnummer:
-                    parts = str(versnummer).split(',')  # Teile die Eingabe anhand des Kommas
-                    for part in parts:
-                        if '-' in part:  # Überprüfe, ob ein Bereich (z.B. 3-6) vorhanden ist
-                            start, end = map(int, part.split('-'))  # Teile den Bereich anhand des Bindestrichs
-                            numbers.extend(range(start, end + 1))  # Füge die Zahlen im Bereich zur Liste hinzu
+                        if self.vers_position == o:
+                            verse_widget.config(style='aktive.TLabel')
+                        if self.vers_position > 0:
+                            widget_liedanzeige.config(style='aktive.TLabel')
                         else:
-                            numbers.append(int(part))  # Füge einzelne Zahlen zur Liste hinzu
-                else:
-                    vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (liednummer,),singel_or_multi=True)
-                    if vers_number:
-                        for vers in vers_number:
-                            numbers += vers
-                    else:
-                        numbers.append(1)
-                numbers_all = []
-                vers_number = db_connection_info_get("SELECT verse_number FROM verses WHERE song_id = ?", (liednummer,),singel_or_multi=True)
-                if not button_or_normal:
-                    if self.button_aktivitat:
-                        ver_ausführen = self.adjust_number(self.vers_position+übergabe_postion_vers, numbers, übergabe_postion_vers)
-                        if not ver_ausführen[2]:
-                            self.vers_position =  ver_ausführen[1]+1
-                        elif ver_ausführen[2] == "up":
-                            self.vers_position = 0
-                            self.lied_position += 1
                             widget_liedanzeige.config(style='vorbereitung.TFrame')
-                            self.command_vorbereitung_lied_vers()
-                            self.clear_verse_widgets()
-                            self.ablauf_sterung(übergabe_postion_vers=self.vers_position, übergabe_postion_lied=self.lied_position, button_or_normal=True)
-                            return
-                        elif ver_ausführen[2] == "down":
-                            self.vers_position = 0
-                        widget_liedanzeige.config(style='TButton')
-                    self.button_aktivitat = False
-                    if self.vers_position == 999:
-                        self.vers_position = len(numbers)
-                    if self.vers_position > 1000:
-                        self.vers_position = 0
-                else:
-                    self.button_aktivitat = True
-                if vers_number:
-                    for vers in vers_number:
-                        numbers_all += vers
-                if not numbers_all:
-                    for number in numbers:
-                        numbers_all.append(number)
-                for i, verse_num in enumerate(numbers_all):
-                    text = db_connection_info_get("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?", (liednummer, verse_num))
-                    textanzeiger.config(text=text, )
-                    (count_pages_and_display(textanzeiger, text=text))
-                    verse_widget = ttk.Button(self.frame.frame, text=f"Vers {verse_num}", style='TButton', command=lambda v=verse_num, l= self.lied_position: self.lied_vers_button_command(l, v))
-                    verse_rel_y = 0.1 * (position + 1 + i)  # Berechnet die y-Position des Widgets
-                    register_widget(name=f"verse_{position}_{verse_num}", widget=verse_widget, relheight=0.05, relwidth=0.7, relx=0, rely=verse_rel_y, get_position=True, position=float(f"{position}.{verse_num}"))
-                    self.register_vers_widegt(name=f"verse_{position}_{verse_num}", widget=verse_widget, pos=i+1,)
-                    update_widget_positions()                
-
-                for name, info in self.widget_info_liedauswahl_aublauf.items():
-                    if info["pos"] > position:
-                        info["liedanzeige"].place_configure(rely=0.1 * (info["pos"] + len(numbers_all)))
-                
-                #Letzes vers deakteviert tasteneingabe vers + 1
-                if self.lied_position > len(self.widget_info_liedauswahl_aublauf)-2 and self.vers_position > len(numbers):
-                    self.unbind("<Right>")
-                    self.unbind("<Up>")
-                    self.bind("<Up>", self.trigger_command_with_param_last)
-                    self.command_last_lied()
-                    return
-                else:
-                    self.bind("<Right>", self.trigger_command_with_param)
-                    self.unbind("<Up>")
-                    self.bind("<Up>", self.trigger_command_with_param)
-
-                if not button_or_normal:
-
-                    if self.vers_position > len(numbers):
-                        self.vers_position = 0
-                        self.lied_position += 1
-                        widget_liedanzeige.config(style='TButton')
-                        self.clear_verse_widgets()
-                        update_widget_positions()
-                    elif self.vers_position == 0 and self.lied_position == position:
-                        widget_liedanzeige.config(style='vorbereitung.TFrame')
-                        self.command_vorbereitung_lied_vers()
-                    else:
-                        widget_liedanzeige.config(style='aktive.TFrame')
-                        self.command_aktive_lied_vers(vers_position=self.vers_position, liedenummer=liednummer)
-                        for name, info in self.verse_widgets.items():
-                            widget = info["widget"]
-                            position = info["pos"]
-                            if position == numbers[self.vers_position-1]:
-                                widget.config(style='aktive.TLabel')
-                else:
-                    if self.vers_position == 0:
-                        widget_liedanzeige.config(style='vorbereitung.TFrame')
-                        self.command_vorbereitung_lied_vers()
-                    else:
-                        widget_liedanzeige.config(style='aktive.TFrame')
-                        self.command_aktive_lied_vers(vers_position=self.vers_position, liedenummer=liednummer)
-                        for name, info in self.verse_widgets.items():
-                            widget = info["widget"]
-                            position = info["pos"]
-                            if position == self.vers_position:
-                                widget.config(style='aktive.TLabel')
-            else:
-                widget_liedanzeige.config(style='TButton')
+                update_widget_positions()     
 
 
 
