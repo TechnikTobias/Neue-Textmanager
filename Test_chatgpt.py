@@ -15,14 +15,32 @@ from screeninfo import get_monitors
 
 widget_info = {}
 
-
 def get_db_connection():
+    """
+    Diese Funktion verbindet mich mit der Datenbank Lieder_Datenbank
+
+    Parameter:
+    Keine
+
+    Rückgabewert:
+    conn: verbindung zur datenbank
+    """
     db_filename = "Lieder_Datenbank.db"
     db_path = os.path.join(os.path.dirname(__file__), db_filename)
     conn = sqlite3.connect(db_path)
     return conn
 
-def db_connection_info_write(input_db, input_db_variabel):
+def db_connection_info_write(input_db :str = "input", input_db_variabel :tuple = ()):
+    """
+    Diese Funktion schreibt daten in die Datenbank
+
+    Parameter:
+    input_db: Befehl eingabe wie INSERT INTO Ablaufverwaltung (Position)
+    input_db_variabel: eingabe in dem fall für Position (1), wichtig tupel
+    
+    Rückgabewert: 
+    Keinen
+    """
     conn = get_db_connection()
     cursor = conn.cursor()
     if len(input_db_variabel) > 1:
@@ -581,10 +599,13 @@ class TextmanagerAPP(tk.Tk):
             self.gegerator_lieder_ablauf(entry[0],entry[3], entry[1], liednummer=entry[2], versnummer=entry[4], buch=entry[5])
         self.button_ablauf_steuerung()
         update_widget_positions()
-        self.vers_position = 0
-        self.lied_position = 0
+        self.vers_position :int = 0
+        self.lied_position :int = 0
         self.verse_widgets = {}
-        self.all_info_vers = []
+        self.all_info_vers :list = []  
+        """Die Vareable info_all_vers ist erste klammer [] ist die Position 
+        in der ablauf was über die Vareable self.lied_position gesteuert wird
+        """
         self.bind("<Configure>", self.one_resize)
         self.bind("<Left>", self.trigger_command_with_param)
         self.bind("<Right>", self.trigger_command_with_param)
@@ -715,6 +736,7 @@ class TextmanagerAPP(tk.Tk):
             self.lied_position -= 1
             self.vers_position = self.all_info_vers[self.lied_position][0][-1]
             self.command_button_press(über_lied=self.lied_position, über_vers=self.vers_position)
+            
 
         elif self.vers_position < 0 and self.lied_position == 0 :
             self.vers_position = 0
@@ -727,17 +749,20 @@ class TextmanagerAPP(tk.Tk):
                 position_vers = info["pos"]
                 if position_vers == self.vers_position-1:
                     widget.config(style='end.TFrame')
+                    self.command_last_lied()
                 else:
                     widget.config(style="TLabel")
             return
         elif not self.vers_position == 0:
             vers_über = (self.adjust_number(self.vers_position, self.all_info_vers[self.lied_position][0], über_vers))
             self.vers_position = vers_über[0]
+            if self.vers_position == None:
+                self.vers_position = 0
             if vers_über[1] == "up":
                 self.command_button_press(über_lied=self.lied_position + 1, über_vers=0)
+                vers_über = 0
             
 
-        
         for name, info in self.widget_info_liedauswahl_aublauf.items():
             liednummer = info["liednummer"]
             versnummer = info["versnummer"]
@@ -755,6 +780,7 @@ class TextmanagerAPP(tk.Tk):
                     position_vers = info["pos"]
                     if position_vers == self.vers_position:
                         widget.config(style='aktive.TLabel')
+                        self.command_aktive_lied_vers()
                     else:
                         widget.config(style="TLabel")
 
@@ -797,9 +823,6 @@ class TextmanagerAPP(tk.Tk):
 
 
 
-    def trigger_command_with_param_last(self, event):
-        self.ablauf_steuerung(-1, 10000)
-
 
 
     def trigger_command_with_param(self, event):
@@ -825,9 +848,14 @@ class TextmanagerAPP(tk.Tk):
     def command_last_lied(self):
         pass
 
-    def command_aktive_lied_vers(self, liedenummer, vers_position):
-        text = db_connection_info_get("SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?", (liedenummer, vers_position))
-
-
+    def command_aktive_lied_vers(self):
+        text = self.all_info_vers[self.lied_position][self.vers_position][1]
+        print(f"{text}erste anzeige")
+        for name, info in self.verse_widgets.items():
+            text = info["text"]
+            position_vers = info["pos"]
+            if self.vers_position == position_vers:
+                print(f"{text}zweite anzeige")
+                break
     def command_vorbereitung_lied_vers(self):
         pass
