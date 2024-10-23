@@ -3,6 +3,7 @@ import Load_settings
 import Neue_Textmanager
 
 from tkinter import *
+from tkinter import ttk
 from PIL import Image, ImageTk
 import tkinter.font as tkFont
 from tkinter.colorchooser import askcolor
@@ -181,25 +182,6 @@ class Swich_generator:
 
 
 
-class Farben_class:
-
-    def __init__(self, Anzeigefenster, Farbe_ort, Name, Text_hover = ""):
-        self.Farbe_ort = Farbe_ort
-        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
-        text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
-        self.Hintergrndfarbe_auswahl = ResponsiveWidget(Button, Anzeigefenster, font=Settings.Textgröße_von_alle_Texte, fg=text_farbe, bg=hintergrund_farbe, text=Name, command=self.Farbe_def, border=0)
 
 
 
-    def Farbe_def(self):
-        color = askcolor()  
-        if not (color[1]) == None:
-            Neue_Textmanager.get_db_connection("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (f"{color[1]}",f"{self.Farbe_ort}"), False)
-        Load_settings.Load_all_collor()
-
-    def color(self, bg_color, fg_color, activ_bg, activ_fg):
-        self.Hintergrndfarbe_auswahl.config(bg=bg_color, fg=fg_color, activebackground=activ_bg, activeforeground=activ_fg)
-    
-    def Text_size(self, Font_, Factor_x =1, Factor_y = 1, x_start =10, Y_Start = 10):
-        self.Hintergrndfarbe_auswahl.config(font= Font_)
-        self.Hintergrndfarbe_auswahl.place(x= x_start+Factor_x*int(Settings.text_size), y= Y_Start+Factor_y*int(Settings.text_size))

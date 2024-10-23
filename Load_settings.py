@@ -22,6 +22,7 @@ def Textmanager_größen(self, Textsize):
     style.configure('TButton',  borderwidth=0, font=('Helvetica', text_size), background=hintergrund_farbe, foreground=text_farbe)
     style.configure('vorbereitung.TFrame',  borderwidth=0, font=('Helvetica', text_size), background="orange", foreground="black")
     style.configure('end.TFrame',  borderwidth=0, font=('Helvetica', text_size), background="pink", foreground="black")
+    style.configure("Switch.TFrame", background=hintergrund_farbe, onbackground="#3eee21", offbackground="#e01b24", foreground=text_farbe, zwischen_background="#8f8523")
     try:
         text_size = min( int(Settings.Graphig_bildschirm.winfo_height()/50*factor), int(Settings.Graphig_bildschirm.winfo_width()/80*factor))
         style.configure('TScale', borderwidth=0, font=('Helvetica',50), background=hintergrund_farbe, foreground=text_farbe)

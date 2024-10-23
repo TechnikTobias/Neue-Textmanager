@@ -1,6 +1,7 @@
 import Neue_Textmanager
 import Load_settings
 import Class_gen
+import Switch
 
 import tkinter.ttk as ttk
 from typing import Optional
@@ -57,6 +58,15 @@ def ResponsiveWidget(widget, *args, **kwargs):
     for (k, v) in bindings.items():
         w.bind(k, lambda e, kwarg=v: e.widget.config(**kwarg))
     return w
+
+
+
+def Farbe_def(self):
+    color = askcolor()  
+    if not (color[1]) == None:
+        Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (f"{color[1]}",f"{self.Farbe_ort}"))
+
+
 
 #checksetting kann weg aber ert wenn alles verbessert wurde
 def Check_settings(Tkfont = True):
@@ -232,7 +242,6 @@ class Settings_window(Toplevel):
                 print(f"Error: {e}. 'update_widget_positions' method not found in 'TextmanagerAPP'.")
 
 
-        global Textfarbe_auswahl, Hintergrndfarbe_auswahl, Button_Hintergrndfarbe_auswahl, Button_Textfarbe_Button
         hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
         self.config(bg=hintergrund_farbe)
         self.geometry("1080x720")
@@ -262,12 +271,15 @@ class Settings_window(Toplevel):
     def settings_Textanzeiger_def(self):
         self.delete_widget_setting()
         global Textanzeiger_Textfarbe_button, Textanzeiger_Hintergrund_Button, Bildschirm_opt1, Bildschirm_ausrichtung_button, Text_größe_ändern, Textanzeiger_setting_class, Liedvorschau_Button
-        see_the_text = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
+        see_the_text = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",))
         hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
         text_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
         self.config(bg=hintergrund_farbe)
-        Textanzeiger_setting_class = Class_gen.Swich_generator(self, "Liedtextanzeige", f"see_the_text", see_the_text, Test, "Lädt die Textanzeige womit der Text an einem anderm Bildschirm", zise=text_size)
+        Textanzeiger_setting_class = Switch.Switch(self, text="Liedtextanzeige", speicher_db="see_the_text", state=see_the_text, command=Test,  Skalierung=1)
+        Textanzeiger_setting_class.place(relx=0.2, rely=0)
+        Textanzeiger_Textfarbe_button = ttk.Button( self, style="TButton", text="Textfarbe", command=Farbe_def)
         Textanzeiger_Textfarbe_button = Class_gen.Farben_class(self, "textanzeiger_textfarbe", "text_farbe")
+        Textanzeiger_Textfarbe_button.place(relx=0.2, rely=0.1)
         Textanzeiger_Hintergrund_Button = Class_gen.Farben_class(self, "textanzeiger_hintergrund", "Hintergrund")
         Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(self, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung2", "Textbildschirm", Skalierung)
         if Bildschirm_ausrichtung:

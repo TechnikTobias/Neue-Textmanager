@@ -51,7 +51,19 @@ def db_connection_info_write(input_db :str = "input", input_db_variabel :tuple =
     conn.close()
 
 
-def db_connection_info_get( input_db, input_db_variabel, singel_or_multi = False):
+def db_connection_info_get( input_db :str = "input", input_db_variabel :tuple = (), singel_or_multi :bool = False):
+    """
+    Diese Funktion liest Info aus einer Datenbank aus
+
+    Parameter:
+    input_db: eingabe wie "SELECT verse_text FROM verses WHERE song_id = ? AND verse_number = ?"
+    input_db_variabel: eingabe wie (liednummer, Versnummer)
+    singel_or_multi: Eingabe standart wert False ausgabe ist ein str oder int, bei True ist ausgabe eine list.
+
+    Rückgabewert: 
+    bei singel_or_multi == True: list
+    bei singel_or_multi == False: str or int
+    """
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(input_db, input_db_variabel)

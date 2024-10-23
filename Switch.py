@@ -25,7 +25,7 @@ class Switch(ttk.Frame):
         self.style = ttk.Style()
         self.style.configure(style)
 
-        self.canvas = tk.Canvas(self, width=self.skalieren(60), height=self.skalieren(25), bd=0, highlightthickness=0)
+        self.canvas = tk.Canvas(self, width=self.skalieren(60), height=self.skalieren(25), bd=0, highlightthickness=0, background=self.style.lookup(self.cget("style"), "background", ("",)))
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
         self.update_canvas()
