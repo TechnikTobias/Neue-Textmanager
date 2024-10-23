@@ -61,10 +61,6 @@ def ResponsiveWidget(widget, *args, **kwargs):
 
 
 
-def Farbe_def(self):
-    color = askcolor()  
-    if not (color[1]) == None:
-        Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (f"{color[1]}",f"{self.Farbe_ort}"))
 
 
 
@@ -224,6 +220,7 @@ class Settings_window(Toplevel):
             skalierung += 10
             Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (skalierung,"scalierung"))
             Load_settings.Textmanager_größen(self=self,Textsize=self.winfo_geometry())
+            scale_label.config(text=skalierung)
             self.update_widget_positions()
             try:
                 Neue_Textmanager.update_widget_positions()
@@ -235,6 +232,7 @@ class Settings_window(Toplevel):
             skalierung -= 10
             Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (skalierung,"scalierung"))
             Load_settings.Textmanager_größen(self=self,Textsize=self.winfo_geometry())
+            scale_label.config(text=skalierung)
             self.update_widget_positions()
             try:
                 Neue_Textmanager.update_widget_positions()
@@ -251,9 +249,9 @@ class Settings_window(Toplevel):
         register_widget(name="Scale_button_plus", widget=scale_button_plus, relheight=0.05, relwidth=0.1, relx=0.2, rely=0.15, setting=True)
         scale_button_minus = ttk.Button(self, style='TButton', text="-10%", command=groese_minus)
         register_widget(name="scale_button_minus", widget=scale_button_minus,  relheight=0.05, relwidth=0.1, relx=0.3, rely=0.15, setting=True)
-        Hintergrndfarbe_auswahl = ttk.Button(self, text="Hintergrund",style='TButton')
+        Hintergrndfarbe_auswahl = ttk.Button(self, text="Hintergrund",style='TButton', command=lambda text = "hintergrundfarbe": self.Farbe_def(text))
         register_widget(name="Hintergrund Farben Button", widget=Hintergrndfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.2,rely=0.25, setting=True)
-        Button_Textfarbe_Button = ttk.Button(self, text="Button Text Farbe",style='TButton')
+        Button_Textfarbe_Button = ttk.Button(self, text="Button Text Farbe",style='TButton', command=lambda text = "text_farbe": self.Farbe_def(text))
         register_widget(name="Text Farben Button", widget=Button_Textfarbe_Button,relheight=0.05, relwidth=0.3, relx=0.4,rely=0.25, setting=True)
         Textfarbe_auswahl = ttk.Button(self, text="Hintergrund",style='TButton')
         register_widget(name="Text Farben ", widget=Textfarbe_auswahl,relheight=0.05, relwidth=0.2, relx=0.1,rely=0.45, setting=True)
@@ -277,23 +275,31 @@ class Settings_window(Toplevel):
         self.config(bg=hintergrund_farbe)
         Textanzeiger_setting_class = Switch.Switch(self, text="Liedtextanzeige", speicher_db="see_the_text", state=see_the_text, command=Test,  Skalierung=1)
         Textanzeiger_setting_class.place(relx=0.2, rely=0)
-        Textanzeiger_Textfarbe_button = ttk.Button( self, style="TButton", text="Textfarbe", command=Farbe_def)
-        Textanzeiger_Textfarbe_button = Class_gen.Farben_class(self, "textanzeiger_textfarbe", "text_farbe")
+        Textanzeiger_Textfarbe_button = ttk.Button( self, style="TButton", text="Textfarbe", command=lambda text = "textanzeiger_textfarbe": self.Farbe_def(text))
         Textanzeiger_Textfarbe_button.place(relx=0.2, rely=0.1)
-        Textanzeiger_Hintergrund_Button = Class_gen.Farben_class(self, "textanzeiger_hintergrund", "Hintergrund")
-        Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(self, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung2", "Textbildschirm", Skalierung)
-        if Bildschirm_ausrichtung:
-            Bildschirm_ausrichtung_button = ResponsiveWidget(Button,self, font=Textgröße_von_alle_Texte, text="Rechts", command=Links, bd=0)
-        else:
-            Bildschirm_ausrichtung_button = ResponsiveWidget(Button, self, font=Textgröße_von_alle_Texte, text="Links", command=Rechts, bd=0)
-        Text_größe_ändern = Class_gen.Text_scalierung(self, Text_size_def, from__=0, to_=100, orient_=HORIZONTAL, backgrund=hintergrund_farbe, foregrund=text_farbe, aktuelle_zahl=int(Text_anzeiger_textgröße[0]), font_=Textgröße_von_alle_Texte, size=int(text_size))
-        Liedvorschau_Button = Class_gen.Swich_generator(Settings_is=self, Textanzeige="Liedvorschau", Text_datei_save=f"Liedvorschau", Text_hover="Diese Einstellung zeigt vor dem Gottesdienst die Lieder an", zise=text_size, ob_True=Liedvorschau, def_bei_offbutton=Test)
+        Textanzeiger_Hintergrund_Button = ttk.Button( self, style="TButton", text="Hintergrund", command=lambda text = "textanzeiger_hintergrund": self.Farbe_def(text)) 
+        Textanzeiger_Hintergrund_Button.place(relx=0.2, rely=0.2)
+    """        Bildschirm_opt1 = Class_gen.Bild_schirm_größe_class(self, Bildschirm_auflösung_quere, Bildschirm_auflösung_hoch ,f"Textmanager Daten/Textmanager Daten/Auflösung2", "Textbildschirm", Skalierung)
+            if Bildschirm_ausrichtung:
+                Bildschirm_ausrichtung_button = ResponsiveWidget(Button,self, font=Textgröße_von_alle_Texte, text="Rechts", command=Links, bd=0)
+            else:
+                Bildschirm_ausrichtung_button = ResponsiveWidget(Button, self, font=Textgröße_von_alle_Texte, text="Links", command=Rechts, bd=0)
+            Text_größe_ändern = Class_gen.Text_scalierung(self, Text_size_def, from__=0, to_=100, orient_=HORIZONTAL, backgrund=hintergrund_farbe, foregrund=text_farbe, aktuelle_zahl=int(Text_anzeiger_textgröße[0]), font_=Textgröße_von_alle_Texte, size=int(text_size))
+            Liedvorschau_Button = Class_gen.Swich_generator(Settings_is=self, Textanzeige="Liedvorschau", Text_datei_save=f"Liedvorschau", Text_hover="Diese Einstellung zeigt vor dem Gottesdienst die Lieder an", zise=text_size, ob_True=Liedvorschau, def_bei_offbutton=Test)
+    """
+
+
+    def Farbe_def(self, übergabe_speicher):
+        color = askcolor()  
+        if (color[1]):
+            Neue_Textmanager.db_connection_info_write("UPDATE Einstellungen SET supjekt = ? WHERE name = ?", (f"{color[1]}",f"{übergabe_speicher}"))
+            Load_settings.Textmanager_größen(self=self,Textsize=10)
 
 
 
 def Load_SmarteSettings():
     global Settings_smarte_unterstüzung, Smarte_Verse, RichtigeVersereihenfolge, Smarte_vorschlage_Button, Smarte_vorschlage_Button_top
-    hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+    hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
     Settings_smarte_unterstüzung = Toplevel()
     Settings_smarte_unterstüzung.geometry("500x800")
     Settings_smarte_unterstüzung.title("Einstellungen für Smarte Unterstüzung")

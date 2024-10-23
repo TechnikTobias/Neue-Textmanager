@@ -9,8 +9,8 @@ from tkinter import ttk as tk
 
 def Textmanager_größen(self, Textsize):
     style = tk.Style()
-    hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
-    text_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
+    hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("hintergrundfarbe",))
+    text_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("text_farbe",))
     factor = int(Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("scalierung",)))/100
     text_size = min( int(Neue_Textmanager.TextmanagerAPP.get_window_size(self)[0]/40*factor), int(Neue_Textmanager.TextmanagerAPP.get_window_size(self)[1]/60*factor))
     style.theme_use("clam")
@@ -30,11 +30,11 @@ def Textmanager_größen(self, Textsize):
 
 
 def Load_Text_anzeiger():
-    see_the_text = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",), True)
+    see_the_text = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("see_the_text",))
     if see_the_text:
         global AnzeigeText, Font1, Text_Anzeige_Label
-        hintergrund_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
-        text_farbe = Neue_Textmanager.get_db_connection("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
+        hintergrund_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_hintergrund",))
+        text_farbe = Neue_Textmanager.db_connection_info_get("SELECT supjekt FROM Einstellungen WHERE name = ?", ("textanzeiger_textfarbe",))
         try: AnzeigeText.config(bg="black")
         except:
             with open (f"Textmanager Daten/Textmanager Daten/Auflösungquere.txt", "r", encoding='utf8') as Hoch_auflösung:
